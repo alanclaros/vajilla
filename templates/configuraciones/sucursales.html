@@ -1,0 +1,146 @@
+{% load jinja_tags %}
+{% load static %}
+
+<div class="row align-items-center">
+    <div class="col-sm-2">&nbsp;</div>
+    <div class="col-sm-8">
+        <!--div contenedor-->
+        <br>
+        <!--alerts-->
+        {% include 'partials/_alerts.html' %}
+
+        <form name="search" method="post" action="">
+            {% csrf_token %}
+            <table class="table3 w-100">
+                <tr>
+                    <th class="w-100 center" colspan="4">
+                        Opciones de Busqueda
+                    </th>
+                </tr>
+
+                <tr class="back1">
+                    <td class="right w-20">
+                        Sucursal&nbsp;:&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <input type="text" name="search_sucursal" id="search_sucursal" class="form-control input w-80" value="{{ session.search_sucursal }}" autocomplete="off">
+                    </td>
+                    <td class="right w-20">
+                        C&oacute;digo&nbsp;:&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <input type="text" name="search_codigo" id="search_codigo" class="form-control input w-80" value="{{ session.search_codigo }}" autocomplete="off">
+                    </td>
+                </tr>
+
+                <tr class="back2">
+                    <td colspan="4" class="center w-100">
+                        <button class="btn btn-primary btn-sm" name="search_button" onclick="sendSearchSucursal();">
+                            <i class="nav-icon fas fa-search"></i>&nbsp;&nbsp;Buscar
+                        </button>
+                        <input type="hidden" name="search_button_x" value="acc">
+                        <input type="hidden" name="module_x" value="{{module_x}}">
+                    </td>
+                </tr>
+            </table>
+        </form>
+        <br>
+        <!--paginacion-->
+        {% include 'partials/pagination.html' %}
+
+        {%if permisos.adicionar == 1 %}
+        <table class="tabla w-100">
+            <td class="left w-100">
+                <button class="btn btn-primary btn-sm" name="add_x" onclick="sendOperation(operation='add');">
+                    <i class="nav-icon fas fa-plus"></i>&nbsp;&nbsp;Nueva Sucursal
+                </button>
+            </td>
+        </table>
+        <br>
+        {% endif %}
+        <table class="table3 w-100">
+            <tr>
+                <th class="w-50 pointer left" {% with cabecera=columnas.0 %} {% include 'partials/cabecera_columna.html' %} {% endwith %}>
+                    {% with cabecera=columnas.0 %}
+                    Sucursal{% include 'partials/titulo_columna.html' %}
+                    {% endwith %}
+                </th>
+                <th colspan="4" class="w-40 pointer left" {% with cabecera=columnas.1 %} {% include 'partials/cabecera_columna.html' %} {% endwith %}>
+                    {% with cabecera=columnas.1 %}
+                    C&oacute;digo{% include 'partials/titulo_columna.html' %}
+                    {% endwith %}
+                </th>
+            </tr>
+
+            {% for sucursal in sucursales %}
+            <tr class="back{{forloop.counter|back_class_color:sucursal.status_id.status_id}}">
+                <td class="left w-50">
+                    {{sucursal.sucursal}}
+                </td>
+                <td class="left w-20">
+                    {{sucursal.codigo}}
+                </td>
+                <td class="center w-8">
+                    {%if permisos.modificar == 1 %}
+                    {% with url_id=sucursal.sucursal_id boton='fas fa-file-invoice' operation='almacenes' titulo='Almacenes' descripcion='Almacenes de la sucursal' %}
+                    {% include 'partials/btn.html' %}
+                    {% endwith %}
+                    {% else %} &nbsp;
+                    {% endif %}
+                </td>
+                <td class="center w-6">
+                    {%if permisos.modificar == 1 %}
+                    {% with url_main=url_main operation='modify' url_id=sucursal.sucursal_id target='' %}
+                    {% include 'partials/btn_modificar.html' %}
+                    {% endwith %}
+                    {% else %} &nbsp;
+                    {% endif %}
+                </td>
+                <td class="center w-6">
+                    {%if permisos.eliminar == 1 %}
+                    {% with url_main=url_main operation='delete' url_id=sucursal.sucursal_id target='' %}
+                    {% include 'partials/btn_eliminar.html' %}
+                    {% endwith %}
+                    {% else %} &nbsp;
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        <br>
+        {% if permisos.adicionar == 1 %}
+        <table class="tabla w-100">
+            <td class="left w-100">
+                <button class="btn btn-primary btn-sm" name="add_x2" onclick="sendOperation(operation='add');">
+                    <i class="nav-icon fas fa-plus"></i>&nbsp;&nbsp;Nueva Sucursal
+                </button>
+            </td>
+        </table>
+        <br>
+        {% endif %}
+    </div>
+    <!--fin div contenedor-->
+    <div class="col-sm-2">&nbsp;</div>
+</div>
+
+<BR><BR>
+<form name="form_order" method="post" action="">
+    {% csrf_token %}
+    <input type="hidden" name="{{session.variable_order}}" value="{{session|get_item:session.variable_order}}">
+    <input type="hidden" name="{{session.variable_order_type}}" value="{{session|get_item:session.variable_order_type}}">
+</form>
+<form name="form_operation" method="post" action="{{url_main}}">
+    {% csrf_token %}
+    <input type="hidden" name="module_x" value="{{module_x}}">
+    <input type="hidden" name="module_x2" value="{{module_x2}}">
+    <input type="hidden" name="module_x3" value="{{module_x3}}">
+    
+    <input type="hidden" name="operation_x" value="{{operation_x}}">
+    <input type="hidden" name="operation_x2" value="{{operation_x2}}">
+    <input type="hidden" name="operation_x3" value="{{operation_x3}}">
+    
+    <input type="hidden" name="id" value="{{id}}">
+    <input type="hidden" name="id2" value="{{id2}}">
+    <input type="hidden" name="id3" value="{{id3}}">
+</form>
+</div>

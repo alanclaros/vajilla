@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% load humanize %}
+{% load static %}
+
+{% block title %} | Contactenos {% endblock %}
+
+{% block js_modulo %}
+<script type="text/javascript" src="{% static "" %}js/home_page.js"></script>
+{% endblock %}
+
+{% block content %}
+
+<div class="row align-items-center">
+    <div class="col-sm-2">&nbsp;</div>
+    <div class="col-sm-8">
+        <!--div contenedor-->
+        <br>
+        <span class="index_atajo">Punto de Venta</span>&nbsp;&nbsp;<span class="index_atajo2">RENE</span>
+        <br><br>
+        <div class="card">
+            <div class="card-body">
+                <p class="card-text center">
+                    Envianos tu consulta y nos pondremos en contacto contigo lo antes posible.
+                </p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <form name="formulario" method="POST" action="" onsubmit="return false;">
+                    {% csrf_token %}
+                    <table class="table3 w-100">
+                        <tr>
+                            <th colspan="3" class="w-100 center">Formulario</th>
+                        </tr>
+                        <tr class="back1">
+                            <td class="w-30 right">
+                                <span class="red">&#42;</span> Apellidos :&nbsp;
+                            </td>
+                            <td colspan="2" class="w-70 left">
+                                <input type="text" name="apellidos" id="apellidos" autocomplete="off" placeholder="Apellidos" class="form-control input w-90" onkeyup="txtValid(this);" onblur="txtValid(this);">
+                            </td>
+                        </tr>
+                        <tr class="back2">
+                            <td class="w-30 right">
+                                <span class="red">&#42;</span> Nombres :&nbsp;
+                            </td>
+                            <td colspan="2" class="w-70 left">
+                                <input type="text" name="nombres" id="nombres" autocomplete="off" placeholder="Nombres" class="form-control input w-90" onkeyup="txtValid(this);" onblur="txtValid(this);">
+                            </td>
+                        </tr>
+                        <tr class="back1">
+                            <td class="w-30 right">
+                                <span class="red">&#42;</span> Fonos :&nbsp;
+                            </td>
+                            <td colspan="2" class="w-70 left">
+                                <input type="text" name="telefonos" id="telefonos" autocomplete="off" placeholder="telefonos" class="form-control input w-90" onkeyup="txtValid(this);" onblur="txtValid(this);">
+                            </td>
+                        </tr>
+                        <tr class="back2">
+                            <td class="w-30 right">
+                                Email :&nbsp;
+                            </td>
+                            <td colspan="2" class="w-70 left">
+                                <input type="text" name="email" id="email" autocomplete="off" placeholder="email" class="form-control input w-90">
+                            </td>
+                        </tr>
+
+                        <tr class="back1">
+                            <td class="w-30 right v-top">
+                                <span class="red">&#42;</span> Mensaje :&nbsp;
+                            </td>
+                            <td colspan="2" class="w-70 left">
+                                <textarea name="mensaje" id="mensaje" class="form-control input w-90 h-60"></textarea>
+                            </td>
+                        </tr>
+
+                        <tr class="back2">
+                            <td colspan="3" class="w-100 center">
+                                &nbsp;
+                            </td>
+                        </tr>
+
+                        <tr class="back2" style="display: none;" id="fila_resultado">
+                            <td colspan="3" class="w-100 center">
+                                <div id="div_resultado">&nbsp;</div>
+                            </td>
+                        </tr>
+
+                        <tr class="back1">
+                            <td colspan="3" class="w-100 center">
+                                <input type="button" class="btn btn-primary btn-sm" name="btn_enviar" id="btn_enviar" value="&nbsp;&nbsp;&nbsp;Enviar&nbsp;&nbsp;&nbsp;" onclick="return formularioContacto();">
+                            </td>
+                        </tr>
+
+                    </table>
+                    <input type="hidden" name="url_main" id="url_main" value="{{url_main}}">
+                </form>
+            </div>
+
+        </div>
+    </div>
+    <!--fin div contenedor-->
+    <div class="col-sm-2">&nbsp;</div>
+</div>
+
+<BR><BR>
+<!--pie de pagina-->
+{% include 'pages/pie_pagina.html' %}
+
+{% endblock %}

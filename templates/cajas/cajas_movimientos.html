@@ -1,0 +1,166 @@
+{% load static %}
+{% load jinja_tags %}
+
+<!-- <script type="text/javascript" src="{% static "" %}js/{{js_file}}.js"></script> -->
+
+<div class="row align-items-center">
+    <div class="col-sm-2">&nbsp;</div>
+    <div class="col-sm-8">
+        <!--div contenedor-->
+        <br>
+        <!--alerts-->
+        {% include 'partials/_alerts.html' %}
+
+        {%if permisos.adicionar == 1 %}
+        <table class="tabla w-100">
+            <td class="left w-100">
+                <button class="btn btn-primary btn-sm" name="add_x" onclick="sendOperation(operation='add');">
+                    <i class="nav-icon fas fa-plus"></i>&nbsp;&nbsp;Nuevo Movimiento
+                </button>
+            </td>
+        </table>
+        <br>
+        {% endif %}
+        <div class="w100 center h-35 v-middle">Fecha: {{current_date}}</div>
+        <table class="table3 w-100">
+            <tr>
+                <th class="w-50">
+                    Movimientos - Env&iacute;os
+                </th>
+                <th colspan="3" class="w-50">
+                    Estado
+                </th>
+            </tr>
+
+            {% for envio in envios_lista %}
+            <tr class="back{{forloop.counter|back_class_color:envio.status_id.status_id}}">
+                <td class="left w-50">
+                    {{envio.caja1_id.punto_id.punto}}-{{envio.caja1_id.codigo}} - {{envio.caja2_id.punto_id.punto}}-{{envio.caja2_id.codigo}}<br>
+                    {{envio.fecha|fecha_mostrar:'dd-MMM-yyyy HH:ii'}} ({{envio.monto}} {{envio.tipo_moneda_id.codigo}})
+                </td>
+                <td class="left w-30">
+                    {% if envio.status_id.status_id == movimiento_caja %}
+                    ENVIO
+                    {% endif %}
+
+                    {% if envio.status_id.status_id == movimiento_caja_recibe %}
+                    ENVIO-RECIBE
+                    {% endif %}
+
+                    {% if envio.status_id.status_id == estado_anulado %}
+                    ANULADO
+                    {% endif %}
+                </td>
+                <td class="center w-10">
+                    {% if permisos.imprimir == 1 %}
+                    {% with url_main=url_main url_id=envio.caja_movimiento_id target='_blank' %}
+                    {% include 'partials/btn_imprimir.html' %}
+                    {% endwith %}
+                    {% endif %}
+                </td>
+                <td class="center w-10">
+                    {% if permisos.anular == 1 %}
+                    {% if envio.status_id.status_id != estado_anulado and envio.status_id.status_id != movimiento_caja_recibe %}
+                    {% with url_id=envio.caja_movimiento_id boton='fas fa-ban' operation='anular' titulo='Anular Movimiento' descripcion='Anular esta operacion' %}
+                    {% include 'partials/btn.html' %}
+                    {% endwith %}
+                    {% endif %}
+                    {% else %} &nbsp;
+                    {% endif %}
+                </td>
+
+            </tr>
+            {% endfor %}
+        </table>
+        <br>
+
+        <table class="table3 w-100">
+            <tr>
+                <th class="w-50">
+                    Movimientos - Recepci&oacute;n
+                </th>
+                <th colspan="4" class="w-50">
+                    Estado
+                </th>
+            </tr>
+
+            {% for recepcion in recepcion_lista %}
+            <tr class="back{{forloop.counter|back_class_color:recepcion.status_id.status_id}}">
+                <td class="left w-50">
+                    {{recepcion.caja1_id.punto_id.punto}}-{{recepcion.caja1_id.codigo}} {{recepcion.caja2_id.punto_id.punto}}-{{recepcion.caja2_id.codigo}}<br>
+                    {{recepcion.fecha|fecha_mostrar:'dd-MMM-yyyy HH:ii'}} ({{recepcion.monto}} {{recepcion.tipo_moneda_id.codigo}})
+                </td>
+                <td class="left w-30">
+                    {% if recepcion.status_id.status_id == movimiento_caja %}
+                    ENVIO
+                    {% endif %}
+
+                    {% if recepcion.status_id.status_id == movimiento_caja_recibe %}
+                    ENVIO-RECIBE
+                    {% endif %}
+
+                    {% if recepcion.status_id.status_id == estado_anulado %}
+                    ANULADO
+                    {% endif %}
+                </td>
+                <td class="center w-6">
+                    {% if permisos.imprimir == 1 %}
+                    {% with url_main=url_main url_id=recepcion.caja_movimiento_id target='_blank' %}
+                    {% include 'partials/btn_imprimir.html' %}
+                    {% endwith %}
+                    {% endif %}
+                </td>
+                <td class="center w-7">
+                    {% if permisos.adicionar == 1 %}
+                    {% if recepcion.status_id.status_id == movimiento_caja %}
+                        {% if recepcion.caja2_id.caja_id == user_perfil.caja_id %}
+                            {% with url_id=recepcion.caja_movimiento_id boton='fas fa-check-square' operation='aceptar_recepcion_x' titulo='Aceptar Movimiento' descripcion='Aceptar esta operacion' %}
+                            {% include 'partials/btn.html' %}
+                            {% endwith %}
+                        {% endif %}
+                    {% endif %}
+                    {% else %} &nbsp;
+                    {% endif %}
+                </td>
+                <td class="center w-7">
+                    {% if permisos.anular == 1 %}
+                    {% if recepcion.status_id.status_id != estado_anulado and recepcion.status_id.status_id == movimiento_caja_recibe %}
+                    {% with url_id=recepcion.caja_movimiento_id boton='fas fa-ban' operation='anular_recepcion_x' titulo='Anular Movimiento' descripcion='Anular esta operacion' %}
+                    {% include 'partials/btn.html' %}
+                    {% endwith %}
+                    {% endif %}
+                    {% else %} &nbsp;
+                    {% endif %}
+                </td>
+
+            </tr>
+            {% endfor %}
+        </table>
+        <br>
+    </div>
+    <!--fin div contenedor-->
+    <div class="col-sm-2">&nbsp;</div>
+</div>
+
+<form name="form_print" method="post" action="{{url_main}}" target="_blank">
+    {% csrf_token %}
+    <input type="hidden" name="module_x" value="{{module_x}}">
+    <input type="hidden" name="operation_x" value="">
+    <input type="hidden" name="id" value="">
+</form>
+<BR><BR>
+    <form name="form_operation" method="post" action="{{url_main}}">
+        {% csrf_token %}
+        <input type="hidden" name="module_x" value="{{module_x}}">
+        <input type="hidden" name="module_x2" value="{{module_x2}}">
+        <input type="hidden" name="module_x3" value="{{module_x3}}">
+        
+        <input type="hidden" name="operation_x" value="{{operation_x}}">
+        <input type="hidden" name="operation_x2" value="{{operation_x2}}">
+        <input type="hidden" name="operation_x3" value="{{operation_x3}}">
+        
+        <input type="hidden" name="id" value="{{id}}">
+        <input type="hidden" name="id2" value="{{id2}}">
+        <input type="hidden" name="id3" value="{{id3}}">
+    </form>
+</div>

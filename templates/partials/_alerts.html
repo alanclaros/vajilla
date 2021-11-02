@@ -1,0 +1,16 @@
+{% if messages %}
+{% for message in messages %}
+
+<div id="message{{forloop.counter}}" class="container">
+    <div class="alert alert-{{message.message.type}} alert-dismissible">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <h5><i class="icon fas {% if message.message.type == 'success' %}fa-check{% endif %}
+                                {% if message.message.type == 'danger' %}fa-ban{% endif %} 
+                                {% if message.message.type == 'warning' %}fa-exclamation-triangle{% endif %}">
+            </i> {{message.message.title}}</h5>
+        {{message.message.description}}
+    </div>
+</div>
+
+{% endfor %}
+{% endif %}

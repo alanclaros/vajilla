@@ -1,0 +1,3 @@
+{% load jinja_tags %}
+
+onClick="sendOrder('{{cabecera}}','{% if session|get_item:session.variable_order == cabecera %}{% if session|get_item:session.variable_order_type == 'ASC' %}DESC{% else %}ASC{% endif %}{% else %}ASC{% endif %}','{{session.variable_order}}','{{session.variable_order_type}}')"

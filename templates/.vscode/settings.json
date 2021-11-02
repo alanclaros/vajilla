@@ -1,0 +1,11 @@
+{
+    "html.format.wrapLineLength": 250,
+    "python.formatting.autopep8Args": [
+        "--ignore E251",
+    ],
+    "[html]": {
+        "editor.trimAutoWhitespace": false,
+        "files.trimTrailingWhitespace": false,
+        "editor.formatOnSave": false,
+    }
+}

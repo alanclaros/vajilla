@@ -1,0 +1,12 @@
+<div id="messagepg" class="container">
+    <div class="alert alert-{% if error == 1 %}warning{% else %}success{% endif %} alert-dismissible">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        {% if error == 1 %}
+        <h5><i class="icon fas fa-exclamation-triangle"></i> Error de Envio!</h5>
+        Error al enviar el mensaje, por favor verifique que lleno correctamente todos los campos.
+        {% else %}
+        <h5><i class="icon fas fa-check"></i> Mensaje Enviado!</h5>
+        <h6>Su mensaje fue enviado correctamente, nos pondremos en contacto con usted lo antes posible.</h6>
+        {% endif %}
+    </div>
+</div>

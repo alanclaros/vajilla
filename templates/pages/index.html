@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% load humanize %}
+{% load static %}
+{% load jinja_tags %}
+
+{% block title %} | Inicio {% endblock %}
+{% block js_modulo %}
+<script type="text/javascript" src="{% static "" %}js/home_page.js"></script>
+{% endblock %}
+{% block content %}
+
+{% if autenticado == 'si' %}
+<br>
+<table class="w-100">
+    <tr>
+        <td class="w-2">&nbsp;</td>
+        <td class="w-96 center">
+            <!--div contenedor-->
+            <table class="table3 w-100">
+                <tr>
+                    <th class="center">Eventos &#34;El Copet&iacute;n&#34;</th>
+                </tr>
+                <tr>
+                    <td class="h-50 w-100 center v-middle">
+                        &nbsp;
+                    </td>
+                </tr>
+            </table>
+            <!--fin div contenedor-->
+        </td>
+        <td class="w-2">&nbsp;</td>
+    </tr>
+</table>
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+{% else %}
+
+<!--cuadros-->
+<br>
+<table class="w-100">
+    <tr>
+        <td class="w-2">&nbsp;</td>
+        <td class="w-96 center">
+            <!--div contenedor-->
+            <table class="table3 w-100">
+                <tr>
+                    <th class="center">Eventos &#34;El Copet&iacute;n&#34;</th>
+                </tr>
+                <tr>
+                    <td class="h-50 w-100 center v-middle">
+                        <a class="link_blue" href="{{1|get_sub_url_empresa}}/accounts/login/">Iniciar Sesion</a>
+                    </td>
+                </tr>
+            </table>
+            <!--fin div contenedor-->
+        </td>
+        <td class="w-2">&nbsp;</td>
+    </tr>
+</table>
+<br><br><br><br><br><br><br><br><br><br><br>
+<br><br><br><br><br><br><br><br><br><br><br>
+<br><br><br><br><br><br><br><br><br><br><br>
+{% endif %}
+{% endblock %}

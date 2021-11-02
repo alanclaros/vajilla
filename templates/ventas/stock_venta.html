@@ -1,0 +1,184 @@
+{% load jinja_tags %}
+{% load static %}
+
+<table class="tablac w-100">
+    <tr class="back1">
+        <td class="w-20 right minw-40">
+            <input type="text" autocomplete="off" class="form-control input right w-98" name="cantidad_{{numero_registro}}" id="cantidad_{{numero_registro}}" onkeyup="{% if vender_fracciones == 'si' %}validarNumeroPunto(this);{% else %}validarNumero(this);{% endif %}totalPedido{{stock_js}}();">
+        </td>
+        <td class="w-30 right minw-60">
+            <input type="text" autocomplete="off" class="form-control input right w-98" name="costo_{{numero_registro}}" id="costo_{{numero_registro}}" onkeyup="validarNumeroPunto(this);totalPedido{{stock_js}}();">
+            <input type="hidden" id="costo_aux_{{numero_registro}}" value="">
+        </td>
+        <td class="w-10 right">
+            <button type="button" class="btn btn-primary btn-xs" onMouseOver=" overlib('seleccionar detalles',CAPTION,'',WIDTH,'120',LEFT); return true" onMouseOut=" nd(); return true" onclick="componentesProducto('{{numero_registro}}');nd();">
+                <img class="ico_img pointer" src="{% static '/img/png/componentes.png' %}">
+            </button>
+        </td>
+        <td class="w-10 right">
+            <button type="button" class="btn btn-primary btn-xs" onMouseOver=" overlib('extras',CAPTION,'',WIDTH,'120',LEFT); return true" onMouseOut=" nd(); return true" onclick="extrasProducto('{{numero_registro}}');nd();">
+                <img class="ico_img pointer" src="{% static '/img/png/extras.png' %}">
+            </button>
+        </td>
+        <td class="w-30 right minw-60">
+            <input type="text" tabindex="-1" class="form-control input right w-98" name="total_{{numero_registro}}" id="total_{{numero_registro}}" readonly="readonly">
+        </td>
+    </tr>
+    <tr class="back2">
+        <td colspan="5" class="w-100 left">
+            <i>{% for stock in stock_producto %}
+            {% if stock.cantidad < 0 %}
+            <span style="color: red;">{{stock.insumo}} ({{stock.cantidad}}),&nbsp;</span>
+            {% else %}
+            {{stock.insumo}} ({{stock.cantidad}}),&nbsp;
+            {% endif %}
+            {% endfor %}
+        </i>
+        </td>
+    </tr>
+</table>
+<div class="modal fade" id="modal-componentes-{{numero_registro}}">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">{{producto.producto}}</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <table class="tablab w-100">
+                <tr>
+                    <th class="w-100 left">
+                        Componente
+                        {% for componente in detalle_producto.lista_componentes %}
+                        <input type="hidden" name="componente_{{numero_registro}}_{{componente.componente_id}}" value="{% if componente.defecto == 1 %}1{% else %}0{% endif %}">
+                        {% endfor %}
+                        <input type="hidden" id="componentes_ids_{{numero_registro}}" value="{{detalle_producto.componentes_ids}}">
+                    </th>
+                </tr>
+                {% for componente in detalle_producto.lista_componentes %}
+                <tr class="back{{forloop.counter|back_class}}">
+                    <td class="left w-100">
+                        <div class="custom-control custom-checkbox">
+                            <input class="custom-control-input" type="checkbox" id="aux_componente_{{numero_registro}}_{{componente.componente_id}}" value="1" onclick="marcarComponente(this, 'componente_{{numero_registro}}_{{componente.componente_id}}');">
+                            <label for="aux_componente_{{numero_registro}}_{{componente.componente_id}}" class="custom-control-label">{{componente.componente}}</label>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+            
+            <!--refrescos-->
+            <input type="hidden" id="refrescos_ids_{{numero_registro}}" value="{{detalle_producto.refresco_grupo_ids}}">
+            {% if detalle_producto.lista_refrescos %}
+            <table class="tablab w-100">
+                <tr>
+                    <th class="w-100 left">
+                        Refrescos
+                        {% for refresco in detalle_producto.lista_refrescos %}
+                        <input type="hidden" name="refresco_{{numero_registro}}_{{refresco.refresco_grupo_id}}" value="{% if refresco.defecto == 1 %}1{% else %}0{% endif %}">
+                        <input type="hidden" name="refresco_precio_{{numero_registro}}_{{refresco.refresco_grupo_id}}" value="{{refresco.precio}}">
+                        {% endfor %}
+                    </th>
+                </tr>
+                {% for refresco in detalle_producto.lista_refrescos %}
+                <tr class="back{{forloop.counter|back_class}}">
+                    <td class="left w-100">
+                        <div class="custom-control custom-checkbox">
+                            <input class="custom-control-input" type="checkbox" id="aux_refresco_{{numero_registro}}_{{refresco.refresco_grupo_id}}" value="1" onclick="marcarRefresco(this, 'refresco_{{numero_registro}}_{{refresco.refresco_grupo_id}}', '{{numero_registro}}');">
+                            <label for="aux_refresco_{{numero_registro}}_{{refresco.refresco_grupo_id}}" class="custom-control-label">
+                                {% if refresco.insumo_id == 0 %}
+                                {{refresco.componente}}, {{refresco.precio}} Bs.
+                                {% else %}
+                                {{refresco.insumo}}, {{refresco.precio}} Bs.
+                                {% endif %}
+                            </label>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% endif %}
+            
+            <!--papas-->
+            <input type="hidden" id="papas_ids_{{numero_registro}}" value="{{detalle_producto.papa_grupo_ids}}">
+            {% if detalle_producto.lista_papas %}
+            <table class="tablab w-100">
+                <tr>
+                    <th class="w-100 left">
+                        Papas
+                        {% for papa in detalle_producto.lista_papas %}
+                        <input type="hidden" name="papa_{{numero_registro}}_{{papa.papa_grupo_id}}" value="{% if papa.defecto == 1 %}1{% else %}0{% endif %}">
+                        <input type="hidden" name="papa_precio_{{numero_registro}}_{{papa.papa_grupo_id}}" value="{{papa.precio}}">
+                        {% endfor %}
+                        
+                    </th>
+                </tr>
+                {% for papa in detalle_producto.lista_papas %}
+                <tr class="back{{forloop.counter|back_class}}">
+                    <td class="left w-100">
+                        <div class="custom-control custom-checkbox">
+                            <input class="custom-control-input" type="checkbox" id="aux_papa_{{numero_registro}}_{{papa.papa_grupo_id}}" value="1" onclick="marcarPapa(this, 'papa_{{numero_registro}}_{{papa.papa_grupo_id}}', '{{numero_registro}}');">
+                            <label for="aux_papa_{{numero_registro}}_{{papa.papa_grupo_id}}" class="custom-control-label">
+                                {% if papa.insumo_id == 0 %}
+                                {{papa.componente}}, {{papa.precio}} Bs.
+                                {% else %}
+                                {{papa.insumo}}, {{papa.precio}} Bs.
+                                {% endif %}
+                            </label>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% endif %}
+            
+        </div>
+        <div class="modal-footer right">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="modal fade" id="modal-extras-{{numero_registro}}">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">{{producto.producto}}</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <!--extras-->
+            <table class="tablab w-100">
+                <tr>
+                    <th class="w-100 left">
+                        Extras
+                        {% for extra in detalle_producto.lista_extras %}
+                        <input type="hidden" name="extra_{{numero_registro}}_{{extra.componente_id}}" value="0">
+                        <input type="hidden" name="extra_precio_{{numero_registro}}_{{extra.componente_id}}" value="{{extra.precio}}">
+                        {% endfor %}
+                        <input type="hidden" id="extras_ids_{{numero_registro}}" value="{{detalle_producto.extras_ids}}">
+                    </th>
+                </tr>
+                {% for extra in detalle_producto.lista_extras %}
+                <tr class="back{{forloop.counter|back_class}}">
+                    <td class="left w-100">
+                        <div class="custom-control custom-checkbox">
+                            <input class="custom-control-input" type="checkbox" id="aux_extra_{{numero_registro}}_{{extra.componente_id}}" value="1" onclick="marcarExtra(this, 'extra_{{numero_registro}}_{{extra.componente_id}}', '{{numero_registro}}');">
+                            <label for="aux_extra_{{numero_registro}}_{{extra.componente_id}}" class="custom-control-label">{{extra.componente}}, {{extra.precio}} Bs.</label>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        <div class="modal-footer right">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>

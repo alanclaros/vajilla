@@ -1,0 +1,46 @@
+<br>
+<div class="row pie_fondo">
+    <div class="col-sm-4 left">
+        <div class="titulo_pie">Informaci&oacute;n de la Empresa</div>
+        <ul>
+            <li class="pointer" onclick="document.pie_acerca_de.submit();">Acerca la Empresa</li>
+            <li class="pointer" onclick="document.pie_acerca_de.submit();">Objetivo General</li>
+            <li class="pointer" onclick="document.pie_acerca_de.submit();">Valores</li>
+        </ul>
+    </div>
+
+    <div class="col-sm-4 left">
+        <div class="titulo_pie">Nuestras Sucursales</div>
+        <ul>
+            <li class="pointer" onclick="document.pie_sucursales.submit();">Sucursal Centra - Republica # 1223</li>
+        </ul>
+    </div>
+
+    <div class="col-sm-4 left">
+        <div class="titulo_pie">Contactenos</div>
+
+        <ul>
+            <li class="pointer" onclick="document.pie_contactenos.submit();">acc.claros@gmail.com</li>
+            <li class="pointer" onclick="document.pie_contactenos.submit();">Cochambaba-Bolivia</li>
+            <li class="pointer" onclick="document.pie_contactenos.submit();">Fonos: 79336111 - 79961647</li>
+        </ul>
+    </div>
+</div>
+<div class="row pie_redes">
+    <div class="col-sm-12 right">
+        <i class="fab fa-facebook pointer" style="font-size: 30px;"></i>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <i class="fab fa-twitter pointer" style="font-size: 30px;"></i>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <i class="fab fa-youtube pointer" style="font-size: 30px;"></i>
+    </div>
+</div>
+<form name="pie_acerca_de" method="POST" action="/acercade/">
+    {% csrf_token %}
+</form>
+<form name="pie_sucursales" method="POST" action="/sucursalesempresa/">
+    {% csrf_token %}
+</form>
+<form name="pie_contactenos" method="POST" action="/contactenos/">
+    {% csrf_token %}
+</form>

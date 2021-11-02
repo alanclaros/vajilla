@@ -1,0 +1,22 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+    <title>PVI - Sistema de Ventas | {{producto}} </title>
+</head>
+<body>
+<div class="row">
+    <div class="col-12 center">
+        {% if imagen != '' %}
+        <img class="img-fluid" src="{% static '/media/productos/' %}{{imagen}}">
+        {% else %}
+        <img src="{% static '/img/producto_sin_imagen.jpg' %}">
+        {% endif %}  
+    </div>
+</div>
+</body>
+</html>

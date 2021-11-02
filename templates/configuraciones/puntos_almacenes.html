@@ -1,0 +1,101 @@
+{% load jinja_tags %}
+{% load static %}
+
+<div class="row align-items-center">
+    <div class="col-sm-2">&nbsp;</div>
+    <div class="col-sm-8">
+        <!--div contenedor-->
+        <br>
+        <!--alerts-->
+        {% include 'partials/_alerts.html' %}
+        <div class="link_blue right">
+            <span class="link_blue pointer" onclick="backWindow();">Volver a Puntos</span>
+        </div>
+        <br>
+
+        <table class="table3 w-100">
+            <tr>
+                <th class="w-100 center" colspan="4">
+                    Sucursal : {{punto_actual.sucursal_id.ciudad_id.ciudad}} - {{punto_actual.sucursal_id.sucursal}}
+                </th>
+            </tr>
+
+            <tr class="back1">
+                <td class="right w-20">
+                    <span id="label1">Punto</span>&nbsp;:&nbsp;
+                    <input type="hidden" id="label1_c" value="Punto">
+                </td>
+                <td colspan="3" class="left w-80">
+                    {{punto_actual.punto}}
+                </td>
+            </tr>
+
+        </table>
+        <br>
+
+        <br>
+        <form name="formulario" method="post" action="" onsubmit="return false;">
+            {% csrf_token %}
+            <table class="table3 w-100">
+                <tr>
+                    <th colspan="2" class="center w-100">
+                        Almacenes para el Punto
+                    </th>
+                </tr>
+                {% for almacen in almacenes_lista %}
+                <tr class="back{{forloop.counter|back_class}}">
+                    <td class="center w-20">
+                        <div class="custom-control custom-checkbox">
+                            <input class="custom-control-input" type="checkbox" id="almacen_{{almacen.almacen_id}}" name="almacen_{{almacen.almacen_id}}" {% if almacen|verificar_punto_almacen:puntos_almacenes == 'si' %}checked{% endif %}>
+                            <label for="almacen_{{almacen.almacen_id}}" class="custom-control-label">&nbsp;</label>
+                        </div>
+                    </td>
+                    <td class="left w-80">
+                        {{almacen.almacen}}
+                    </td>
+                </tr>
+                {% endfor %}
+
+                <tr class="back1">
+                    <td colspan="2" class="center w-100">&nbsp;</td>
+                </tr>
+                {% if permisos.modificar %}
+                <tr class="back2">
+                    <td colspan="2" class="center w-100">
+                        <button class="btn btn-primary btn-sm" name="add_button" onclick="guardarPuntosAlmacenes('formulario', 'add_button', 'button_cancel')">
+                            <i class="nav-icon fas fa-save"></i>&nbsp;&nbsp;Guardar
+                        </button>
+                        
+                        <input type="hidden" name="operation_x" value="modify_x">
+                        <input type="hidden" name="control_form" value="">
+                        <input type="hidden" name="button_cancel" value="Cancelar">
+                        <input type="hidden" name="almacenes_ids" id="almacenes_ids" value="{{almacenes_ids}}">
+                    </td>
+                </tr>
+                {% endif %}
+
+            </table>
+        </form>
+        <br>
+
+    </div>
+    <!--fin div contenedor-->
+    <div class="col-sm-2">&nbsp;</div>
+</div>
+
+<BR><BR>
+    <form name="form_operation" method="post" action="{{url_main}}">
+        {% csrf_token %}
+        <input type="hidden" name="module_x" value="{{module_x}}">
+        <input type="hidden" name="module_x2" value="{{module_x2}}">
+        <input type="hidden" name="module_x3" value="{{module_x3}}">
+        
+        <input type="hidden" name="operation_x" value="{{operation_x}}">
+        <input type="hidden" name="operation_x2" value="{{operation_x2}}">
+        <input type="hidden" name="operation_x3" value="{{operation_x3}}">
+        
+        <input type="hidden" name="id" value="{{id}}">
+        <input type="hidden" name="id2" value="{{id2}}">
+        <input type="hidden" name="id3" value="{{id3}}">
+    </form>
+</div>

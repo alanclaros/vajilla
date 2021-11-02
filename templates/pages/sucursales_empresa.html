@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% load humanize %}
+
+{% block title %} | Sucursales Empresa {% endblock %}
+
+{% block content %}
+
+<div class="row align-items-center">
+    <div class="col-sm-2">&nbsp;</div>
+    <div class="col-sm-8">
+        <!--div contenedor-->
+        <br>
+        <span class="index_atajo">Punto de Venta</span>&nbsp;&nbsp;<span class="index_atajo2">RENE</span>
+        <br><br>
+        <div class="card">
+            <div class="card-body">
+                <p>
+                    <span class="index_title">Sucrusal Central</span>
+                </p>
+                <p class="card-text left">
+                    Av. Republica # 1254 entre Punata y Honduras<br>
+                    Fonos: 79336111 - 79961647
+                </p>
+            </div>
+        </div>
+
+        <!-- <div class="card">
+            <div class="card-body">
+                <p>
+                    <span class="index_title">Sucursal 2</span>
+                </p>
+                <p class="card-text">
+                    Av. Republica # 2343<br>
+                    Fonos: 7251245 - 74856325
+                </p>
+            </div>
+        </div> -->
+
+
+    </div>
+    <!--fin div contenedor-->
+    <div class="col-sm-2">&nbsp;</div>
+</div>
+
+<BR><BR><BR><BR><BR><BR><BR><BR>
+<!--pie de pagina-->
+{% include 'pages/pie_pagina.html' %}
+
+{% endblock %}

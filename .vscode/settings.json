@@ -1,0 +1,17 @@
+{
+    "git.ignoreLimitWarning": true,
+    "python.pythonPath": "venv\\Scripts\\python.exe",
+    "python.linting.pylintArgs": [
+        "--load-plugins=pylint_django",
+        "--max-line-length=220"
+    ],
+    "python.formatting.autopep8Args": [
+        "--max-line-length=220",
+        //"--ignore E251",
+    ],
+    "html.format.wrapLineLength": 250,
+    "[html]": {
+        "editor.trimAutoWhitespace": false,
+        "files.trimTrailingWhitespace": false,
+    }
+}

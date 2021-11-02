@@ -1,0 +1,175 @@
+{% load jinja_tags %}
+{% load static %}
+
+<!--contenedor-->
+<div class="row align-items-center">
+    <div class="col-sm-2">&nbsp;</div>
+    <div class="col-sm-8">
+        <!--contenido-->
+        <!--alerts-->
+        {% include 'partials/_alerts.html' %}
+        <br>
+        {% if puede_eliminar == 0 %}
+        {% with title='Clientes' body='No puede Eliminar este cliente, tiene registros en otros modulos, consulte con el administrador' %}
+        {% include 'partials/_alert_info_cant_delete.html' %}
+        {% endwith %}
+        {% endif %}
+        <div class="link_blue right">
+            <span class="link_blue pointer" onclick="backWindow();">Volver</span>
+        </div>
+        <br>
+        <form name="formulario" method="post" action="" onsubmit="return false;">
+            {% csrf_token %}
+            <table class="table3 w-100">
+                <tr>
+                    <th colspan="4" class="center w-100">
+                        {% if operation_x == "add" %}Adicionar Cliente{% endif %}
+                        {% if operation_x == "modify" %}Modificar Cliente{% endif %}
+                        {% if operation_x == "delete" %}Eliminar Cliente{% endif %}
+                    </th>
+                </tr>
+
+                <tr class="back1">
+                    <td class="right w-20">
+                        Apellidos&nbsp;:&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <input type="text" {% if operation_x == "delete" %}readonly="readonly" {% endif %} autocomplete="off" class="form-control input left w-80" {% autoescape off %} {{db_tags.apellidos}} {% endautoescape %}>
+                    </td>
+                    <td class="right w-20">
+                        Nombres&nbsp;:&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <input type="text" {% if operation_x == "delete" %}readonly="readonly" {% endif %} autocomplete="off" class="form-control input left w-80" {% autoescape off %} {{db_tags.nombres}} {% endautoescape %}>
+                    </td>
+                </tr>
+
+                <tr class="back2">
+                    <td class="right w-20">
+                        CI/NIT&nbsp;:&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <input type="text" {% if operation_x == "delete" %}readonly="readonly" {% endif %} autocomplete="off" class="form-control input left w-80" {% autoescape off %} {{db_tags.ci_nit}} {% endautoescape %}>
+                    </td>
+                    <td class="right w-20">
+                        Activo&nbsp;:&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <div class="custom-control custom-checkbox">
+                            <input class="custom-control-input" type="checkbox" id="activo" name="activo" {% if operation_x == 'add' %}checked{% endif %}
+                                {% if operation_x == 'modify' %}{% if sucursal.status_id_id == status_active %}checked{% endif %}{% endif %} {% if operation_x == 'delete' %}{% if sucursal.status_id_id == status_active %}checked{% endif %}
+                                disabled="disabled" {% endif %}>
+                            <label for="activo" class="custom-control-label">&nbsp;</label>
+                        </div>
+                    </td>
+                </tr>
+
+                <tr class="back1">
+                    <td class="right w-20">
+                        Telefonos&nbsp;:&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <input type="text" {% if operation_x == "delete" %}readonly="readonly" {% endif %} autocomplete="off" class="form-control input left w-80" name="telefonos" id="telefonos" value="{{cliente.telefonos}}">
+                    </td>
+                    <td class="right w-20">
+                        Email&nbsp;:&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <input type="text" {% if operation_x == "delete" %}readonly="readonly" {% endif %} autocomplete="off" class="form-control input left w-90" name="email" id="email" value="{{cliente.email}}">
+                    </td>
+                </tr>
+
+                <tr class="back2">
+                    <td class="right w-20">
+                        Direccion&nbsp;:&nbsp;
+                    </td>
+                    <td colspan="3" class="left w-80">
+                        <input type="text" {% if operation_x == "delete" %}readonly="readonly" {% endif %} autocomplete="off" class="form-control input left w-90" name="direccion" id="direccion" value="{{cliente.direccion}}">
+                    </td>
+                </tr>
+
+                <tr class="back1">
+                    <td class="right w-20">
+                        R.Social&nbsp;:&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <input type="text" {% if operation_x == "delete" %}readonly="readonly" {% endif %} autocomplete="off" class="form-control input left w-80" name="razon_social" id="razon_social" value="{{cliente.razon_social}}">
+                    </td>
+                    <td class="right w-20">
+                        Factura A&nbsp;:&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <input type="text" {% if operation_x == "delete" %}readonly="readonly" {% endif %} autocomplete="off" class="form-control input left w-90" name="factura_a" id="factura_a" value="{{cliente.factura_a}}">
+                    </td>
+                </tr>
+
+                <tr class="back2">
+                    <td colspan="4" class="center w-100">&nbsp;</td>
+                </tr>
+                <tr class="back1">
+                    <td colspan="4" class="center w-100">
+                        {% if operation_x == "add" %}
+                        <button class="btn btn-secondary btn-sm" name="button_cancel" onclick="backWindow();">
+                            <i class="nav-icon fas fa-arrow-alt-circle-left"></i>&nbsp;&nbsp;Cancelar
+                        </button>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <button class="btn btn-primary btn-sm" name="add_button" onclick="sendFormCliente('add', '');">
+                            <i class="nav-icon fas fa-save"></i>&nbsp;&nbsp;Guardar
+                        </button>
+                        <input type="hidden" name="add_x" value="acc">
+                        <input type="hidden" name="control_form" value="{{control_form}}">
+                        {% endif %}
+                        {% if operation_x == "modify" %}
+                        <button class="btn btn-secondary btn-sm" name="button_cancel" onclick="backWindow();">
+                            <i class="nav-icon fas fa-arrow-alt-circle-left"></i>&nbsp;&nbsp;Cancelar
+                        </button>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <button class="btn btn-primary btn-sm" name="add_button" onclick="sendFormCliente('modify', '');">
+                            <i class="nav-icon fas fa-save"></i>&nbsp;&nbsp;Guardar
+                        </button>
+                        <input type="hidden" name="modify_x" value="acc">
+                        <input type="hidden" name="control_form" value="{{control_form}}">
+                        {% endif %}
+                        {% if operation_x == "delete" and puede_eliminar == 1 %}
+                        <button class="btn btn-secondary btn-sm" name="button_cancel" onclick="backWindow();">
+                            <i class="nav-icon fas fa-arrow-alt-circle-left"></i>&nbsp;&nbsp;Cancelar
+                        </button>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <button class="btn btn-danger btn-sm" name="add_button" onclick="sendFormCliente('delete', 'este Cliente');">
+                            <i class="nav-icon far fa-times-circle"></i>&nbsp;&nbsp;Eliminar
+                        </button>
+                        <input type="hidden" name="delete_x" value="acc">
+                        <input type="hidden" name="control_form" value="{{control_form}}">
+                        {% endif %}
+                        <input type="hidden" id="url_main" value="{{url_main}}">
+                        <input type="hidden" id="operation_x" name="operation_x" value="{{operation_x}}">
+                        <input type="hidden" name="module_x" value="{{module_x}}">
+                        <input type="hidden" name="id" value="{{id}}">
+                    </td>
+                </tr>
+
+            </table>
+        </form>
+        <br>
+    </div>
+    <!--fin div contenido-->
+    <div class="col-sm-2">&nbsp;</div>
+</div>
+<!--fin div contenedor-->
+<form name="form_cancel" method="post" action="{{url_main}}">
+    {% csrf_token %}
+</form>
+<form name="form_operation" method="post" action="{{url_main}}">
+    {% csrf_token %}
+    <input type="hidden" name="module_x" value="{{module_x}}">
+    <input type="hidden" name="module_x2" value="{{module_x2}}">
+    <input type="hidden" name="module_x3" value="{{module_x3}}">
+    
+    <input type="hidden" name="operation_x" value="{{operation_x}}">
+    <input type="hidden" name="operation_x2" value="{{operation_x2}}">
+    <input type="hidden" name="operation_x3" value="{{operation_x3}}">
+    
+    <input type="hidden" name="id" value="{{id}}">
+    <input type="hidden" name="id2" value="{{id2}}">
+    <input type="hidden" name="id3" value="{{id3}}">
+</form>

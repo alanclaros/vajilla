@@ -1,0 +1,114 @@
+{% load jinja_tags %}
+{% load static %}
+
+<!-- <script type="text/javascript" src="{% static "" %}js/{{js_file}}.js"></script> -->
+
+<!--contenedor-->
+<div class="row align-items-center">
+    <div class="col-sm-2">&nbsp;</div>
+    <div class="col-sm-8">
+        <!--contenido-->
+        <!--alerts-->
+        {% include 'partials/_alerts.html' %}
+        <br>
+        <div class="link_blue right">
+            <span class="link_blue pointer" onclick="backWindow();">Volver</span>
+        </div>
+        <br>
+        <div class="w100 center h-35 v-middle">Fecha: {{current_date}}</div>
+        <form name="formulario" method="post" action="" onsubmit="return false;">
+            {% csrf_token %}
+            <table class="table3 w-100">
+                <tr>
+                    <th colspan="2" class="center w-100">
+                        {% if operation_x == 'entregar_cancelar' %}Cancelar{% endif %} Entregar Caja : {{caja.punto_id.punto}} - {{caja.caja}}
+                    </th>
+                </tr>
+                <tr>
+                    <th class="w-50 right">
+                        Moneda&nbsp;
+                    </th>
+                    <th class="w-50 right">
+                        Cantidad&nbsp;
+                    </th>
+                </tr>
+
+                {% for moneda in monedas %}
+                <tr class="back{{forloop.counter|back_class}}">
+                    <td class="right w-50">
+                        {{moneda.monto}} {{moneda.codigo}}
+                    </td>
+                    <td class="right w-50">
+                        <input type="text" autocomplete="off" {% if operation_x == 'entregar_cancelar' %}readonly="readonly" {% endif %} class="form-control input right w-50" id="moneda_{{moneda.moneda_id.moneda_id}}"
+                            name='moneda_{{moneda.moneda_id.moneda_id}}' maxlength="5" onkeyup="validarNumeroCO(this);" {% if operation_x == 'entregar_cancelar' %} value="{{moneda.moneda_id.moneda_id|get_cantidad_cierre:detalle}}" {% endif %}>
+                    </td>
+                </tr>
+                {% endfor %}
+                <tr class="back1">
+                    <td class="right w-50">
+                        Total :&nbsp;
+                    </td>
+                    <td class="right w-50">
+                        <input type="text" autocomplete="off" readonly="readonly" value="{{total}}" class="form-control input right w-50" id="total" name='total'>
+                    </td>
+                </tr>
+
+                <tr class="back2">
+                    <td colspan="4" class="center w-100">&nbsp;</td>
+                </tr>
+                <tr class="back2">
+                    <td colspan="4" class="center w-100">
+                        {% if operation_x == "entregar" %}
+                        <button class="btn btn-secondary btn-sm" name="button_cancel" onclick="backWindow();">
+                            <i class="nav-icon fas fa-arrow-alt-circle-left"></i>&nbsp;&nbsp;Cancelar
+                        </button>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <button class="btn btn-primary btn-sm" name="add_button" onclick="sendFormCajaCerrar('add', '');">
+                            <i class="nav-icon fas fa-save"></i>&nbsp;&nbsp;Cerrar
+                        </button>
+                        <input type="hidden" name="operation_x" value="entregar_guardar_x">
+                        {% endif %}
+                        {% if operation_x == "entregar_cancelar" %}
+                        <button class="btn btn-secondary btn-sm" name="button_cancel" onclick="backWindow();">
+                            <i class="nav-icon fas fa-arrow-alt-circle-left"></i>&nbsp;&nbsp;Cancelar
+                        </button>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <button class="btn btn-danger btn-sm" name="add_button" onclick="sendFormCajaCerrar('delete', 'este Cierre de Caja');">
+                            <i class="nav-icon far fa-times-circle"></i>&nbsp;&nbsp;Cancelar Cierre
+                        </button>
+                        <input type="hidden" name="operation_x" value="cancelar_entregar_guardar_x">
+                        {% endif %}
+                        <input type="hidden" name="control_form" value="{{control_form}}">
+                        <input type="hidden" id="url_main" value="{{url_main}}">
+                        <input type="hidden" name="module_x" value="{{module_x}}">
+                        <input type="hidden" name="id" value="{{caja.caja_id}}">
+                        <input type="hidden" name="metodo" id="metodo" value="{{operation_x}}">
+                        <input type="hidden" id="lista_monedas" value="{{lista_monedas}}">
+                    </td>
+                </tr>
+
+            </table>
+        </form>
+        <br>
+    </div>
+    <!--fin div contenido-->
+    <div class="col-sm-2">&nbsp;</div>
+</div>
+<!--fin div contenedor-->
+<form name="form_cancel" method="post" action="{{url_main}}">
+    {% csrf_token %}
+</form>
+<form name="form_operation" method="post" action="{{url_main}}">
+    {% csrf_token %}
+    <input type="hidden" name="module_x" value="{{module_x}}">
+    <input type="hidden" name="module_x2" value="{{module_x2}}">
+    <input type="hidden" name="module_x3" value="{{module_x3}}">
+    
+    <input type="hidden" name="operation_x" value="{{operation_x}}">
+    <input type="hidden" name="operation_x2" value="{{operation_x2}}">
+    <input type="hidden" name="operation_x3" value="{{operation_x3}}">
+    
+    <input type="hidden" name="id" value="{{id}}">
+    <input type="hidden" name="id2" value="{{id2}}">
+    <input type="hidden" name="id3" value="{{id3}}">
+</form>

@@ -1,0 +1,450 @@
+{% load jinja_tags %}
+{% load static %}
+
+{% if operation_x == 'add' or operation_x == 'modify' %}
+<link rel="stylesheet" href="{% static 'js/autosuggest/autosuggest.css' %}">
+<script type="text/javascript" src="{% static "" %}js/autosuggest/autosuggest.js"></script>
+<!-- Autosuggest data: -->
+<script type="text/javascript">
+    var suggest_custom_array_2 = [];
+    var lista_productos_precios= [];
+    {% for producto in lista_productos %}
+    suggest_custom_array_2.push(['{{producto.linea}} - {{producto.producto}}', '{{producto.producto_id}}']);
+    lista_productos_precios['{{producto.producto_id}}'] = '{{producto.precio}}';
+    {% endfor %}
+</script>
+{% endif %}
+
+<!--contenedor-->
+<div class="row align-items-center">
+    <div class="col-sm-2">&nbsp;</div>
+    <div class="col-md-8">
+        <!--contenido-->
+        <!--alerts-->
+        {% include 'partials/_alerts.html' %}
+        <br>
+        {% if puede_anular == 0 %}
+        {% with title='Preventa' body='No puede anular esta preventa, tiene registros en otros modulos, consulte con el administrador' %}
+        {% include 'partials/_alert_info_cant_delete.html' %}
+        {% endwith %}
+        {% endif %}
+        
+        <div class="link_blue right">
+            <span class="link_blue pointer" onclick="backWindow();">Volver</span>
+        </div>
+        <br>
+        <form name="formulario" method="post" action="" onsubmit="return false;">
+            {% csrf_token %}
+            <table class="table3 w-100">
+                <tr>
+                    <th colspan="4" class="center w-100">
+                        {% if operation_x == 'add' %}Adicionar{% endif %}
+                        {% if operation_x == 'modify' %}Modificar{% endif %}
+                        {% if operation_x == 'anular' %}Anular{% endif %}
+                        PreVenta
+                    </th>
+                </tr>
+                
+                {% if operation_x == 'add' or operation_x == 'modify' %}
+                <tr class="backbuscar">
+                    <td class="right w-20">
+                        <i>Buscar</i>&nbsp;:&nbsp;
+                    </td>
+                    <td colspan="3" class="left w-80">
+                        <input type="text" autocomplete="off" placeholder="apellidos" class="form-control input search left w-24" id="buscar_apellidos" value="" maxlength="20">&nbsp;&nbsp;
+                        <input type="text" autocomplete="off" placeholder="nombres" class="form-control input search left w-24" id="buscar_nombres" value="" maxlength="20">&nbsp;&nbsp;
+                        <input type="text" autocomplete="off" placeholder="CI/NIT" class="form-control input search left w-20" id="buscar_ci_nit" value="" maxlength="20">&nbsp;&nbsp;
+                        <button class="btn btn-primary btn-sm" id="btn_buscar" onclick="buscarClienteVenta();">
+                            <i class="nav-icon fas fa-search"></i>
+                        </button>
+                    </td>
+                </tr>
+                <tr class="back1" id="div_clientes">
+                    <td colspan="4" class="left w100">
+                        &nbsp;
+                    </td>
+                </tr>
+                {% endif %}
+                
+                <tr class="back1">
+                    <td class="right w-20">
+                        Apellidos&nbsp;:&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <input type="text" autocomplete="off" class="form-control input left w-90" name="apellidos" id="apellidos" value="{{venta.apellidos}}" maxlength="150" onkeyup="txtValid(this);" onblur="txtValid(this);">
+                        {% if operation == 'add' %}
+                        <input type="hidden" name="cliente_id" id="cliente_id" value="0">
+                        {% else %}
+                        <input type="hidden" name="cliente_id" id="cliente_id" value="{{venta.cliente_id.cliente_id}}">
+                        {% endif %}
+                    </td>
+                    <td class="right w-20">
+                        Nombres&nbsp;:&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <input type="text" autocomplete="off" class="form-control input left w-90" name="nombres" id="nombres" value="{{venta.nombres}}" maxlength="150" onkeyup="txtValid(this);" onblur="txtValid(this);">
+                    </td>
+                </tr>
+                
+                <tr class="back2">
+                    <td class="right w-20">
+                        CI/NIT&nbsp;:&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <input type="text" autocomplete="off" class="form-control input left w-90" name="ci_nit" id="ci_nit" value="{{venta.ci_nit}}" maxlength="150" onkeyup="txtValid(this);" onblur="txtValid(this);">
+                    </td>
+                    <td class="right w-20">
+                        Fonos&nbsp;:&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <input type="text" autocomplete="off" class="form-control input left w-90" name="telefonos" id="telefonos" value="{{venta.telefonos}}" maxlength="150" onkeyup="txtValid(this);" onblur="txtValid(this);">
+                    </td>
+                </tr>
+                
+                <tr class="back1">
+                    <td class="right w-20">
+                        Contrato&nbsp;:&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <input type="text" autocomplete="off" class="form-control input left w-90" name="numero_contrato" id="numero_contrato" value="{{venta.numero_contrato}}" maxlength="10" onkeyup="txtValid(this);" onblur="txtValid(this);">
+                    </td>
+                    <td class="right w-20">
+                        Factura&nbsp;:&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <input type="text" autocomplete="off" class="form-control input left w-90" name="factura_a" id="factura_a" value="{{venta.factura_a}}" maxlength="150">
+                    </td>
+                </tr>
+                
+                <tr class="back2">
+                    <td class="right w-20">
+                        Direccion&nbsp;:&nbsp;
+                    </td>
+                    <td colspan="3" class="left w-80">
+                        <input type="text" autocomplete="off" class="form-control input left w-99" name="direccion_evento" id="direccion_evento" value="{{venta.direccion_evento}}" onkeyup="txtValid(this);" onblur="txtValid(this);">
+                    </td>
+                </tr>
+                
+                <tr class="back1">
+                    <td class="right w-20">
+                        F.Evento&nbsp;:&nbsp;
+                    </td>
+                    <td colspan="3" class="left w-80">
+                        <input name="fecha_evento" id="fecha_evento" value="{{fecha_evento}}" type="text" class="form-control input w-30 left" readonly="readonly">
+                        <script type="text/javascript">
+                            var foopicker = new FooPicker({
+                                id: 'fecha_evento',
+                                dateFormat: 'dd-MMM-yyyy'
+                            });
+                        </script>
+                    </td>
+                </tr>
+                
+                <tr class="back2">
+                    <td class="right w-20">
+                        F.Entrega&nbsp;:&nbsp;
+                    </td>
+                    <td colspan="3" class="left w-80">
+                        <input name="fecha_entrega" id="fecha_entrega" value="{{fecha_entrega}}" onfocus="ocultarProductosVenta();" type="text" class="form-control input w-30 left" readonly="readonly">
+                        <script type="text/javascript">
+                            var foopicker = new FooPicker({
+                                id: 'fecha_entrega',
+                                dateFormat: 'dd-MMM-yyyy'
+                            });
+                        </script> 
+                        <select name="hora_entrega" id="hora_entrega"  onchange="ocultarProductosVenta();" class="form-control w-20 input h-35">
+                            {% for hora in horas %}
+                            <option value="{{hora}}" {% if hora == hora_entrega %}selected{% endif %}>{{hora}}</option>
+                            {% endfor %}
+                        </select> 
+                        <select name="minuto_entrega" id="minuto_entrega"  onchange="ocultarProductosVenta();" class="form-control w-20 input h-35">
+                            {% for minuto in minutos %}
+                            <option value="{{minuto}}" {% if minuto == minuto_entrega %}selected{% endif %}>{{minuto}}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                </tr>
+                
+                <tr class="back1">
+                    <td class="right w-20">
+                        F.Devolucion&nbsp;:&nbsp;
+                    </td>
+                    <td colspan="3" class="left w-80">
+                        <input name="fecha_devolucion" id="fecha_devolucion" value="{{fecha_devolucion}}" onfocus="ocultarProductosVenta();" type="text" class="form-control input w-30 left" readonly="readonly">
+                        <script type="text/javascript">
+                            var foopicker = new FooPicker({
+                                id: 'fecha_devolucion',
+                                dateFormat: 'dd-MMM-yyyy'
+                            });
+                        </script>
+                        <select name="hora_devolucion" id="hora_devolucion"  onchange="ocultarProductosVenta();" class="form-control w-20 input h-35">
+                            {% for hora in horas %}
+                            <option value="{{hora}}" {% if hora == hora_devolucion %}selected{% endif %}>{{hora}}</option>
+                            {% endfor %}
+                        </select> 
+                        <select name="minuto_devolucion" id="minuto_devolucion"  onchange="ocultarProductosVenta();" class="form-control w-20 input h-35">
+                            {% for minuto in minutos %}
+                            <option value="{{minuto}}" {% if minuto == minuto_devolucion %}selected{% endif %}>{{minuto}}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                </tr>
+                
+                <tr class="back2">
+                    <td class="right w-20">
+                        Observacion&nbsp;:&nbsp;
+                    </td>
+                    <td colspan="3" class="left w-80">
+                        <input type="text" autocomplete="off" class="form-control input left w-99" name="observacion" id="observacion" value="{{venta.observacion}}">
+                    </td>
+                </tr>
+            </table>
+
+            {% if operation_x != 'anular' %}
+            <table class="table3 w-100">
+                <tr class="back1">
+                    <td class="w-100 center">
+                        <button class="btn btn-primary btn-sm" id="btn_stock" onclick="mostrarProductosVenta();">
+                            <i class="nav-icon fas fa-database"></i>&nbsp;&nbsp;Mostrar Productos para estas Fechas
+                        </button>
+                    </td>
+                </tr>
+            </table>
+            {% endif %}
+            
+            <div id="div_cargar_stock" style="display: none;">
+                &nbsp;{% for key, value in datos_productos.items %}
+                <input type="hidden" id="pro_stock_{{key}}" value="{{value}}">
+                {% endfor %}
+            </div>
+
+            <div id="div_listap" style="display: {% if operation_x == 'add' %}none{% endif %};">
+                <table class="table3 w-100">
+                    <tr class="back1">
+                        <td colspan="2" class="w-100">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <th colspan="2" class="w-100 center">Lista de Productos</th>
+                    </tr>
+                    <tr class="back1">
+                        <td class="w-40 left" id="columna1">
+                            &nbsp;
+                        </td>
+                        <td class="w-60 center" id="columna2">
+                            <table class="table3 w-100">
+                                <tr>
+                                    <td class="w-20 center minw-20">
+                                        <i>Cant</i>
+                                    </td>
+                                    <td class="w-25 right minw-30">
+                                        <i>Costo</i>
+                                    </td>
+                                    <td class="w-25 right minw-40">
+                                        <i>Total</i>
+                                    </td>
+                                    <td class="w-30 right minw-40">
+                                        <i>Det</i>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    {% if operation_x == 'add' or operation_x == 'modify' %}
+                    {% for fila in filas %}
+                    {% with fila_venta=venta_detalles|detalle_venta:fila %}
+                    
+                    {% if operation_x == 'add' %}
+                    <tr class="back{{forloop.counter|back_class}}" id="fila_{{fila}}" style="display: {% if forloop.counter == 1 %}display{% else %}none{% endif %};">
+                    {% else %}
+                    <tr class="back{{forloop.counter|back_class}}" id="fila_{{fila}}" style="display: {% if forloop.counter < len_mostrar %}display{% else %}none{% endif %};">
+                    {% endif %}
+                        <td class="w-40 left minw-140">
+                            <input type="hidden" name="producto_{{fila}}" id="producto_{{fila}}" value="{{fila_venta.producto_id}}" />
+                            <input type="text" autocomplete="off" id="tb2_{{fila}}" name="tb2_{{fila}}" class="form-control input search_producto left w-99" value="{{fila_venta.producto}}" onblur="validarFilaPreVenta('{{fila}}');" />
+                            <script type="text/javascript"> new autosuggest("tb2_{{fila}}", null, function (index, control) { seleccionPPreVenta('{{fila}}', control.keywords[index], control.values[index]); }); 
+                            </script>
+                            
+                        </td>
+                        <td class="w-60 left">
+                            <table class="tablac w-100">
+                                <tr class="back1">
+                                    <td class="w-20 right minw-20">
+                                        <input type="text" autocomplete="off" class="form-control input right w-98" name="cantidad_{{fila}}" id="cantidad_{{fila}}" value="{{fila_venta.cantidad_salida|toint}}" onkeyup="{% if vender_fracciones == 'si' %}validarNumeroPunto(this);{% else %}validarNumero(this);{% endif %}totalPedidoPreVenta();">
+                                    </td>
+                                    <td class="w-25 right minw-30">
+                                        <input type="text" autocomplete="off" class="form-control input right w-98" name="costo_{{fila}}" id="costo_{{fila}}" value="{{fila_venta.costo_salida}}" onkeyup="validarNumeroPunto(this);totalPedidoPreVenta();">
+                                    </td>
+                                    <td class="w-25 right minw-40">
+                                        <input type="text" tabindex="-1" class="form-control input right w-98" name="total_{{fila}}" id="total_{{fila}}" value="{{fila_venta.total_salida}}" readonly="readonly">
+                                    </td>
+                                    <td class="w-30 left minw-40">
+                                        <input type="text" autocomplete="off" class="form-control input right w-98" name="detalle_{{fila}}" id="detalle_{{fila}}" value="{{fila_venta.detalle}}" maxlength="250">
+                                    </td>
+                                </tr>
+                                <tr class="back2">
+                                    <td colspan="4" class="w-100 left">
+                                        {% if operation_x == 'add' %}
+                                        <span id="span_stock_producto_{{fila}}" class="input_stock">&nbsp;</span>
+                                        {% endif %}
+                                        {% if operation_x == 'modify' %}
+                                            {% if fila_venta.producto_id != '0' %}
+                                                {% with cantidad_stock=datos_productos|get_stock:fila_venta.producto_id %}
+                                                <span id="span_stock_producto_{{fila}}" class="input_stock{% if cantidad_stock <= 0 %}_red{% endif %}">{{cantidad_stock}}</span>
+                                                {% endwith %}
+                                            {% else %}
+                                                <span id="span_stock_producto_{{fila}}" class="input_stock">&nbsp;</span>
+                                            {% endif %}
+                                        {% endif %}
+                                    </i>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    {% endwith %}
+                    {% endfor %}
+                    {% else %}
+                    {% for detalle in venta_detalles %}
+                    <tr class="back{{forloop.counter|back_class}}">
+                        <td class="w-40 left minw-140">
+                            {{detalle.producto_id.linea_id.linea}} - {{detalle.producto_id.producto}}
+                        </td>
+                        <td class="w-60 left">
+                            <table class="tablac w-100">
+                                <tr class="back1">
+                                    <td class="w-20 right minw-20">
+                                        {{detalle.cantidad_salida}}
+                                    </td>
+                                    <td class="w-25 right minw-30">
+                                        {{detalle.costo_salida}}
+                                    </td>
+                                    <td class="w-25 right minw-40">
+                                        {{detalle.total_salida}}
+                                    </td>
+                                    <td class="w-30 left minw-40">
+                                        {{detalle.detalle}}
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% endif %}
+                    <tr class="back1">
+                        <td colspan="2" class="w-100 right">
+                            
+                            SubTotal : <input type="text" class="form-control input right w-20" name="total_pedido" id="total_pedido" value="{{venta.subtotal}}" readonly="readonly"> Bs.<br>
+                            
+                            &#37; Desc. <input type="text" autocomplete="off" class="form-control input right w-20" name="porcentaje_descuento" id="porcentaje_descuento" value="{{venta.porcentaje_descuento}}" onkeyup="validarNumeroPunto(this); calcularPorcentajeDescuentoVenta(); totalPedidoPreVenta();">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+                            Desc. <input type="text" autocomplete="off" class="form-control input right w-20" name="descuento" id="descuento" value="{{venta.descuento}}" onkeyup="validarNumeroPunto(this); totalPedidoPreVenta();"> Bs.<br>
+                            
+                            Total Productos : <input type="text" class="form-control input right w-20" name="total_venta" id="total_venta" value="{% if venta %}{{venta.total|subtract:venta.costo_transporte}}{% endif %}" readonly="readonly"> Bs.
+                            
+                            <br>
+                            Transporte : <input type="text" autocomplete="off" class="form-control input right w-20" name="costo_transporte" id="costo_transporte" value="{{venta.costo_transporte}}" onkeyup="validarNumeroPunto(this); totalPedidoPreVenta();"> Bs.<br>
+                            Total : <input type="text" class="form-control input right w-20" name="total_final" id="total_final" value="{{venta.total}}" readonly="readonly"> Bs.
+                        </td>
+                    </tr>
+                    
+                    
+                    <tr class="back2">
+                        <td colspan="2" class="center w-100">&nbsp;</td>
+                    </tr>
+                    
+                    <tr class="back1">
+                        <td colspan="2" class="right w-100">
+                            Garantia : <input type="text" autocomplete="off" class="form-control input right w-20" name="garantia_bs" id="garantia_bs" value="{{venta.garantia_bs}}" onkeyup="validarNumeroPunto(this);"> Bs.
+                        </td>
+                    </tr>
+                    <tr class="back1">
+                        <td colspan="2" class="center w-100">
+                            Observacion :<br><input type="text" autocomplete="off" class="form-control input left w-90" name="observacion" id="observacion" value="{{venta.observacion}}">
+                        </td>
+                    </tr>
+
+                    <tr class="back2">
+                        <td colspan="2" class="center w-100">&nbsp;</td>
+                    </tr>
+                    <tr class="back1">
+                        <td colspan="2" class="center w-100">
+                            {% if operation_x == "add" %}
+                            <button class="btn btn-secondary btn-sm" name="button_cancel" onclick="backWindow();">
+                                <i class="nav-icon fas fa-arrow-alt-circle-left"></i>&nbsp;&nbsp;Cancelar
+                            </button>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <button class="btn btn-primary btn-sm" name="add_button" onclick="sendFormVenta('add', '');">
+                                <i class="nav-icon fas fa-save"></i>&nbsp;&nbsp;Guardar
+                            </button>
+                            <input type="hidden" name="add_x" value="acc">
+                            <input type="hidden" name="control_form" value="{{control_form}}">
+                            <input type="hidden" name="operation" value="{{operation}}">
+                            {% endif %}
+                            
+                            {% if operation_x == "modify" %}
+                            <button class="btn btn-secondary btn-sm" name="button_cancel" onclick="backWindow();">
+                                <i class="nav-icon fas fa-arrow-alt-circle-left"></i>&nbsp;&nbsp;Cancelar
+                            </button>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <button class="btn btn-primary btn-sm" name="add_button" onclick="sendFormVenta('modify', '');">
+                                <i class="nav-icon fas fa-save"></i>&nbsp;&nbsp;Guardar
+                            </button>
+                            <input type="hidden" name="modify_x" value="acc">
+                            <input type="hidden" name="control_form" value="{{control_form}}">
+                            <input type="hidden" name="operation" value="{{operation}}">
+                            {% endif %}
+                            
+                            {% if operation_x == "anular" and puede_anular == 1 %}
+                            <input type="button" name="button_cancel" value="Cancelar" class="btn btn-secondary btn-sm" onclick="backWindow();">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <input type="hidden" name="control_form" value="txt|2|S|motivo_anula|">
+                            <input type="hidden" name="anular_x" value="acc">
+                            <input type="hidden" name="operation" value="{{operation}}">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <input type="button" name="add_button" value="&nbsp;Anular&nbsp;" class="btn btn-primary btn-sm" onclick="sendFormVenta('anular', 'esta Preventa');">
+                            {% endif %}
+                            <input type="hidden" name="id" value="{{id}}">
+                            <input type="hidden" id="url_main" value="{{url_main}}">
+                            <input type="hidden" id="url_add" value="{{url_add}}">
+                            <input type="hidden" id="operation_x" name="operation_x" value="{{operation_x}}">
+                            <input type="hidden" id="module_x" name="module_x" value="{{module_x}}">
+                            <input type="hidden" id="vender_fracciones" name="vender_fracciones" value="{{vender_fracciones}}">
+                        </td>
+                    </tr>
+
+                </table>
+            </div>
+        </form>
+        <br>
+        <br>
+        <br>
+        <br>
+    </div>
+    <!--fin div contenido-->
+    <div class="col-sm-2">&nbsp;</div>
+</div>
+<!--fin div contenedor-->
+<form name="form_cancel" method="post" action="{{url_main}}">
+    {% csrf_token %}
+</form>
+
+<form name="form_print" method="post" action="{{url_main}}" target="_blank">
+    {% csrf_token %}
+    <input type="hidden" name="module_x" value="{{module_x}}">
+    <input type="hidden" name="operation_x" value="">
+    <input type="hidden" name="id" value="">
+</form>
+<form name="form_operation" method="post" action="{{url_main}}">
+    {% csrf_token %}
+    <input type="hidden" name="module_x" value="{{module_x}}">
+    <input type="hidden" name="module_x2" value="{{module_x2}}">
+    <input type="hidden" name="module_x3" value="{{module_x3}}">
+    
+    <input type="hidden" name="operation_x" value="{{operation_x}}">
+    <input type="hidden" name="operation_x2" value="{{operation_x2}}">
+    <input type="hidden" name="operation_x3" value="{{operation_x3}}">
+    
+    <input type="hidden" name="id" value="{{id}}">
+    <input type="hidden" name="id2" value="{{id2}}">
+    <input type="hidden" name="id3" value="{{id3}}">
+</form>

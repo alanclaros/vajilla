@@ -1,0 +1,164 @@
+{% load jinja_tags %}
+{% load static %}
+
+<!--contenedor-->
+<div class="row align-items-center">
+    <div class="col-sm-2">&nbsp;</div>
+    <div class="col-sm-8">
+        <!--contenido-->
+        <!--alerts-->
+        {% include 'partials/_alerts.html' %}
+        <br>
+        {% if puede_eliminar == 0 %}
+        {% with title='Cajas' body='No puede Eliminar esta caja, tiene registros en otros modulos, consulte con el administrador' %}
+        {% include 'partials/_alert_info_cant_delete.html' %}
+        {% endwith %}
+        {% endif %}
+        <div class="link_blue right">
+            <span class="link_blue pointer" onclick="backWindow2();">Volver Lista Cajas</span>
+        </div>
+        <br>
+
+        <table class="table3 w-100">
+            <tr>
+                <th class="w-100 center" colspan="4">
+                    Sucursal : {{punto_caja.sucursal_id.zona_id.zona}} - {{punto_caja.sucursal_id.sucursal}}
+                </th>
+            </tr>
+
+            <tr class="back1">
+                <td class="right w-20">
+                    <span id="label1">Punto</span>&nbsp;:&nbsp;
+                    <input type="hidden" id="label1_c" value="Punto">
+                </td>
+                <td colspan="3" class="left w-80">
+                    {{punto_caja.punto}}
+                </td>
+            </tr>
+
+        </table>
+        <br>
+
+        <form name="formulario" method="post" action="" onsubmit="return false;">
+            {% csrf_token %}
+            <table class="table3 w-100">
+                <tr>
+                    <th colspan="4" class="center w-100">
+                        {% if operation_x2 == "add" %}Adicionar Caja{% endif %}
+                        {% if operation_x2 == "modify" %}Modificar Caja{% endif %}
+                        {% if operation_x2 == "delete" %}Eliminar Caja{% endif %}
+                    </th>
+                </tr>
+
+                <tr class="back1">
+                    <td class="right w-20">
+                        Tipo Moneda&nbsp;:&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <select name="tipo_moneda" id="tipo_moneda" class="form-control input w-80" {% if operation_x2 == "delete" %}readonly="readonly" {% endif %}>
+                            {% for tipo_moneda in tipos_monedas %}
+                            <option value="{{tipo_moneda.tipo_moneda_id}}" {% if caja.tipo_moneda_id_id == tipo_moneda.tipo_moneda_id %}selected{% endif %}>{{tipo_moneda.tipo_moneda}}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td class="right w-20">
+                        Caja&nbsp;:&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <input type="text" {% if operation_x2 == "delete" %}readonly="readonly" {% endif %} autocomplete="off" class="form-control input left w-70" {% autoescape off %} {{db_tags.caja}} {% endautoescape %}>
+                    </td>
+                </tr>
+
+                <tr class="back2">
+                    <td class="right w-20">
+                        <span id="label2">C&oacute;digo</span>&nbsp;:&nbsp;
+                        <input type="hidden" id="label2_c" value="Cod.">
+                    </td>
+                    <td class="left w-30">
+                        <input type="text" {% if operation_x2 == "delete" %}readonly="readonly" {% endif %} autocomplete="off" class="form-control input left w-70" {% autoescape off %} {{db_tags.codigo}} {% endautoescape %}>
+                    </td>
+                    <td class="right w-20">
+                        Activo&nbsp;:&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <div class="custom-control custom-checkbox">
+                            <input class="custom-control-input" type="checkbox" id="activo" name="activo" {% if operation_x2 == 'add' %}checked{% endif %}
+                                {% if operation_x2 == 'modify' %}{% if caja.status_id_id == status_active %}checked{% endif %}{% endif %} {% if operation_x2 == 'delete' %}{% if caja.status_id_id == status_active %}checked{% endif %} disabled="disabled"
+                                {% endif %}>
+                            <label for="activo" class="custom-control-label">&nbsp;</label>
+                        </div>
+                    </td>
+                </tr>
+
+                <tr class="back1">
+                    <td colspan="4" class="center w-100">&nbsp;</td>
+                </tr>
+                <tr class="back2">
+                    <td colspan="4" class="center w-100">
+                        {% if operation_x2 == "add" %}
+                        <button class="btn btn-secondary btn-sm" name="button_cancel" onclick="backWindow2();">
+                            <i class="nav-icon fas fa-arrow-alt-circle-left"></i>&nbsp;&nbsp;Cancelar
+                        </button>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <button class="btn btn-primary btn-sm" name="add_button" onclick="sendFormCaja('add', '');">
+                            <i class="nav-icon fas fa-save"></i>&nbsp;&nbsp;Guardar
+                        </button>
+                        <input type="hidden" name="add_x" value="acc">
+                        <input type="hidden" name="control_form" value="{{control_form}}">
+                        {% endif %}
+                        {% if operation_x2 == "modify" %}
+                        <button class="btn btn-secondary btn-sm" name="button_cancel" onclick="backWindow2();">
+                            <i class="nav-icon fas fa-arrow-alt-circle-left"></i>&nbsp;&nbsp;Cancelar
+                        </button>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <button class="btn btn-primary btn-sm" name="add_button" onclick="sendFormCaja('modify', '');">
+                            <i class="nav-icon fas fa-save"></i>&nbsp;&nbsp;Guardar
+                        </button>
+                        <input type="hidden" name="modify_x" value="acc">
+                        <input type="hidden" name="control_form" value="{{control_form}}">
+                        {% endif %}
+                        {% if operation_x2 == "delete" and puede_eliminar == 1 %}
+                        <button class="btn btn-secondary btn-sm" name="button_cancel" onclick="backWindow2();">
+                            <i class="nav-icon fas fa-arrow-alt-circle-left"></i>&nbsp;&nbsp;Cancelar
+                        </button>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <button class="btn btn-danger btn-sm" name="add_button" onclick="sendFormCaja('delete', 'esta Caja');">
+                            <i class="nav-icon far fa-times-circle"></i>&nbsp;&nbsp;Eliminar
+                        </button>
+                        <input type="hidden" name="delete_x" value="acc">
+                        <input type="hidden" name="control_form" value="{{control_form}}">
+                        {% endif %}
+                        <input type="hidden" id="url_main" value="{{url_main}}">
+                        <input type="hidden" id="operation_x" name="operation_x" value="{{operation_x}}">
+                        <input type="hidden" id="operation_x2" name="operation_x2" value="{{operation_x2}}">
+                        <input type="hidden" name="module_x" value="{{module_x}}">
+                        <input type="hidden" name="id" value="{{id}}">
+                        <input type="hidden" name="id2" value="{{id2}}">
+                    </td>
+                </tr>
+
+            </table>
+        </form>
+        <br>
+    </div>
+    <!--fin div contenido-->
+    <div class="col-sm-2">&nbsp;</div>
+</div>
+<!--fin div contenedor-->
+<form name="form_cancel" method="post" action="{{url_main}}">
+    {% csrf_token %}
+</form>
+<form name="form_operation" method="post" action="{{url_main}}">
+    {% csrf_token %}
+    <input type="hidden" name="module_x" value="{{module_x}}">
+    <input type="hidden" name="module_x2" value="{{module_x2}}">
+    <input type="hidden" name="module_x3" value="{{module_x3}}">
+    
+    <input type="hidden" name="operation_x" value="{{operation_x}}">
+    <input type="hidden" name="operation_x2" value="{{operation_x2}}">
+    <input type="hidden" name="operation_x3" value="{{operation_x3}}">
+    
+    <input type="hidden" name="id" value="{{id}}">
+    <input type="hidden" name="id2" value="{{id2}}">
+    <input type="hidden" name="id3" value="{{id3}}">
+</form>

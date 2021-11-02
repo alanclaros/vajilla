@@ -1,0 +1,24 @@
+{% load humanize %}
+{% load jinja_tags %}
+{% load static %}
+
+<table class="table3 w-100">
+    {% for imagen in productos_imagenes %}
+    <tr class="back{{forloop.counter|back_class}}">
+        <td class="right w-20">
+            <i class="nav-icon ico_modify_delete pointer fas fa-minus-circle" onclick="nd(); eliminarImagen('{{imagen.producto_imagen_id}}');"
+                onMouseOver="overlib('quitar imagen',CAPTION,'Producto',WIDTH,'120',LEFT); return true" onMouseOut=" nd(); return true"></i>&nbsp;
+        </td>
+        <td class="left w-30">
+            <img src="{% static '/media/productos/' %}{{imagen.imagen_thumb}}" class="pointer" onclick="nd(); mostrarImagen('{{imagen.producto_imagen_id}}');" onMouseOver=" overlib('mostrar imagen',CAPTION,'Imagen',WIDTH,'120',RIGHT); return true"
+                onMouseOut=" nd(); return true">
+        </td>
+        <td class="right w-20">
+            Posici&oacute;n&nbsp;:&nbsp;
+        </td>
+        <td class="left w-30">
+            <input type="text" autocomplete="off" value="{{imagen.posicion}}" class="form-control input w-60 right" name="posicion_{{imagen.producto_imagen_id}}" id="posicion_{{imagen.producto_imagen_id}}" onkeyup="validarNumero(this);">
+        </td>
+    </tr>
+    {% endfor %}
+</table>

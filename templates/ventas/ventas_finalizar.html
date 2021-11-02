@@ -1,0 +1,128 @@
+{% load jinja_tags %}
+{% load static %}
+
+<!--contenedor-->
+<div class="row align-items-center">
+    <div class="col-sm-2">&nbsp;</div>
+    <div class="col-md-8">
+        <!--contenido-->
+        <!--alerts-->
+        {% include 'partials/_alerts.html' %}
+        <br>
+        {% if saldo_venta != 0 %}
+        {% with title='Ventas' body='No puede finalizar esta venta, el saldo de la venta debe ser "cero"' %}
+        {% include 'partials/_alert_info_cant_delete.html' %}
+        {% endwith %}
+        {% endif %}
+        
+        <div class="link_blue right">
+            <span class="link_blue pointer" onclick="backWindow();">Volver</span>
+        </div>
+        <br>
+        <form name="formulario" method="post" action="" onsubmit="return false;">
+            {% csrf_token %}
+            <table class="table3 w-100">
+                <tr>
+                    <th colspan="4" class="center w-100">
+                        {% if operation_x == 'pasar_finalizado' %}Finalizar Venta{% endif %}
+                        {% if operation_x == 'pasar_finalizado_anular' %}Anular Finalizar Venta{% endif %}
+                    </th>
+                </tr>
+                
+                <tr class="back1">
+                    <td class="right w-20 v-top">
+                        <i>Venta</i>&nbsp;:&nbsp;
+                    </td>
+                    <td colspan="3" class="left w-80">
+                        ({{venta.numero_contrato}}) {{venta.apellidos}} {{venta.nombres}}, CI: {{venta.ci_nit}}<br>
+                        <b>Saldo Venta: {{saldo_venta}} Bs.</b> ({{venta.fecha_evento|fecha_mostrar:"dd-MMM-yyyy"}})
+                    </td>
+                </tr>
+                <tr class="back2" id="div_clientes">
+                    <td colspan="4" class="left w100">
+                        &nbsp;
+                    </td>
+                </tr>
+                
+                {% if operation_x == 'pasar_finalizado_anular' %}
+                    <tr class="back1">
+                        <td colspan="2" class="center w-100">
+                            Motivo Anulacion&nbsp;:<br>
+                            <input type="text" class="form-control input w-98" onkeyup="txtValid(this);" onblur="txtValid(this);" autocomplete="off" value="" maxlength="250" name="motivo_anula" id="motivo_anula">
+                        </td>
+                    </tr>
+                    {% endif %}
+                
+                <tr class="back1">
+                    <td colspan="4" class="center w-100">&nbsp;</td>
+                </tr>
+                <tr class="back2">
+                    <td colspan="4" class="center w-100">
+                        {% if operation_x == "pasar_finalizado" and saldo_venta == 0 %}
+                            <button class="btn btn-secondary btn-sm" name="button_cancel" onclick="backWindow();">
+                                <i class="nav-icon fas fa-arrow-alt-circle-left"></i>&nbsp;&nbsp;Cancelar
+                            </button>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <button class="btn btn-primary btn-sm" name="add_button" onclick="sendFormVenta('pasar_finalizado', '');">
+                                <i class="nav-icon fas fa-save"></i>&nbsp;&nbsp;Pasar a Finalizado
+                            </button>
+                            <input type="hidden" name="pasar_finalizado_x" value="acc">
+                            <input type="hidden" name="control_form" value="{{control_form}}">
+                            <input type="hidden" name="operation" value="{{operation}}">
+                            {% endif %}
+                            
+                            {% if operation_x == "pasar_finalizado_anular" and puede_anular == 1 %}
+                            <input type="button" name="button_cancel" value="Cancelar" class="btn btn-secondary btn-sm" onclick="backWindow();">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <input type="hidden" name="control_form" value="txt|2|S|motivo_anula|Motivo Anulacion">
+                            <input type="hidden" name="anular_x" value="acc">
+                            <input type="hidden" name="operation" value="{{operation}}">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <input type="button" name="add_button" value="&nbsp;Anular&nbsp;" class="btn btn-primary btn-sm" onclick="sendFormVenta('pasar_finalizado_anular', 'esta finalizacion de venta');">
+                            {% endif %}
+                            <input type="hidden" name="id" value="{{id}}">
+                            <input type="hidden" id="url_main" value="{{url_main}}">
+                            <input type="hidden" id="url_add" value="{{url_add}}">
+                            <input type="hidden" id="operation_x" name="operation_x" value="{{operation_x}}">
+                            <input type="hidden" id="module_x" name="module_x" value="{{module_x}}">
+                    </td>
+                </tr>
+            </table>
+            
+        </form>
+        <br>
+        <br>
+        <br>
+        <br>
+    </div>
+    <!--fin div contenido-->
+    <div class="col-sm-2">&nbsp;</div>
+</div>
+<!--fin div contenedor-->
+<form name="form_cancel" method="post" action="{{url_main}}">
+    {% csrf_token %}
+</form>
+
+<form name="form_print" method="post" action="{{url_main}}" target="_blank">
+    {% csrf_token %}
+    <input type="hidden" name="module_x" value="{{module_x}}">
+    <input type="hidden" name="operation_x" value="">
+    <input type="hidden" name="id" value="">
+</form>
+<form name="form_operation" method="post" action="{{url_main}}">
+    {% csrf_token %}
+    <input type="hidden" name="module_x" value="{{module_x}}">
+    <input type="hidden" name="module_x2" value="{{module_x2}}">
+    <input type="hidden" name="module_x3" value="{{module_x3}}">
+    
+    <input type="hidden" name="operation_x" value="{{operation_x}}">
+    <input type="hidden" name="operation_x2" value="{{operation_x2}}">
+    <input type="hidden" name="operation_x3" value="{{operation_x3}}">
+    
+    <input type="hidden" name="motivo_anula" value="">
+    <input type="hidden" name="ci_id" value="">
+    
+    <input type="hidden" name="id" value="{{id}}">
+    <input type="hidden" name="id2" value="{{id2}}">
+    <input type="hidden" name="id3" value="{{id3}}">
+</form>

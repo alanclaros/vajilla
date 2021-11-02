@@ -1,0 +1,278 @@
+{% load jinja_tags %}
+{% load static %}
+
+<!--contenedor-->
+<div class="row align-items-center">
+    <div class="col-sm-2">&nbsp;</div>
+    <div class="col-md-8">
+        <!--contenido-->
+        <!--alerts-->
+        {% include 'partials/_alerts.html' %}
+        <br>
+        {% if puede_anular == 0 %}
+        {% with title='Venta' body='No puede anular esta venta, tiene registros en otros modulos, consulte con el administrador' %}
+        {% include 'partials/_alert_info_cant_delete.html' %}
+        {% endwith %}
+        {% endif %}
+        
+        <div class="link_blue right">
+            <span class="link_blue pointer" onclick="backWindow();">Volver</span>
+        </div>
+        <br>
+        <form name="formulario" method="post" action="" onsubmit="return false;">
+            {% csrf_token %}
+            <table class="table3 w-100">
+                <tr>
+                    <th colspan="4" class="center w-100">
+                        {% if operation_x == 'pasar_vuelta' %}Pasar a Vuelta a Almacen{% endif %}
+                        {% if operation_x == 'pasar_vuelta_anular' %}Anular Pasar Vuelta a Almacen{% endif %}
+                    </th>
+                </tr>
+                
+                <tr class="back1">
+                    <td class="right w-20">
+                        Apellidos&nbsp;:&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <input type="text" autocomplete="off" readonly="readonly" class="form-control input left w-90" name="apellidos" id="apellidos" value="{{venta.apellidos}}" maxlength="150" onkeyup="txtValid(this);" onblur="txtValid(this);">
+                        <input type="hidden" name="cliente_id" id="cliente_id" value="{{venta.cliente_id.cliente_id}}">
+                    </td>
+                    <td class="right w-20">
+                        Nombres&nbsp;:&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <input type="text" autocomplete="off" readonly="readonly" class="form-control input left w-90" name="nombres" id="nombres" value="{{venta.nombres}}" maxlength="150" onkeyup="txtValid(this);" onblur="txtValid(this);">
+                    </td>
+                </tr>
+                
+                <tr class="back2">
+                    <td class="right w-20">
+                        CI/NIT&nbsp;:&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <input type="text" autocomplete="off" readonly="readonly" class="form-control input left w-90" name="ci_nit" id="ci_nit" value="{{venta.ci_nit}}" maxlength="150" onkeyup="txtValid(this);" onblur="txtValid(this);">
+                    </td>
+                    <td class="right w-20">
+                        Fonos&nbsp;:&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <input type="text" autocomplete="off" readonly="readonly" class="form-control input left w-90" name="telefonos" id="telefonos" value="{{venta.telefonos}}" maxlength="150" onkeyup="txtValid(this);" onblur="txtValid(this);">
+                    </td>
+                </tr>
+                
+                <tr class="back1">
+                    <td class="right w-20">
+                        Contrato&nbsp;:&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <input type="text" autocomplete="off" readonly="readonly" class="form-control input left w-90" name="numero_contrato" id="numero_contrato" value="{{venta.numero_contrato}}" maxlength="10" onkeyup="txtValid(this);" onblur="txtValid(this);">
+                    </td>
+                    <td class="right w-20">
+                        Factura&nbsp;:&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <input type="text" autocomplete="off" readonly="readonly" class="form-control input left w-90" name="factura_a" id="factura_a" value="{{venta.factura_a}}" maxlength="150">
+                    </td>
+                </tr>
+                
+                <tr class="back2">
+                    <td class="right w-20">
+                        Direccion&nbsp;:&nbsp;
+                    </td>
+                    <td colspan="3" class="left w-80">
+                        <input type="text" autocomplete="off" readonly="readonly" class="form-control input left w-99" name="direccion_evento" id="direccion_evento" value="{{venta.direccion_evento}}" onkeyup="txtValid(this);" onblur="txtValid(this);">
+                    </td>
+                </tr>
+                
+                <tr class="back1">
+                    <td class="right w-20">
+                        F.Evento&nbsp;:&nbsp;
+                    </td>
+                    <td colspan="3" class="left w-80">
+                        {{venta.fecha_evento|fecha_mostrar:"dd-MMM-yyyy"}}
+                    </td>
+                </tr>
+                
+                <tr class="back2">
+                    <td class="right w-20">
+                        F.Entrega&nbsp;:&nbsp;
+                    </td>
+                    <td colspan="3" class="left w-80">
+                        {{venta.fecha_entrega|fecha_mostrar:"dd-MMM-yyyy HH:ii"}}
+                    </td>
+                </tr>
+                
+                <tr class="back1">
+                    <td class="right w-20">
+                        F.Devolucion&nbsp;:&nbsp;
+                    </td>
+                    <td colspan="3" class="left w-80">
+                        {{venta.fecha_devolucion|fecha_mostrar:"dd-MMM-yyyy HH:ii"}}
+                    </td>
+                </tr>
+                
+                <tr class="back2">
+                    <td class="right w-20">
+                        Observacion&nbsp;:&nbsp;
+                    </td>
+                    <td colspan="3" class="left w-80">
+                        <input type="text" autocomplete="off" readonly="readonly" class="form-control input left w-99" name="observacion" id="observacion" value="{{venta.observacion}}">
+                    </td>
+                </tr>
+            </table>
+            
+            <div id="div_listap">
+                <table class="table3 w-100">
+                    <tr class="back1">
+                        <td colspan="2" class="w-100">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <th colspan="2" class="w-100 center">Lista de Productos</th>
+                    </tr>
+                    <tr class="back1">
+                        <td class="w-40 left" id="columna1">
+                            &nbsp;
+                        </td>
+                        <td class="w-60 center" id="columna2">
+                            <table class="table3 w-100">
+                                <tr>
+                                    <td class="w-15 right minw-20">
+                                        <i>Sal.</i>
+                                    </td>
+                                    <td class="w-15 right minw-20">
+                                        <i>Vuel.</i>
+                                    </td>
+                                    <td class="w-20 right minw-30">
+                                        <i>Rot.</i>
+                                    </td>
+                                    <td class="w-20 right minw-30">
+                                        <i>Refac.</i>
+                                    </td>
+                                    <td class="w-30 right minw-40">
+                                        <i>Total</i>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    {% for producto in lista_productos %}
+                    <tr class="back{{forloop.counter|back_class}}">
+                        <td class="w-40 left minw-140">
+                            {{producto.producto}}
+                        </td>
+                        <td class="w-60 left">
+                            <table class="tablac w-100">
+                                <tr class="back1">
+                                    <td class="w-15 right minw-20">
+                                        {{producto.cantidad_salida|toint}}&nbsp;
+                                        <input type="hidden" id="salida_{{forloop.counter}}" name="salida_{{forloop.counter}}" value="{{producto.cantidad_salida|toint}}">
+                                    </td>
+                                    <td class="w-15 right minw-20">
+                                        <input type="text" autocomplete="off" class="form-control input right w-98" name="vuelta_{{forloop.counter}}" id="vuelta_{{forloop.counter}}" value="{{producto.cantidad_vuelta|toint}}" onkeyup="{% if vender_fracciones == 'si' %}validarNumeroPunto(this);{% else %}validarNumero(this);{% endif %}totalPedidoVueltaVenta();">
+                                    </td>
+                                    <td class="w-20 right minw-30">
+                                        <input type="text" autocomplete="off" class="form-control input right w-98" name="rotura_{{forloop.counter}}" id="rotura_{{forloop.counter}}" value="{{producto.costo_rotura}}" onkeyup="{% if vender_fracciones == 'si' %}validarNumeroPunto(this);{% else %}validarNumero(this);{% endif %}totalPedidoVueltaVenta();">
+                                    </td>
+                                    <td class="w-20 right minw-30">
+                                        <input type="text" autocomplete="off" class="form-control input right w-98" name="refaccion_{{forloop.counter}}" id="refaccion_{{forloop.counter}}" value="{{producto.refaccion}}" onkeyup="validarNumeroPunto(this);totalPedidoVueltaVenta();">
+                                    </td>
+                                    <td class="w-30 right minw-40">
+                                        <input type="text" tabindex="-1" class="form-control input right w-90" name="total_{{forloop.counter}}" id="total_{{forloop.counter}}" value="{{producto|total_producto_vuelta}}" readonly="readonly">
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    <tr class="back1">
+                        <td class="w-40 right minw-140">
+                            &nbsp;
+                        </td>
+                        <td class="w-60 right">
+                            Total :&nbsp; <input type="text" tabindex="-1" class="form-control input right w-30" name="total_final" id="total_final" value="" readonly="readonly">
+                        </td>
+                    </tr>
+                    
+                    {% if operation_x == 'pasar_vuelta_anular' %}
+                    <tr class="back1">
+                        <td colspan="2" class="center w-100">
+                            Motivo Anulacion&nbsp;:<br>
+                            <input type="text" class="form-control input w-98" onkeyup="txtValid(this);" onblur="txtValid(this);" autocomplete="off" value="" maxlength="250" name="motivo_anula" id="motivo_anula">
+                        </td>
+                    </tr>
+                    {% endif %}
+
+                    <tr class="back2">
+                        <td colspan="2" class="center w-100">&nbsp;</td>
+                    </tr>
+                    <tr class="back1">
+                        <td colspan="2" class="center w-100">
+                            {% if operation_x == "pasar_vuelta" %}
+                            <button class="btn btn-secondary btn-sm" name="button_cancel" onclick="backWindow();">
+                                <i class="nav-icon fas fa-arrow-alt-circle-left"></i>&nbsp;&nbsp;Cancelar
+                            </button>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <button class="btn btn-primary btn-sm" name="add_button" onclick="sendFormVenta('pasar_vuelta', '');">
+                                <i class="nav-icon fas fa-save"></i>&nbsp;&nbsp;Pasar a Vuelta
+                            </button>
+                            <input type="hidden" name="pasar_vuelta_x" value="acc">
+                            <input type="hidden" name="control_form" value="{{control_form}}">
+                            <input type="hidden" name="operation" value="{{operation}}">
+                            {% endif %}
+                            
+                            {% if operation_x == "pasar_vuelta_anular" and puede_anular == 1 %}
+                            <input type="button" name="button_cancel" value="Cancelar" class="btn btn-secondary btn-sm" onclick="backWindow();">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <input type="hidden" name="control_form" value="txt|2|S|motivo_anula|Motivo Anulacion">
+                            <input type="hidden" name="anular_x" value="acc">
+                            <input type="hidden" name="operation" value="{{operation}}">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <input type="button" name="add_button" value="&nbsp;Anular&nbsp;" class="btn btn-primary btn-sm" onclick="sendFormVenta('pasar_vuelta_anular', 'esta vuelta');">
+                            {% endif %}
+                            <input type="hidden" name="id" value="{{id}}">
+                            <input type="hidden" id="url_main" value="{{url_main}}">
+                            <input type="hidden" id="url_add" value="{{url_add}}">
+                            <input type="hidden" id="operation_x" name="operation_x" value="{{operation_x}}">
+                            <input type="hidden" id="module_x" name="module_x" value="{{module_x}}">
+                            <input type="hidden" id="vender_fracciones" name="vender_fracciones" value="{{vender_fracciones}}">
+                            <input type="hidden" id="cant_productos" value="{{cant_productos}}">
+                        </td>
+                    </tr>
+
+                </table>
+            </div>
+        </form>
+        <br>
+        <br>
+        <br>
+        <br>
+    </div>
+    <!--fin div contenido-->
+    <div class="col-sm-2">&nbsp;</div>
+</div>
+<!--fin div contenedor-->
+<form name="form_cancel" method="post" action="{{url_main}}">
+    {% csrf_token %}
+</form>
+
+<form name="form_print" method="post" action="{{url_main}}" target="_blank">
+    {% csrf_token %}
+    <input type="hidden" name="module_x" value="{{module_x}}">
+    <input type="hidden" name="operation_x" value="">
+    <input type="hidden" name="id" value="">
+</form>
+<form name="form_operation" method="post" action="{{url_main}}">
+    {% csrf_token %}
+    <input type="hidden" name="module_x" value="{{module_x}}">
+    <input type="hidden" name="module_x2" value="{{module_x2}}">
+    <input type="hidden" name="module_x3" value="{{module_x3}}">
+    
+    <input type="hidden" name="operation_x" value="{{operation_x}}">
+    <input type="hidden" name="operation_x2" value="{{operation_x2}}">
+    <input type="hidden" name="operation_x3" value="{{operation_x3}}">
+    
+    <input type="hidden" name="id" value="{{id}}">
+    <input type="hidden" name="id2" value="{{id2}}">
+    <input type="hidden" name="id3" value="{{id3}}">
+</form>

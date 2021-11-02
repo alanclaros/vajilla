@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% load humanize %}
+
+{% block title %} | Acerca De {% endblock %}
+
+{% block content %}
+
+<div class="row align-items-center">
+    <div class="col-sm-2">&nbsp;</div>
+    <div class="col-sm-8">
+        <!--div contenedor-->
+        <br>
+        <span class="index_atajo">Punto de Venta</span>&nbsp;&nbsp;<span class="index_atajo2">RENE</span>
+        <br><br>
+        <div class="card">
+            <div class="card-body">
+                <p>
+                    <span class="index_title">Filosof&iacute;a</span>
+                </p>
+                <p class="card-text left">
+                    El tiempo, uno de los recursos m&aacute;s preciados que se nos ha dado. Crear y entregar valor a la sociedad,
+                    es una muy buena manera de aprovecharlo.
+                </p>
+            </div>
+        </div>
+
+        <!-- <div class="card">
+            <div class="card-body">
+                <p>
+                    <span class="index_title">Misi&oacute;n</span>
+                </p>
+                <p class="card-text">
+                    mision de la empresa
+                </p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <p>
+                    <span class="index_title">Visi&oacute;n</span>
+                </p>
+                <p class="card-text">
+                    vision de la empresa
+                </p>
+            </div>
+        </div> -->
+
+        <div class="card">
+            <div class="card-body">
+                <p>
+                    <span class="index_title">Objetivo General</span>
+                </p>
+                <p class="card-text left">
+                    Crear una comunidad de nogicios independientes muy s&oacute;lida, capaz de brindrar
+                    un excelente servicio a sus usuarios. A trav&eacute;s de desarrollar planes, programas y
+                    proyectos modernos e innovadores que beneficien a la misma comunidad y a todos sus usuarios.
+                </p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <p>
+                    <span class="index_title">Valores</span>
+                </p>
+                <p class="card-text left">
+                <ul class="left">
+                    <li>So&ntilde;ar grande.</li>
+                    <li>Pasi&oacute;n.</li>
+                    <li>Disciplina.</li>
+                    <li>Compromiso.</li>
+                    <li>Responsabilidad.</li>
+                    <li>Respeto.</li>
+                    <li>Innovaci&oacute;n.</li>
+                    <li>Mejora Continua.</li>
+                    <li>Trabajo en equipo.</li>
+                </ul>
+                </p>
+            </div>
+        </div>
+    </div>
+    <!--fin div contenedor-->
+    <div class="col-sm-2">&nbsp;</div>
+</div>
+
+<br><br><br><br><br><br><br><br><br><br>
+<!--pie de pagina-->
+{% include 'pages/pie_pagina.html' %}
+
+{% endblock %}

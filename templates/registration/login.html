@@ -1,0 +1,112 @@
+{% load static %}
+<!doctype html>
+<html lang="esp">
+
+<head>
+    <!-- Required meta tags -->
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+
+    <title>Eventos - El Copetin</title>
+
+
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+
+    <!-- Our Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/nav_style.css' %}">
+
+    <!-- <script src="file/jquery.min.js"></script>
+    <script src="file/bootstrap.min.js"></script> -->
+
+    <script type="text/javascript" src="{% static 'js/buttons.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/index.js' %}"></script>
+
+</head>
+
+<body onload="load_login();">
+    <div class="container">
+        <div class="row head_user">
+            <div class="col-sm">
+                &nbsp;
+            </div>
+        </div>
+
+        <div class="row align-items-center">
+            <div class="col-sm-3 text-center">
+                <img class="mx-auto d-block img-fluid" src="{% static 'img/logo_izquierda.png' %}">
+            </div>
+            <div class="col-sm-9 text-center">
+                <h1 class="head_login"><b>Eventos - El Copet&iacute;n</b> </h1>
+            </div>
+        </div>
+
+        <div class="row head_user">
+            <div class="col-sm">
+                &nbsp;
+            </div>
+        </div>
+
+        <div class="w-100">&nbsp;</div>
+        <div class="row align-items-center">
+            <div class="col-sm-3">&nbsp;</div>
+            <div class="col-sm">
+                {% if form.errors %}
+                <div class="error">
+                    <p>&#34;Usuario o Password Incorrectos&#34;</p>
+                </div>
+                {% endif %}
+
+                {% if next %}
+                {% if user.is_authenticated %}
+                <div class="error">
+                    <p>Su cuenta no tiene acceso a este m&oacute;dulo. Intente con otra cuenta</p>
+                </div>
+                {% else %}
+                <div class="error">
+                    <p>Por favor ingrese para ver esta p&aacute;gina.</p>
+                </div>
+                {% endif %}
+                {% endif %}
+
+                <form name="formulario" method="post" action="{% url 'login' %}" onsubmit="return verifyForm();">
+                    {% csrf_token %}
+                    <table class="tabla w-100">
+                        <tr class="tr_head">
+                            <td class="td_head center" colspan="2">Inicio de Sesi&oacute;n</td>
+                        </tr>
+                        <tr class="tr_content">
+                            <td class="td_content right w-40">
+                                Usuario :&nbsp;
+                            </td>
+                            <td class="td_content td_left w-60">
+                                <input type="text" name="username" autocomplete="off" placeholder="usuario" class="input w-70">
+                            </td>
+                        </tr>
+                        <tr class="tr_content">
+                            <td class="td_content right w-40">
+                                Password :&nbsp;
+                            </td>
+                            <td class="td_content left w-60">
+                                <input type="password" name="password" placeholder="password" class="input w-70">
+                            </td>
+                        </tr>
+                        <tr class="tr_content">
+                            <td colspan="2" class="td_content center w-100">
+                                <input type="submit" name="add_button" value="Entrar" class="btn" onClick="return verifyForm();">
+                                <input type="hidden" name="next" value="{{ next }}" />
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+
+            </div>
+            <div class="col-sm-3">&nbsp;</div>
+
+        </div>
+    </div>
+</body>
+
+</html>

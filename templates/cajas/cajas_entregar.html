@@ -1,0 +1,108 @@
+{% load jinja_tags %}
+{% load static %}
+
+<!-- <script type="text/javascript" src="{% static "" %}js/{{js_file}}.js"></script> -->
+
+<div class="row align-items-center">
+    <div class="col-sm-2">&nbsp;</div>
+    <div class="col-sm-8">
+        <!--div contenedor-->
+        <br>
+        <!--alerts-->
+        {% include 'partials/_alerts.html' %}
+        <div class="w100 center h-35 v-middle">Fecha: {{current_date}}</div>
+        <table class="table3 w-100">
+            <tr>
+                <th class="w-30 left">
+                    Caja
+                </th>
+                <th colspan="4" class="w-70 left">
+                    Estado
+                </th>
+            </tr>
+
+            {% for caja in cajas %}
+            <tr class="back{{forloop.counter|back_class}}">
+                <td class="left w-30">
+                    <strong>{{caja.punto_id.punto}}-{{caja.caja}}</strong>
+                </td>
+                <td class="left w-40">
+                    {% if operaciones_caja|get_item:caja.caja_id == no_aperturado %}
+                    SIN APERTURA
+                    {% endif %}
+
+                    {% if operaciones_caja|get_item:caja.caja_id == apertura %}
+                    APERTURADO
+                    {% endif %}
+
+                    {% if operaciones_caja|get_item:caja.caja_id == apertura_recibe %}
+                    <label id="label1">APERTURA-RECIBE</label>
+                    <input type="hidden" id="label1_c" value="APERT.-RECIBE">
+                    {% endif %}
+
+                    {% if operaciones_caja|get_item:caja.caja_id == cierre %}
+                    CIERRE
+                    {% endif %}
+
+                    {% if operaciones_caja|get_item:caja.caja_id == cierre_recibe %}
+                    CIERRE-RECIBE
+                    {% endif %}
+                </td>
+                <td class="center w-10">
+                    {% if operaciones_caja|get_item:caja.caja_id != no_aperturado %}
+                    {% if permisos.imprimir == 1 %}
+                    {% with url_main=url_main url_id=caja.caja_id target='_blank' %}
+                    {% include 'partials/btn_imprimir.html' %}
+                    {% endwith %}
+                    {% endif %}
+                    {% endif %}
+                </td>
+                <td class="center w-10">
+                    {% if operaciones_caja|get_item:caja.caja_id == apertura_recibe %}
+                    {% if permisos.adicionar == 1 %}
+                    {% with url_id=caja.caja_id boton='fas fa-hand-holding-usd' operation='entregar_x' descripcion='Entregar Caja' titulo='Cajas' %}
+                    {% include 'partials/btn.html' %}
+                    {% endwith %}
+                    {% endif %}
+                    {% endif %}
+                </td>
+                <td class="center w-10">
+                    {% if operaciones_caja|get_item:caja.caja_id == cierre %}
+                    {% if permisos.adicionar == 1 %}
+                    {% with url_id=caja.caja_id boton='far fa-window-close' operation='cancelar_entregar_x' descripcion='Cancelar entrega caja' titulo='Cajas' %}
+                    {% include 'partials/btn.html' %}
+                    {% endwith %}
+                    {% endif %}
+                    {% endif %}
+                </td>
+
+            </tr>
+            {% endfor %}
+        </table>
+        <br>
+    </div>
+    <!--fin div contenedor-->
+    <div class="col-sm-2">&nbsp;</div>
+</div>
+<form name="form_operation" method="post" action="{{url_main}}">
+    {% csrf_token %}
+    <input type="hidden" name="module_x" value="{{module_x}}">
+    <input type="hidden" name="module_x2" value="{{module_x2}}">
+    <input type="hidden" name="module_x3" value="{{module_x3}}">
+    
+    <input type="hidden" name="operation_x" value="{{operation_x}}">
+    <input type="hidden" name="operation_x2" value="{{operation_x2}}">
+    <input type="hidden" name="operation_x3" value="{{operation_x3}}">
+    
+    <input type="hidden" name="id" value="{{id}}">
+    <input type="hidden" name="id2" value="{{id2}}">
+    <input type="hidden" name="id3" value="{{id3}}">
+</form>
+<form name="form_print" method="post" action="{{url_main}}" target="_blank">
+    {% csrf_token %}
+    <input type="hidden" name="module_x" value="{{module_x}}">
+    <input type="hidden" name="operation_x" value="">
+    <input type="hidden" name="id" value="">
+</form>
+<BR><BR>
+</div>

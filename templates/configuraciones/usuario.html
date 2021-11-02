@@ -1,0 +1,309 @@
+{% load jinja_tags %}
+{% load static %}
+
+<div class="row align-items-center">
+    <div class="col-sm-2">&nbsp;</div>
+    <div class="col-sm-8">
+        <!--contenido-->
+        <!--alerts-->
+        {% include 'partials/_alerts.html' %}
+        <br>
+        {% if puede_eliminar == 0 %}
+        {% with title='Usuarios' body='No puede Eliminar este ususario, tiene registros en otros modulos, consulte con el administrador' %}
+        {% include 'partials/_alert_info_cant_delete.html' %}
+        {% endwith %}
+        {% endif %}
+        <div class="link_blue right">
+            <span class="link_blue pointer" onclick="backWindow();">Volver</span>
+        </div>
+        <br>
+        <form name="formulario" method="post" action="" onsubmit="return false;">
+            {% csrf_token %}
+            <table class="table3 w-100">
+                <tr>
+                    <th colspan="4" class="center w-100">
+                        {% if operation_x == "add" %}Adicionar Usuario{% endif %}
+                        {% if operation_x == "modify" %}Modificar Usuario{% endif %}
+                        {% if operation_x == "delete" %}Eliminar Usuario{% endif %}
+                    </th>
+                </tr>
+
+                <tr class="back2">
+                    <td class="right w-20">
+                        Perfil&nbsp;:&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <select name="perfil_id" id="perfil_id" class="form-control input w-80" {% if operation_x == 'delete' %}readonly="readonly" {% endif %}>
+                            {% for perfil in perfiles %}
+                            <option value="{{perfil.perfil_id}}" {% if usuario_perfil.perfil_id.perfil_id == perfil.perfil_id %}selected{% endif %}>{{perfil.perfil}}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td class="right w-20">
+                        Notif.&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <select name="notificacion" id="notificacion" class="form-control input w-80" {% if operation_x == 'delete' %}readonly="readonly" {% endif %}>
+                            <option value="0" {% if usuario_perfil.notificacion == 0 %}selected{% endif %}>NO</option>
+                            <option value="1" {% if usuario_perfil.notificacion == 1 %}selected{% endif %}>SI</option>
+                        </select>
+                    </td>
+                </tr>
+
+                <tr class="back2">
+                    <td class="right w-20">
+                        Punto&nbsp;:&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <select name="punto_id" id="punto_id" class="form-control input w-95" {% if operation_x == 'delete' %}readonly="readonly" {% endif %}>
+                            {% for punto in puntos %}
+                            <option value="{{punto.punto_id}}" {% if usuario_perfil.punto_id == punto.punto_id %}selected{% endif %}>{{punto.sucursal_id.sucursal}}-{{punto.punto}}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td class="right w-20">
+                        Caja&nbsp;:&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <select name="caja_id" id="caja:_id" class="form-control input w-80">
+                            <option value="0">---</option>
+                            {% for caja in cajas %}
+                            <option value="{{caja.caja_id}}" {% if usuario_perfil.caja_id == caja.caja_id %}selected{% endif %}>{{caja.punto_id.punto}}-{{caja.caja}}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                </tr>
+
+                <tr class="back1">
+                    <td class="right w-20">
+                        Nombres&nbsp;:&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <input type="text" {% if operation_x == "delete" %}readonly="readonly" {% endif %} autocomplete="off" class="form-control input w-80" {% autoescape off %} {{db_tags.first_name}} {% endautoescape %}>
+                    </td>
+                    <td class="right w-20">
+                        Apellidos&nbsp;:&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <input type="text" {% if operation_x == "delete" %}readonly="readonly" {% endif %} autocomplete="off" class="form-control input w-80" {% autoescape off %} {{db_tags.last_name}} {% endautoescape %}>
+                    </td>
+                </tr>
+
+                <tr class="back2">
+                    <td class="right w-20">
+                        Usuario&nbsp;:&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <input type="text" {% if operation_x == "delete" %}readonly="readonly" {% endif %} autocomplete="off" class="form-control input w-80" {% autoescape off %} {{db_tags.username}} {% endautoescape %}>
+                    </td>
+                    <td class="right w-20">
+                        Password&nbsp;:&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        {% if operation_x == "add" %}
+                        <input type="password" autocomplete="off" class="form-control input w-80" name="password" id="password" onkeyup="txtValid(this);" onblur="txtValid(this);" value="">
+                        {% else %}
+                        <input type="password" readonly="readonly" autocomplete="off" class="form-control input w-80" id="pass_ant" name="pass_ant" value="*******">
+                        {% endif %}
+                    </td>
+                </tr>
+
+                {%if operation_x == "modify" %}
+                <tr class="back2">
+                    <td class="right w-20">
+                        Cambiar Password&nbsp;:&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <select name="cambiar" id="cambiar" class="form-control input w-80" onChange="deshabilitar(cambiar)">
+                            <option value="yes">SI</option>
+                            <option value="no" selected>NO</option>
+                        </select>
+                    </td>
+                    <td class="right w-20">
+                        Nuevo&nbsp;:&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <input type="password" disabled autocomplete="off" class="form-control input w-80" name="password" id="password" onkeyup="txtValid(this);" onblur="txtValid(this);" value="">
+                    </td>
+                </tr>
+                {% endif %}
+
+                <tr class="back1">
+                    <td class="right w-20">
+                        Correo&nbsp;:&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <input type="text" {% if operation_x == "delete" %}readonly="readonly" {% endif %} autocomplete="off" class="form-control input w-80" {% autoescape off %} {{db_tags.email}} {% endautoescape %}>
+                    </td>
+                    <td class="right w-20">
+                        Activo&nbsp;:&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <div class="custom-control custom-checkbox">
+                            <input class="custom-control-input" type="checkbox" id="activo" name="activo" {% if operation_x == 'add' %}checked{% endif %}
+                                {% if operation_x == 'modify' %}{% if usuario_perfil.status_id_id == status_active %}checked{% endif %}{% endif %} {% if operation_x == 'delete' %}{% if usuario_perfil.status_id_id == status_active %}checked{% endif %}
+                                disabled="disabled" {% endif %}>
+                            <label for="activo" class="custom-control-label">&nbsp;</label>
+                        </div>
+                    </td>
+                </tr>
+
+                <tr class="back2">
+                    <td colspan="4" class="center w-100">&nbsp;</td>
+                </tr>
+
+                <tr class="back1">
+                    <td class="left w-100" colspan="4">
+                        <table class="table3 w-100">
+                            <tr>
+                                <th class="w-10 h-15 right">&nbsp;</th>
+                                <th class="w-30 h-15 left v-bottom"><label id="label10">M&oacute;dulo</label><input type="hidden" id="label10_c" value="M&oacute;dulo"></th>
+                                <th class="w-10 h-15 center v-bottom"><label id="label11">Adiciona</label><input type="hidden" id="label11_c" value="Ad."></th>
+                                <th class="w-10 h-15 center v-bottom"><label id="label12">Modifica</label><input type="hidden" id="label12_c" value="Mo."></th>
+                                <th class="w-10 h-15 center v-bottom"><label id="label13">Elimina</label><input type="hidden" id="label13_c" value="El."></th>
+                                <th class="w-10 h-15 center v-bottom"><label id="label14">Anula</label><input type="hidden" id="label14_c" value="An."></th>
+                                <th class="w-10 h-15 center v-bottom"><label id="label15">Imprime</label><input type="hidden" id="label15_c" value="Im."></th>
+                                <th class="w-10 h-15 center v-bottom"><label id="label16">Permiso</label><input type="hidden" id="label16_c" value="Pe."></th>
+                            </tr>
+
+                            {% for modulo in modulos %}
+                            <tr class="back{{forloop.counter|back_class}} h-25">
+                                <td class="right w-10">
+                                    <div class="custom-control custom-checkbox">
+                                        <input class="custom-control-input" type="checkbox" id="modulo_{{modulo.modulo_id}}" name="modulo_{{modulo.modulo_id}}"
+                                            {% if modulo.modulo_id|get_objeto_user_modulo:user_modulos|get_item:'enabled' == 1 %}checked {% endif %}>
+                                        <label for="modulo_{{modulo.modulo_id}}" class="custom-control-label">&nbsp;</label>
+                                    </div>
+                                </td>
+                                <td class="left w-30">
+                                    &nbsp;{{modulo.modulo_txt}}
+                                </td>
+                                <td class="center w-10">
+                                    {% if modulos_sistema|get_item:modulo.modulo_id|get_item:'adiciona' == 1 %}
+                                    <div class="custom-control custom-checkbox">
+                                        <input class="custom-control-input" type="checkbox" id="modulo_{{modulo.modulo_id}}_ad" name="modulo_{{modulo.modulo_id}}_ad"
+                                            {% if modulo.modulo_id|get_objeto_user_modulo:user_modulos|get_item:'adicionar' == 1 %}checked {% endif %}>
+                                        <label for="modulo_{{modulo.modulo_id}}_ad" class="custom-control-label">&nbsp;</label>
+                                    </div>
+                                    {% endif %}
+                                </td>
+                                <td class="center w-10">
+                                    {% if modulos_sistema|get_item:modulo.modulo_id|get_item:'modifica' == 1 %}
+                                    <div class="custom-control custom-checkbox">
+                                        <input class="custom-control-input" type="checkbox" id="modulo_{{modulo.modulo_id}}_mo" name="modulo_{{modulo.modulo_id}}_mo"
+                                            {% if modulo.modulo_id|get_objeto_user_modulo:user_modulos|get_item:'modificar' == 1 %}checked {% endif %}>
+                                        <label for="modulo_{{modulo.modulo_id}}_mo" class="custom-control-label">&nbsp;</label>
+                                    </div>
+                                    {% endif %}
+                                </td>
+                                <td class="center w-10">
+                                    {% if modulos_sistema|get_item:modulo.modulo_id|get_item:'elimina' == 1 %}
+                                    <div class="custom-control custom-checkbox">
+                                        <input class="custom-control-input" type="checkbox" id="modulo_{{modulo.modulo_id}}_el" name="modulo_{{modulo.modulo_id}}_el"
+                                            {% if modulo.modulo_id|get_objeto_user_modulo:user_modulos|get_item:'eliminar' == 1 %}checked {% endif %}>
+                                        <label for="modulo_{{modulo.modulo_id}}_el" class="custom-control-label">&nbsp;</label>
+                                    </div>
+                                    {% endif %}
+                                </td>
+                                <td class="center w-10">
+                                    {% if modulos_sistema|get_item:modulo.modulo_id|get_item:'anula' == 1 %}
+                                    <div class="custom-control custom-checkbox">
+                                        <input class="custom-control-input" type="checkbox" id="modulo_{{modulo.modulo_id}}_an" name="modulo_{{modulo.modulo_id}}_an"
+                                            {% if modulo.modulo_id|get_objeto_user_modulo:user_modulos|get_item:'anular' == 1 %}checked {% endif %}>
+                                        <label for="modulo_{{modulo.modulo_id}}_an" class="custom-control-label">&nbsp;</label>
+                                    </div>
+                                    {% endif %}
+                                </td>
+                                <td class="center w-10">
+                                    {% if modulos_sistema|get_item:modulo.modulo_id|get_item:'imprime' == 1 %}
+                                    <div class="custom-control custom-checkbox">
+                                        <input class="custom-control-input" type="checkbox" id="modulo_{{modulo.modulo_id}}_im" name="modulo_{{modulo.modulo_id}}_im"
+                                            {% if modulo.modulo_id|get_objeto_user_modulo:user_modulos|get_item:'imprimir' == 1 %}checked {% endif %}>
+                                        <label for="modulo_{{modulo.modulo_id}}_im" class="custom-control-label">&nbsp;</label>
+                                    </div>
+                                    {% endif %}
+                                </td>
+                                <td class="center w-10">
+                                    {% if modulos_sistema|get_item:modulo.modulo_id|get_item:'permiso' == 1 %}
+                                    <div class="custom-control custom-checkbox">
+                                        <input class="custom-control-input" type="checkbox" id="modulo_{{modulo.modulo_id}}_pe" name="modulo_{{modulo.modulo_id}}_pe"
+                                            {% if modulo.modulo_id|get_objeto_user_modulo:user_modulos|get_item:'permiso' == 1 %}checked {% endif %}>
+                                        <label for="modulo_{{modulo.modulo_id}}_pe" class="custom-control-label">&nbsp;</label>
+                                    </div>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+
+                        </table>
+                    </td>
+                </tr>
+
+                <tr class="back2">
+                    <td colspan="4" class="center w-100">&nbsp;</td>
+                </tr>
+                <tr class="back2">
+                    <td colspan="4" class="center w-100">
+                        {% if operation_x == "add" %}
+                        <button class="btn btn-secondary btn-sm" name="button_cancel" onclick="backWindow();">
+                            <i class="nav-icon fas fa-arrow-alt-circle-left"></i>&nbsp;&nbsp;Cancelar
+                        </button>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <button class="btn btn-primary btn-sm" name="add_button" onclick="sendFormUsuario('add', '');">
+                            <i class="nav-icon fas fa-save"></i>&nbsp;&nbsp;Guardar
+                        </button>
+                        <input type="hidden" name="add_x" value="acc">
+                        <input type="hidden" name="control_form" value="{{control_form}}">
+                        {% endif %}
+                        {% if operation_x == "modify" %}
+                        <button class="btn btn-secondary btn-sm" name="button_cancel" onclick="backWindow();">
+                            <i class="nav-icon fas fa-arrow-alt-circle-left"></i>&nbsp;&nbsp;Cancelar
+                        </button>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <button class="btn btn-primary btn-sm" name="add_button" onclick="sendFormUsuario('modify', '');">
+                            <i class="nav-icon fas fa-save"></i>&nbsp;&nbsp;Guardar
+                        </button>
+                        <input type="hidden" name="modify_x" value="acc">
+                        <input type="hidden" name="control_form" value="{{control_form}}">
+                        {% endif %}
+                        {% if operation_x == "delete" and puede_eliminar == 1 %}
+                        <button class="btn btn-secondary btn-sm" name="button_cancel" onclick="backWindow();">
+                            <i class="nav-icon fas fa-arrow-alt-circle-left"></i>&nbsp;&nbsp;Cancelar
+                        </button>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <button class="btn btn-danger btn-sm" name="add_button" onclick="sendFormUsuario('delete', 'este Usuario');">
+                            <i class="nav-icon far fa-times-circle"></i>&nbsp;&nbsp;Eliminar
+                        </button>
+                        <input type="hidden" name="delete_x" value="acc">
+                        <input type="hidden" name="control_form" value="{{control_form}}">
+                        {% endif %}
+                        <input type="hidden" id="url_main" value="{{url_main}}">
+                        <input type="hidden" id="operation_x" name="operation_x" value="{{operation_x}}">
+                        <input type="hidden" id="metodo" value="{{operation_x}}">
+                        <input type="hidden" name="module_x" value="{{module_x}}">
+                        <input type="hidden" name="id" value="{{id}}">
+                    </td>
+                </tr>
+
+            </table>
+        </form>
+        <br>
+    </div>
+    <!--fin div contenido-->
+    <div class="col-sm-2">&nbsp;</div>
+</div>
+<!--fin div contenedor-->
+<form name="form_operation" method="post" action="">
+    {% csrf_token %}
+    <input type="hidden" name="module_x" value="{{module_x}}">
+    <input type="hidden" name="module_x2" value="{{module_x2}}">
+    <input type="hidden" name="module_x3" value="{{module_x3}}">
+    
+    <input type="hidden" name="operation_x" value="{{operation_x}}">
+    <input type="hidden" name="operation_x2" value="{{operation_x2}}">
+    <input type="hidden" name="operation_x3" value="{{operation_x3}}">
+    
+    <input type="hidden" name="id" value="{{id}}">
+    <input type="hidden" name="id2" value="{{id2}}">
+    <input type="hidden" name="id3" value="{{id3}}">
+</form>

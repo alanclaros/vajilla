@@ -1,0 +1,137 @@
+{% load jinja_tags %}
+{% load static %}
+
+<!-- <script type="text/javascript" src="{% static "" %}js/{{js_file}}.js"></script> -->
+<!--contenedor-->
+<div class="row align-items-center">
+    <div class="col-sm-2">&nbsp;</div>
+    <div class="col-sm-8">
+        <!--contenido-->
+        <!--alerts-->
+        {% include 'partials/_alerts.html' %}
+        <br>
+        {% if puede_anular == 0 %}
+        {% with title='Cajas Movimientos' body='No puede Anular este movimiento, tiene registros en otros modulos, consulte con el administrador' %}
+        {% include 'partials/_alert_info_cant_delete.html' %}
+        {% endwith %}
+        {% endif %}
+        <div class="link_blue right">
+            <span class="link_blue pointer" onclick="backWindow();">Volver</span>
+        </div>
+        <br>
+        <form name="formulario" method="post" action="" onsubmit="return false;">
+            {% csrf_token %}
+            <table class="table3 w-100">
+                <tr>
+                    <th colspan="4" class="center w-100">
+                        {% if operation_x == "add" %}Recibir Envio{% endif %}
+                        {% if operation_x == "anular_recepcion" %}Anular Recibir Envio{% endif %}
+                    </th>
+                </tr>
+
+                <tr class="back1">
+                    <td class="right w-20">
+                        Origen&nbsp;:&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <select name="caja1" id="caja1" class="form-control h-35 input w-80" readonly="readonly">
+                            <option value="{{cm_dato.caja1_id.caja_id}}">{{cm_dato.caja1_id.caja}}</option>
+                        </select>
+                    </td>
+                    <td class="right w-20">
+                        Destino&nbsp;:&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <select name="caja2" id="caja2" class="form-control h-35 input w-80" readonly="readonly">
+                            <option value="{{cm_dato.caja2_id.caja_id}}">{{cm_dato.caja2_id.punto_id.punto}}-{{cm_dato.caja2_id.caja}}</option>
+                        </select>
+                    </td>
+                </tr>
+
+                <tr class="back2">
+                    <td class="right w-20">
+                        Monto&nbsp;:&nbsp;
+                    </td>
+                    <td colspan="3" class="left w-80">
+                        <input type="text" autocomplete="off" class="form-control input right w-30" name="monto" id="monto" value="{{cm_dato.monto}}" readonly="readonly"> 
+                        {{cm_dato.caja1_id.tipo_moneda_id.codigo}}
+                    </td>
+                </tr>
+
+                <tr class="back1">
+                    <td class="right w-20">
+                        Concepto&nbsp;:&nbsp;
+                    </td>
+                    <td colspan="3" class="left w-80">
+                        <input type="text" autocomplete="off" class="form-control input left w-90" name="concepto" id="concepto" value="{{cm_dato.concepto}}" readonly="readonly">
+                    </td>
+                </tr>
+
+                {% if operation_x == 'anular_recepcion' %}
+                <tr class="back2">
+                    <td class="right w-20">
+                        Motivo&nbsp;:&nbsp;
+                    </td>
+                    <td colspan="3" class="left w-80">
+                        <input type="text" autocomplete="off" class="form-control input left w-90" name="motivo_anula" id="motivo_anula" value="">
+                    </td>
+                </tr>
+                {% endif %}
+
+                <tr class="back1">
+                    <td colspan="4" class="center w-100">&nbsp;</td>
+                </tr>
+                <tr class="back2">
+                    <td colspan="4" class="center w-100">
+                        {% if operation_x == "aceptar_recepcion" %}
+                        <button class="btn btn-secondary btn-sm" name="button_cancel" onclick="backWindow();">
+                            <i class="nav-icon fas fa-arrow-alt-circle-left"></i>&nbsp;&nbsp;Cancelar
+                        </button>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <button class="btn btn-primary btn-sm" name="add_button" onclick="sendFormCajaMovimientoRecibe('add', '');">
+                            <i class="nav-icon fas fa-save"></i>&nbsp;&nbsp;Recibir
+                        </button>
+                        <input type="hidden" name="operation_x" id="operation_x" value="aceptar_recepcion_guardar">
+                        {% endif %}
+                        {% if operation_x == "anular_recepcion" and puede_anular == 1 %}
+                        <button class="btn btn-secondary btn-sm" name="button_cancel" onclick="backWindow();">
+                            <i class="nav-icon fas fa-arrow-alt-circle-left"></i>&nbsp;&nbsp;Cancelar
+                        </button>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <button class="btn btn-danger btn-sm" name="add_button" onclick="sendFormCajaMovimientoRecibe('anular', 'esta Recepcion de Movimiento');">
+                            <i class="nav-icon far fa-times-circle"></i>&nbsp;&nbsp;Anular
+                        </button>
+                        <input type="hidden" name="operation_x" id="operation_x" value="anular_recepcion_guardar">
+                        {% endif %}
+                        <input type="hidden" name="control_form" value="{{control_form}}">
+                        <input type="hidden" id="url_main" value="{{url_main}}">
+                        <input type="hidden" name="module_x" value="{{module_x}}">
+                        <input type="hidden" name="id" value="{{cm_dato.caja_movimiento_id}}">
+                    </td>
+                </tr>
+
+            </table>
+        </form>
+        <br>
+    </div>
+    <!--fin div contenido-->
+    <div class="col-sm-2">&nbsp;</div>
+</div>
+<!--fin div contenedor-->
+<form name="form_cancel" method="post" action="{{url_main}}">
+    {% csrf_token %}
+</form>
+<form name="form_operation" method="post" action="{{url_main}}">
+    {% csrf_token %}
+    <input type="hidden" name="module_x" value="{{module_x}}">
+    <input type="hidden" name="module_x2" value="{{module_x2}}">
+    <input type="hidden" name="module_x3" value="{{module_x3}}">
+    
+    <input type="hidden" name="operation_x" value="{{operation_x}}">
+    <input type="hidden" name="operation_x2" value="{{operation_x2}}">
+    <input type="hidden" name="operation_x3" value="{{operation_x3}}">
+    
+    <input type="hidden" name="id" value="{{id}}">
+    <input type="hidden" name="id2" value="{{id2}}">
+    <input type="hidden" name="id3" value="{{id3}}">
+</form>

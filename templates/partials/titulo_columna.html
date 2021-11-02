@@ -1,0 +1,10 @@
+{% load static %}
+{% load jinja_tags %}
+
+{% if cabecera == session|get_item:session.variable_order %}
+{% if session|get_item:session.variable_order_type == "ASC" %}
+&nbsp;<img src="{% static 'img/pass/r_asc.gif' %}">
+{% else %}
+&nbsp;<img src="{% static 'img/pass/r_desc.gif' %}">
+{% endif %}
+{% endif %}

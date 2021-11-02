@@ -1,0 +1,21 @@
+{% load jinja_tags %}
+
+{% if session.pages_list|length > 1 %}
+<table>
+    <tr>
+        <td class="link_pages_down">Pages&nbsp;:&nbsp;</td>
+        {% for pagina in session.pages_list %}
+        {% if session|get_item:session.variable_page|lower == pagina|lower %}
+        <td class="link_pages_down">{{pagina}}</td>
+        {% else %}
+        <td class="link_pages pointer" onclick="module_pagination('{{pagina}}');">{{pagina}}</td>
+        {% endif %}
+        {% endfor %}
+    </tr>
+</table>
+<form name="form_page" method="post" action="">
+    {% csrf_token %}
+    <input type="hidden" name="name_var_page" id="name_var_page" value="{{session.variable_page}}">
+</form>
+<br>
+{% endif %}

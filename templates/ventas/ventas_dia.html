@@ -1,0 +1,167 @@
+{% load humanize %}
+{% load jinja_tags %}
+{% load static %}
+
+{% if existe_error %}
+<div class="alert alert-warning alert-dismissible">
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+    <h5><i class="icon fas fa-exclamation-triangle"></i>Ventas!</h5>
+    Error al registrar la Venta, {{error_operation}}
+</div>
+<br>
+{% endif %}
+
+<!--alerts-->
+{% include 'partials/_alerts.html' %}
+
+<table class="table3 w-100">
+    <tr>
+        <th colspan="4" class="center w-100">
+            Ventas del {{fecha_actual}}
+        </th>
+    </tr>
+
+    <tr class="{% if datos_venta.status_id.status_id == estado_pedido %}backpedido{% else %}back1{% endif %}">
+        <td class="right w-20">
+            Venta&nbsp;:&nbsp;
+        </td>
+        <td colspan="3" class="left w-80">
+            ({{datos_venta.numero_venta}}) &nbsp;&nbsp;&nbsp;&nbsp;
+            <input type="button" class="btn btn-primary btn-xs btn_search" value="&#60;&#60;" {% if datos_venta.previous_id == 0 %}disabled{% else %}onclick="loadIDVenta('{{datos_venta.previous_id}}');" {% endif %}>
+            &nbsp;
+            <input type="button" class="btn btn-primary btn-xs btn_search" value="&#62;&#62;" {% if datos_venta.next_id == 0 %}disabled{% else %}onclick="loadIDVenta('{{datos_venta.next_id}}');" {% endif %}>
+            {% if datos_venta.venta_id != 0 %}
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                {% if permisos.imprimir %}
+                    <i class="nav-icon ico_modify_delete pointer fas fa-print" onclick="imprimirVenta('{{datos_venta.venta_id}}');"></i>
+                    &nbsp;&nbsp;
+                {% endif %}
+                
+                {% if permisos.modificar and datos_venta.status_id.status_id != estado_anulado %}
+                    <i class="nav-icon ico_modify_delete pointer fas fa-edit" onclick="modificarVenta('{{datos_venta.venta_id}}');"></i>
+                    &nbsp;&nbsp;
+                {% endif %}
+        
+                {% if datos_venta.status_id.status_id != estado_anulado %}
+                    {% if permisos.anular %}
+                        <i class="nav-icon ico_modify_delete pointer fas fa-ban" onclick="anularVenta('{{datos_venta.venta_id}}');"></i>
+                        &nbsp;&nbsp;
+                    {% endif %}
+                {% else %}
+                    &nbsp;&nbsp;<b>ANULADO</b>
+                {% endif %}
+            {% endif %}
+        </td>
+    </tr>
+
+    <tr class="back1" id="linea_anular" style="display: none;">
+        <td class="right w-20">
+            Motivo :&nbsp;
+        </td>
+        <td colspan="3" class="left w-80">
+            <input type="text" class="form-control input w-60" name="motivo_anula" id="motivo_anula" maxlength="250">&nbsp;
+            <input type="button" class="btn btn-primary btn-xs" value="Anular" onclick="confirmarAnularVenta();">&nbsp;
+            <input type="button" class="btn btn-primary btn-xs" value="Cancelar" onclick="cancelarAnularVenta();">
+        </td>
+    </tr>
+
+    <tr class="back2">
+        <td class="right w-20">
+            Cliente&nbsp;:&nbsp;
+        </td>
+        <td colspan="3" class="left w-80">
+            {{datos_venta.apellidos}} {{datos_venta.nombres}}, CI/NIT : {{datos_venta.ci_nit}}
+        </td>
+    </tr>
+
+    <tr class="back1">
+        <td class="right w-20">
+            Total&nbsp;:&nbsp;
+        </td>
+        <td colspan="3" class="left w-80">
+            <b>{{datos_venta.total}} Bs.</b>
+        </td>
+    </tr>
+
+    <tr class="back1" style="display: none;">
+        <td colspan="4" class="w-100">
+            <div id="div_datos_venta">
+                <input type="hidden" id="m_almacen_id" value="{{datos_venta.almacen_id}}">
+                <input type="hidden" id="m_tipo_venta" value="{{datos_venta.tipo_venta}}">
+                <input type="hidden" id="m_costo_abc" value="{{datos_venta.costo_abc}}">
+                <input type="hidden" id="m_cliente_id" value="{{datos_venta.cliente_id}}">
+                <input type="hidden" id="m_apellidos" value="{{datos_venta.apellidos}}">
+                <input type="hidden" id="m_nombres" value="{{datos_venta.nombres}}">
+                <input type="hidden" id="m_ci_nit" value="{{datos_venta.ci_nit}}">
+                <input type="hidden" id="m_telefonos" value="{{datos_venta.telefonos}}">
+                <input type="hidden" id="m_direccion" value="{{datos_venta.direccion}}">
+                <input type="hidden" id="m_mesa" value="{{datos_venta.mesa}}">
+                <input type="hidden" id="m_observacion" value="{{datos_venta.observacion}}">
+                <input type="hidden" id="m_lugar_id" value="{{datos_venta.lugar_id}}">
+                
+                <input type="hidden" id="m_porcentaje_descuento" value="{{datos_venta.porcentaje_descuento}}">
+                <input type="hidden" id="m_descuento" value="{{datos_venta.descuento}}">
+
+                <input type="hidden" id="m_numero_cuotas" value="{{datos_venta.numero_cuotas}}">
+                <input type="hidden" id="m_mensual_dias" value="{{datos_venta.mensual_dias}}">
+                <input type="hidden" id="m_tiempo_dias" value="{{datos_venta.tiempo_dias}}">
+                <input type="hidden" id="m_fecha_fija" value="{{datos_venta.fecha_fija}}">
+
+                {% for detalle in datos_venta.detalles %}
+                    <span id="m_producto_{{forloop.counter}}">{{detalle.producto}}</span>
+                    <span id="m_producto_id_{{forloop.counter}}">{{detalle.producto_id}}</span>
+                    <span id="m_cantidad_{{forloop.counter}}">{{detalle.cantidad}}</span>
+                    <span id="m_costo_{{forloop.counter}}">{{detalle.costo}}</span>
+                    <span id="m_total_{{forloop.counter}}">{{detalle.total}}</span>
+                    
+                    <span id="m_componentes_ids_{{forloop.counter}}">{{detalle.componentes_ids}}</span>
+                    <span id="m_extras_ids_{{forloop.counter}}">{{detalle.extras_ids}}</span>
+                    <span id="m_refrescos_ids_{{forloop.counter}}">{{detalle.refrescos_ids}}</span>
+                    <span id="m_papas_ids_{{forloop.counter}}">{{detalle.papas_ids}}</span>
+                    <!--componentes-->
+                    {% with numero_fila=forloop.counter %}
+                    {% for detalle in detalle.lista_componentes %}
+                        <span id="m_componente_{{numero_fila}}_{{detalle.componente_id.componente_id}}">{{detalle.cantidad}}</span>
+                    {% endfor %}
+                    {% endwith %}
+                    
+                    {% with numero_fila=forloop.counter %}
+                    {% for extra in detalle.lista_extras %}
+                        <span id="m_extra_{{numero_fila}}_{{extra.componente_id.componente_id}}">{{extra.cantidad}}</span>
+                    {% endfor %}
+                    {% endwith %}
+                    
+                    {% with numero_fila=forloop.counter %}
+                    {% for refresco in detalle.lista_refrescos %}
+                            <span id="m_refresco_{{numero_fila}}_{{refresco.refresco_grupo_id}}">{{refresco.cantidad}}</span>
+                    {% endfor %}
+                    {% endwith %}
+                    
+                    {% with numero_fila=forloop.counter %}
+                    {% for papa in detalle.lista_papas %}
+                            <span id="m_papa_{{numero_fila}}_{{papa.papa_grupo_id}}">{{papa.cantidad}}</span>
+                    {% endfor %}
+                    {% endwith %}
+                    
+                {% endfor %}
+            </div>
+        </td>
+    </tr>
+
+    <tr class="back2">
+        <td class="right w-20 v-top">
+            Detalles&nbsp;:&nbsp;
+        </td>
+        <td colspan="3" class="left w-80">
+            {% for detalle in datos_venta.detalles %}
+            {{detalle.producto}}, {{detalle.cantidad}} &#42; {{detalle.costo}} &#61; {{detalle.total}}<br>
+            {% endfor %}
+        </td>
+    </tr>
+
+    <tr class="back2">
+        <td colspan="4" class="left w-100">
+            &nbsp;
+        </td>
+    </tr>
+</table>

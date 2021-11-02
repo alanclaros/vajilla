@@ -1,0 +1,16 @@
+{% load humanize %}
+{% load jinja_tags %}
+
+<input type="hidden" name="stock_ids_{{producto_id}}" id="stock_ids_{{producto_id}}" value="{{stock_ids}}">
+<table class="table3 w-100">
+    {% for stock in stock_producto %}
+    <tr class="back1">
+        <td class="w-50 right">
+            <input type="text" tabindex="-1" id="actual_{{stock.stock_id}}" name="actual_{{stock.stock_id}}" value="{{stock.cantidad|toint}}" class="form-control input right w-99" readonly="readonly">
+        </td>
+        <td class="w-50 right">
+            <input type="text" autocomplete="off" class="form-control input right w-98" name="cantidad_{{stock.stock_id}}" id="cantidad_{{stock.stock_id}}" onkeyup="{% if vender_fracciones == 'si' %}validarNumeroPunto(this);{% else %}validarNumero(this);{% endif %}controlarStock{{stock_js}}('{{stock.stock_id}}');">
+        </td>
+    </tr>
+    {% endfor %}
+</table>

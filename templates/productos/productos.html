@@ -1,0 +1,179 @@
+{% load static %}
+{% load jinja_tags %}
+
+<div class="row align-items-center">
+    <div class="col-sm-2">&nbsp;</div>
+    <div class="col-sm-8">
+        <!--div contenedor-->
+        <br>
+        <!--alerts-->
+        {% include 'partials/_alerts.html' %}
+
+        <form name="search" method="post" action="">
+            {% csrf_token %}
+            <table class="table3 w-100">
+                <tr>
+                    <th class="w-100 center" colspan="4">
+                        Opciones de Busqueda
+                    </th>
+                </tr>
+
+                <tr class="back1">
+                    <td class="right w-20">
+                        L&iacute;nea&nbsp;:&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <input type="text" name="search_linea" id="search_linea" class="form-control input w-80" value="{{ session.search_linea }}" autocomplete="off">
+                    </td>
+                    <td class="right w-20">
+                        Producto&nbsp;:&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <input type="text" name="search_producto" id="search_producto" class="form-control input w-80" value="{{ session.search_producto }}" autocomplete="off">
+                    </td>
+                </tr>
+
+                <tr class="back2">
+                    <td class="right w-20">
+                        Codigo&nbsp;:&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <input type="text" name="search_codigo" id="search_codigo" class="form-control input w-80" value="{{ session.search_codigo }}" autocomplete="off">
+                    </td>
+                    <td class="right w-20">
+                        &nbsp;
+                    </td>
+                    <td class="left w-30">
+                        &nbsp;
+                    </td>
+                </tr>
+
+                <tr class="back1">
+                    <td colspan="4" class="center w-100">
+                        <button class="btn btn-primary btn-sm" name="search_button" onclick="sendSearchProducto();">
+                            <i class="nav-icon fas fa-search"></i>&nbsp;&nbsp;Buscar
+                        </button>
+                        <input type="hidden" name="search_button_x" value="acc">
+                        <input type="hidden" name="module_x" value="{{module_x}}">
+                    </td>
+                </tr>
+            </table>
+        </form>
+        <br>
+        <!--paginacion-->
+        {% include 'partials/pagination.html' %}
+
+        {%if permisos.adicionar == 1 %}
+        <table class="tabla w-100">
+            <td class="left w-100">
+                <button class="btn btn-primary btn-sm" name="add_x" onclick="sendOperation(operation='add');">
+                    <i class="nav-icon fas fa-plus"></i>&nbsp;&nbsp;Nuevo Producto
+                </button>
+            </td>
+        </table>
+        <br>
+        {% endif %}
+        <table class="table3 w-100">
+            <tr>
+                <th class="w-30 pointer left" {% with cabecera=columnas.0 %} {% include 'partials/cabecera_columna.html' %} {% endwith %}>
+                    {% with cabecera=columnas.0 %}
+                    Linea{% include 'partials/titulo_columna.html' %}
+                    {% endwith %}
+                </th>
+                <th class="w-30 pointer left" {% with cabecera=columnas.1 %} {% include 'partials/cabecera_columna.html' %} {% endwith %}>
+                    {% with cabecera=columnas.1 %}
+                    Producto{% include 'partials/titulo_columna.html' %}
+                    {% endwith %}
+                </th>
+                <th colspan="5" class="w-40 pointer left" {% with cabecera=columnas.2 %} {% include 'partials/cabecera_columna.html' %} {% endwith %}>
+                    {% with cabecera=columnas.2 %}
+                    Codigo{% include 'partials/titulo_columna.html' %}
+                    {% endwith %}
+                </th>
+            </tr>
+
+            {% for producto in productos %}
+            <tr class="back{{forloop.counter|back_class_color:producto.status_id.status_id}}">
+                <td class="left w-30">
+                    {{producto.linea_id.linea}}
+                </td>
+                <td class="left w-30">
+                    {{producto.producto}}
+                </td>
+                <td class="left w-20">
+                    {{producto.codigo}}
+                </td>
+
+                <td class="center w-5">
+                    {%if permisos.modificar == 1 %}
+                    {% with url_id=producto.producto_id boton='fas fa-copy' operation='copiar' titulo='Copiar' descripcion='Copiar este producto' %}
+                    {% include 'partials/btn.html' %}
+                    {% endwith %}
+                    {% else %} &nbsp;
+                    {% endif %}
+                </td>
+                <td class="center w-5">
+                    {%if permisos.modificar == 1 %}
+                    {% with url_id=producto.producto_id boton='far fa-images' operation='imagenes' titulo='Imagenes' descripcion='Imagenes del producto' %}
+                    {% include 'partials/btn.html' %}
+                    {% endwith %}
+                    {% else %} &nbsp;
+                    {% endif %}
+                </td>
+                <td class="center w-5">
+                    {%if permisos.modificar == 1 %}
+                    {% with url_main=url_main operation='modify' url_id=producto.producto_id target='' %}
+                    {% include 'partials/btn_modificar.html' %}
+                    {% endwith %}
+                    {% else %} &nbsp;
+                    {% endif %}
+                </td>
+                <td class="center w-5">
+                    {%if permisos.eliminar == 1 %}
+                    {% with url_main=url_main operation='delete' url_id=producto.producto_id target='' %}
+                    {% include 'partials/btn_eliminar.html' %}
+                    {% endwith %}
+                    {% else %} &nbsp;
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        <br>
+        {% if permisos.adicionar == 1 %}
+        <table class="tabla w-100">
+            <td class="left w-100">
+                <button class="btn btn-primary btn-sm" name="add_x2" onclick="sendOperation(operation='add');">
+                    <i class="nav-icon fas fa-plus"></i>&nbsp;&nbsp;Nuevo Producto
+                </button>
+            </td>
+        </table>
+        <br>
+        {% endif %}
+    </div>
+    <!--fin div contenedor-->
+    <div class="col-sm-2">&nbsp;</div>
+</div>
+
+<BR><BR>
+<form name="form_order" method="post" action="">
+    {% csrf_token %}
+    <input type="hidden" name="{{session.variable_order}}" value="{{session|get_item:session.variable_order}}">
+    <input type="hidden" name="{{session.variable_order_type}}" value="{{session|get_item:session.variable_order_type}}">
+</form>
+
+</div>
+<form name="form_operation" method="post" action="{{url_main}}">
+    {% csrf_token %}
+    <input type="hidden" name="module_x" value="{{module_x}}">
+    <input type="hidden" name="module_x2" value="{{module_x2}}">
+    <input type="hidden" name="module_x3" value="{{module_x3}}">
+    
+    <input type="hidden" name="operation_x" value="{{operation_x}}">
+    <input type="hidden" name="operation_x2" value="{{operation_x2}}">
+    <input type="hidden" name="operation_x3" value="{{operation_x3}}">
+    
+    <input type="hidden" name="id" value="{{id}}">
+    <input type="hidden" name="id2" value="{{id2}}">
+    <input type="hidden" name="id3" value="{{id3}}">
+</form>

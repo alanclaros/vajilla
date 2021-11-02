@@ -1,0 +1,191 @@
+{% load static %}
+{% load jinja_tags %}
+
+<!-- <script type="text/javascript" src="{% static "" %}js/{{js_file}}.js"></script> -->
+
+<div class="row align-items-center">
+    <div class="col-sm-2">&nbsp;</div>
+    <div class="col-sm-8">
+        <!--div contenedor-->
+        <br>
+        <!--alerts-->
+        {% include 'partials/_alerts.html' %}
+
+        <form name="search" method="post" action="">
+            {% csrf_token %}
+            <table class="table3 w-100">
+                <tr>
+                    <th class="w-100 center" colspan="4">
+                        Opciones de Busqueda
+                    </th>
+                </tr>
+
+                <tr class="back1">
+                    <td class="right w-20">
+                        Fecha Ini&nbsp;:&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <input name="search_fecha_ini" id="search_fecha_ini" value="{{ session.search_fecha_ini }}" type="text" class="form-control input w-90 left" readonly="readonly">
+                        <script type="text/javascript">
+                            var foopicker = new FooPicker({
+                                id: 'search_fecha_ini',
+                                dateFormat: 'dd-MMM-yyyy'
+                            });
+                        </script>
+                    </td>
+                    <td class="right w-20">
+                        Fecha Fin&nbsp;:&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <input name="search_fecha_fin" id="search_fecha_fin" value="{{ session.search_fecha_fin }}" type="text" class="form-control input w-90 left" readonly="readonly">
+                        <script type="text/javascript">
+                            var foopicker = new FooPicker({
+                                id: 'search_fecha_fin',
+                                dateFormat: 'dd-MMM-yyyy'
+                            });
+                        </script>
+                    </td>
+                </tr>
+
+                <tr class="back2">
+                    <td class="right w-20">
+                        Caja&nbsp;:&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <select name="search_caja" id="search_caja" class="form-control input w-90">
+                            <option value="0">(TODOS)</option>
+                            {% for caja in cajas %}
+                            <option value="{{caja.caja_id}}" {% if caja.caja_id == session.search_caja|add:"0" %}selected{% endif %}>{{caja.codigo}}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td class="right w-20">
+                        Concepto&nbsp;:&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <input type="text" name="search_concepto" id="search_concepto" class="form-control input w-80" value="{{ session.search_concepto }}" autocomplete="off">
+                    </td>
+                </tr>
+
+                <tr class="back1">
+                    <td colspan="4" class="center w-100">
+                        <button class="btn btn-primary btn-sm" name="search_button" onclick="sendSearchCajaEgreso();">
+                            <i class="nav-icon fas fa-search"></i>&nbsp;&nbsp;Buscar
+                        </button>
+                        <input type="hidden" name="search_button_x" value="acc">
+                        <input type="hidden" name="module_x" value="{{module_x}}">
+                    </td>
+                </tr>
+            </table>
+        </form>
+        <br>
+        <!--paginacion-->
+        {% include 'partials/pagination.html' %}
+
+        {%if permisos.adicionar == 1 %}
+        <table class="tabla w-100">
+            <td class="left w-100">
+                <button class="btn btn-primary btn-sm" name="add_x" onclick="sendOperation(operation='add');">
+                    <i class="nav-icon fas fa-plus"></i>&nbsp;&nbsp;Nuevo Egreso
+                </button>
+            </td>
+        </table>
+        <br>
+        {% endif %}
+        <table class="table3 w-100">
+            <tr>
+                <th class="w-40 pointer left" {% with cabecera=columnas.0 %} {% include 'partials/cabecera_columna.html' %} {% endwith %}>
+                    {% with cabecera=columnas.0 %}
+                    Fecha{% include 'partials/titulo_columna.html' %}
+                    {% endwith %}
+                </th>
+                <th class="w-30 pointer left" {% with cabecera=columnas.1 %} {% include 'partials/cabecera_columna.html' %} {% endwith %}>
+                    {% with cabecera=columnas.1 %}
+                    Concepto{% include 'partials/titulo_columna.html' %}
+                    {% endwith %}
+                </th>
+                <th colspan="3" class="w-30 pointer left" {% with cabecera=columnas.2 %} {% include 'partials/cabecera_columna.html' %} {% endwith %}>
+                    {% with cabecera=columnas.2 %}
+                    Monto{% include 'partials/titulo_columna.html' %}
+                    {% endwith %}
+                </th>
+            </tr>
+
+            {% for egreso in cajas_egresos %}
+            <tr class="back{{forloop.counter|back_class_color:egreso.status_id.status_id}}">
+                <td class="left w-40">
+                    {{egreso.fecha|fecha_mostrar:'dd-MMM-yyyy HH:ii'}} - {{egreso.caja_id.codigo}}
+                    {% if egreso.status_id.status_id == estado_anulado %}
+                    &nbsp;<strong>ANULADO</strong>
+                    {% endif %}
+                </td>
+                <td class="left w-30">
+                    {{egreso.concepto}}
+                </td>
+                <td class="right w-10">
+                    {{egreso.monto}}
+                </td>
+                <td class="center w-10">
+                    {% if permisos.imprimir == 1 %}
+                    {% with url_main=url_main url_id=egreso.caja_egreso_id target='_blank' %}
+                    {% include 'partials/btn_imprimir.html' %}
+                    {% endwith %}
+                    {% else %} &nbsp;
+                    {% endif %}
+                </td>
+                <td class="center w-10">
+                    {% if permisos.anular == 1 %}
+                    {% if egreso.status_id.status_id != estado_anulado %}
+                    {% with url_id=egreso.caja_egreso_id boton='fas fa-ban' operation='anular' titulo='Cajas Egresos' descripcion='Anular esta operacion' %}
+                    {% include 'partials/btn.html' %}
+                    {% endwith %}
+                    {% endif %}
+                    {% else %} &nbsp;
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        <br>
+        {% if permisos.adicionar == 1 %}
+        <table class="tabla w-100">
+            <td class="left w-100">
+                <button class="btn btn-primary btn-sm" name="add_x2" onclick="sendOperation(operation='add');">
+                    <i class="nav-icon fas fa-plus"></i>&nbsp;&nbsp;Nuevo Egreso
+                </button>
+            </td>
+        </table>
+        <br>
+        {% endif %}
+    </div>
+    <!--fin div contenedor-->
+    <div class="col-sm-2">&nbsp;</div>
+</div>
+
+<BR><BR>
+<form name="form_order" method="post" action="">
+    {% csrf_token %}
+    <input type="hidden" name="{{session.variable_order}}" value="{{session|get_item:session.variable_order}}">
+    <input type="hidden" name="{{session.variable_order_type}}" value="{{session|get_item:session.variable_order_type}}">
+</form>
+<form name="form_print" method="post" action="{{url_main}}" target="_blank">
+    {% csrf_token %}
+    <input type="hidden" name="module_x" value="{{module_x}}">
+    <input type="hidden" name="operation_x" value="">
+    <input type="hidden" name="id" value="">
+</form>
+</div>
+<form name="form_operation" method="post" action="{{url_main}}">
+    {% csrf_token %}
+    <input type="hidden" name="module_x" value="{{module_x}}">
+    <input type="hidden" name="module_x2" value="{{module_x2}}">
+    <input type="hidden" name="module_x3" value="{{module_x3}}">
+    
+    <input type="hidden" name="operation_x" value="{{operation_x}}">
+    <input type="hidden" name="operation_x2" value="{{operation_x2}}">
+    <input type="hidden" name="operation_x3" value="{{operation_x3}}">
+    
+    <input type="hidden" name="id" value="{{id}}">
+    <input type="hidden" name="id2" value="{{id2}}">
+    <input type="hidden" name="id3" value="{{id3}}">
+</form>

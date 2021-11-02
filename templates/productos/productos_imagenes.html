@@ -1,0 +1,152 @@
+{% load jinja_tags %}
+{% load static %}
+
+<!--contenedor-->
+<div class="row align-items-center">
+    <div class="col-sm-2">&nbsp;</div>
+    <div class="col-sm-8">
+        <!--contenido-->
+        <!--alerts-->
+        {% include 'partials/_alerts.html' %}
+        <br>
+        <div class="link_blue right">
+            <span class="link_blue pointer" onclick="backWindow();">Volver</span>
+        </div>
+        <br>
+        <form name="formulario" method="post" action="" enctype="multipart/form-data" onsubmit="return false;">
+            {% csrf_token %}
+            <table class="table3 w-100">
+                <tr>
+                    <th colspan="4" class="center w-100">
+                        Imagenes Productos
+                    </th>
+                </tr>
+
+                <tr class="back1">
+                    <td class="right w-20">
+                        Linea :&nbsp;
+                    </td>
+                    <td colspan="3" class="left w-80">
+                        {{producto.linea_id.linea}}
+                    </td>
+                </tr>
+
+                <tr class="back2">
+                    <td class="right w-20">
+                        Producto&nbsp;:&nbsp;
+                    </td>
+                    <td colspan="3" class="left w-80">
+                        {{producto.producto}}
+                    </td>
+                </tr>
+
+                <tr class="back1">
+                    <td colspan="4" class="left w-100">
+                        <div id="div_lista_imagenes">
+                            <table class="table3 w-100">
+                                {% for imagen in productos_imagenes %}
+                                <tr class="back{{forloop.counter|back_class}}">
+                                    <td class="right w-20">
+                                        <i class="nav-icon ico_modify_delete pointer fas fa-minus-circle" onclick="nd(); eliminarImagen('{{imagen.producto_imagen_id}}');"
+                                            onMouseOver="overlib('quitar imagen',CAPTION,'Producto',WIDTH,'120',LEFT); return true" onMouseOut=" nd(); return true"></i>&nbsp;
+                                    </td>
+                                    <td class="left w-30">
+                                        <img src="{% static '/media/productos/' %}{{imagen.imagen_thumb}}" class="pointer" onclick="nd(); mostrarImagen('{{imagen.producto_imagen_id}}');"
+                                            onMouseOver=" overlib('mostrar imagen',CAPTION,'Imagen',WIDTH,'120',RIGHT); return true" onMouseOut=" nd(); return true">
+                                    </td>
+                                    <td class="right w-20">
+                                        Posici&oacute;n&nbsp;:&nbsp;
+                                    </td>
+                                    <td class="left w-30">
+                                        <input type="text" autocomplete="off" value="{{imagen.posicion}}" class="form-control input w-60 right" name="posicion_{{imagen.producto_imagen_id}}" id="posicion_{{imagen.producto_imagen_id}}"
+                                            onkeyup="validarNumero(this);">
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+
+                <tr class="back2">
+                    <td colspan="4" class="center w-100">&nbsp;</td>
+                </tr>
+                <tr class="back1">
+                    <td colspan="4" class="center w-100">
+                        <button class="btn btn-secondary btn-sm" name="button_cancel" onclick="backWindow();">
+                            <i class="nav-icon fas fa-arrow-alt-circle-left"></i>&nbsp;&nbsp;Cancelar
+                        </button>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <button class="btn btn-primary btn-sm" name="add_button" onclick="formularioImagenProducto('imagenes', 'images_x', 'formulario', 'add_button', 'button_cancel');">
+                            <i class="nav-icon fas fa-save"></i>&nbsp;&nbsp;Guardar
+                        </button>
+                        
+                        <input type="hidden" name="images_x" value="acc">
+                        <input type="hidden" id="url_main" value="{{url_main}}">
+                        <input type="hidden" id="pid" value="{{pid}}">
+                        <input type="hidden" name="id" value="{{id}}">
+                        <input type="hidden" id="operation_x" name="operation_x" value="{{operation_x}}">
+                        <input type="hidden" id="module_x" name="module_x" value="{{module_x}}">
+                    </td>
+                </tr>
+
+                <tr class="back2">
+                    <td colspan="4" class="center w-100">&nbsp;</td>
+                </tr>
+
+                <tr>
+                    <th colspan="4" class="center">
+                        Cargar Nueva Imagen
+                    </th>
+                </tr>
+                <tr class="back1">
+                    <td class="right w-20">
+                        Img :&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <input type="file" class="form-control input w-90" name="imagen1" id="imagen1">
+                    </td>
+                    <td class="right w-20">
+                        Posici&oacute;n&nbsp;:&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <input type="text" autocomplete="off" class="form-control input w-40 right" name="posn_1" id="posn_1" onkeyup="validarNumero(this);">
+                        &nbsp;&nbsp;&nbsp;
+                        <input type="button" id="btn_imagen" class="btn btn-primary btn-xs btn_search" value="Cargar" onclick="cargarImagen();">
+                    </td>
+                </tr>
+                <tr class="back2">
+                    <td colspan="4" class="center w-100">&nbsp;</td>
+                </tr>
+
+            </table>
+        </form>
+        <br>
+    </div>
+    <!--fin div contenido-->
+    <div class="col-sm-2">&nbsp;</div>
+</div>
+<!--fin div contenedor-->
+<form name="form_cancel" method="post" action="{{url_main}}">
+    {% csrf_token %}
+</form>
+<form name="form_img" method="post" action="{{url_main}}" target="_blank">
+    {% csrf_token %}
+    <input type="hidden" name="id" value="">
+    <input type="hidden" name="module_x" value="{{module_x}}">
+    <input type="hidden" name="operation_x" value="mostrar_imagen">
+</form>
+<form name="form_operation" method="post" action="{{url_main}}">
+    {% csrf_token %}
+    <input type="hidden" name="module_x" value="{{module_x}}">
+    <input type="hidden" name="module_x2" value="{{module_x2}}">
+    <input type="hidden" name="module_x3" value="{{module_x3}}">
+    
+    <input type="hidden" name="operation_x" value="{{operation_x}}">
+    <input type="hidden" name="operation_x2" value="{{operation_x2}}">
+    <input type="hidden" name="operation_x3" value="{{operation_x3}}">
+    
+    <input type="hidden" name="id" value="{{id}}">
+    <input type="hidden" name="id2" value="{{id2}}">
+    <input type="hidden" name="id3" value="{{id3}}">
+</form>

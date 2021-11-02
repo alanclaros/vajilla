@@ -1,0 +1,45 @@
+{% load humanize %}
+{% load jinja_tags %}
+{% load static %}
+
+<td colspan="4" class="left w100">
+<table class="tablab w-100">
+    <tr>
+        <th class="left w-25">
+            CI/NIT
+        </th>
+        <th class="left w-35">
+            Apellidos
+        </th>
+        <th class="left w-30">
+            Nombres
+        </th>
+        <th class="center w-10">
+            &nbsp;
+        </th>
+    </tr>
+
+    {% for cliente in clientes %}
+    <tr class="backbuscar_fila{{forloop.counter|back_class}}">
+        <td class="left w-25">
+            {{cliente.ci_nit}}
+        </td>
+        <td class="left w-35">
+            {{cliente.apellidos}}
+        </td>
+        <td class="left w-30">
+            {{cliente.nombres}}
+        </td>
+        <td class="center w-10">
+            <input type="hidden" id="ci_nit_{{cliente.cliente_id}}" value="{{cliente.ci_nit}}">
+            <input type="hidden" id="apellidos_{{cliente.cliente_id}}" value="{{cliente.apellidos}}">
+            <input type="hidden" id="nombres_{{cliente.cliente_id}}" value="{{cliente.nombres}}">
+            <input type="hidden" id="telefonos_{{cliente.cliente_id}}" value="{{cliente.telefonos}}">
+            <input type="hidden" id="direccion_{{cliente.cliente_id}}" value="{{cliente.direccion}}">
+            <i class="nav-icon ico_modify_delete pointer fas fa-check-square" onclick="seleccionarClienteVenta('{{cliente.cliente_id}}'); nd();"
+                onMouseOver=" overlib('seleccionar cliente',WIDTH,'120',LEFT); return true" onMouseOut=" nd(); return true"></i>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+</td>

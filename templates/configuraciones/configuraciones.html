@@ -1,0 +1,116 @@
+{% load static %}
+{% load jinja_tags %}
+
+<div class="row align-items-center">
+    <div class="col-sm-2">&nbsp;</div>
+    <div class="col-sm-8">
+        <!--div contenedor-->
+        <br>
+        {% include 'partials/_alerts.html' %}
+
+        <form name="formulario" method="post" action="" onsubmit="return false;">
+            {% csrf_token %}
+            <table class="table3 w-100">
+                <tr>
+                    <th class="w-100 center" colspan="4">
+                        Configuraciones
+                    </th>
+                </tr>
+
+                <tr class="back1">
+                    <td class="right w-20">
+                        C/Pagina&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <input type="text" autocomplete="off" class="form-control input right w-70" name="cant_per_page" id="cant_per_page" value="{{configuraciones.cant_per_page}}" onkeyup="validarNumero(this);txtValid(this);" onblur="txtValid(this);">
+                    </td>
+                    <td class="right w-20">
+                        &nbsp;
+                    </td>
+                    <td class="left w-30">
+                        &nbsp;
+                    </td>
+                </tr>
+                
+                <tr class="back2">
+                    <td class="right w-20">
+                        Min. Devolucion&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <input type="text" autocomplete="off" class="form-control input right w-70" name="minutos_antes_devolucion" id="minutos_antes_devolucion" value="{{configuraciones.minutos_antes_devolucion}}" onkeyup="validarNumero(this);txtValid(this);" onblur="txtValid(this);">
+                    </td>
+                    <td class="right w-20">
+                        Min. Entrega&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <input type="text" autocomplete="off" class="form-control input right w-70" name="minutos_despues_entrega" id="minutos_despues_entrega" value="{{configuraciones.minutos_despues_entrega}}" onkeyup="validarNumero(this);txtValid(this);" onblur="txtValid(this);">
+                    </td>
+                </tr>
+                
+                <tr class="back1">
+                    <td class="right w-20">
+                        F. Serv.&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <select name="usar_fecha_servidor" id="usar_fecha_servidor" class="form-control input w-70 h-35">
+                            <option value="si" {% if configuraciones.usar_fecha_servidor == 'si' %}selected{% endif %}>SI</option>
+                            <option value="no" {% if configuraciones.usar_fecha_servidor == 'no' %}selected{% endif %}>NO</option>
+                        </select>
+                    </td>
+                    <td class="right w-20">
+                        Fecha&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <input name="fecha_sistema" name="fecha_sistema" id="fecha_sistema" value="{{ configuraciones.fecha_sistema|fecha_mostrar:'dd-MMM-yyyy' }}" type="text" class="form-control input w-90 left" readonly="readonly">
+                        <script type="text/javascript">
+                            var foopicker = new FooPicker({
+                                id: 'fecha_sistema',
+                                dateFormat: 'dd-MMM-yyyy'
+                            });
+                        </script>
+                    </td>
+                </tr>
+
+                <tr class="back2">
+                    <td colspan="4" class="center w-100">
+                        &nbsp;
+                    </td>
+                </tr>
+
+                {% if permisos.modificar %}
+                <tr class="back1">
+                    <td colspan="4" class="center w-100">
+                        <button class="btn btn-primary btn-sm" name="add_button" onclick="mandarFormularioConfiguracion();">
+                            <i class="nav-icon fas fa-save"></i>&nbsp;&nbsp;Guardar
+                        </button>
+                        <input type="hidden" name="module_x" value="{{module_x}}">
+                        <input type="hidden" name="operation_x" value="modify">
+                        <input type="hidden" name="control_form" value="{{control_form}}">
+                    </td>
+                </tr>
+                {% endif %}
+            </table>
+        </form>
+        <br>
+
+    </div>
+    <!--fin div contenedor-->
+    <div class="col-sm-2">&nbsp;</div>
+</div>
+
+<BR><BR>
+    <form name="form_operation" method="post" action="{{url_main}}">
+        {% csrf_token %}
+        <input type="hidden" name="module_x" value="{{module_x}}">
+        <input type="hidden" name="module_x2" value="{{module_x2}}">
+        <input type="hidden" name="module_x3" value="{{module_x3}}">
+        
+        <input type="hidden" name="operation_x" value="{{operation_x}}">
+        <input type="hidden" name="operation_x2" value="{{operation_x2}}">
+        <input type="hidden" name="operation_x3" value="{{operation_x3}}">
+        
+        <input type="hidden" name="id" value="{{id}}">
+        <input type="hidden" name="id2" value="{{id2}}">
+        <input type="hidden" name="id3" value="{{id3}}">
+    </form>
+</div>

@@ -1,0 +1,261 @@
+{% load jinja_tags %}
+{% load static %}
+
+<!--contenedor-->
+<div class="row align-items-center">
+    <div class="col-sm-2">&nbsp;</div>
+    <div class="col-md-8">
+        <!--contenido-->
+        <!--alerts-->
+        {% include 'partials/_alerts.html' %}
+        <br>
+        
+        <div class="link_blue right">
+            <span class="link_blue pointer" onclick="backWindow();">Volver</span>
+        </div>
+        <br>
+        <form name="formulario" method="post" action="" onsubmit="return false;">
+            {% csrf_token %}
+            <table class="table3 w-100">
+                <tr>
+                    <th colspan="4" class="center w-100">
+                        Cobros sobre la Venta
+                    </th>
+                </tr>
+                
+                <tr class="back1">
+                    <td class="right w-20 v-top">
+                        <i>Venta</i>&nbsp;:&nbsp;
+                    </td>
+                    <td colspan="3" class="left w-80">
+                        ({{venta.numero_contrato}}) {{venta.apellidos}} {{venta.nombres}}, CI: {{venta.ci_nit}}<br>
+                        Total: {{saldo_inicial}} Bs. ({{venta.fecha_evento|fecha_mostrar:"dd-MMM-yyyy"}})
+                    </td>
+                </tr>
+                <tr class="back2" id="div_clientes">
+                    <td colspan="4" class="left w100">
+                        &nbsp;
+                    </td>
+                </tr>
+                
+                <tr class="back1">
+                    <td colspan="4" class="right w100">
+                        <b><i>Garant&iacute;a : {{venta.garantia_bs}} Bs.</i></b>
+                    </td>
+                </tr>
+                <tr>
+                    <th colspan="4" class="center w-100">
+                        Total Alquiler Productos
+                    </th>
+                </tr>
+                <tr class="back1">
+                    <td colspan="4" class="right w100">
+                        <b>Total Alquiler : {{venta_y_garantia}} Bs.</b>
+                    </td>
+                </tr>
+                
+                <tr>
+                    <th colspan="4" class="center w100">
+                        Deuda en Refacci&oacute;n y Reposici&oacute;n
+                    </th>
+                </tr>
+                <tr class="back1">
+                    <td colspan="4" class="right w100">
+                        <i><b>Refacci&oacute;n y Reposici&oacute;n : {{deuda_detalles}} Bs.</b></i>
+                    </td>
+                </tr>
+                
+                <tr class="back1">
+                    <td colspan="4" class="right w100">
+                        <b>Total Ref. y Rep. : {{venta_garantia_detalles}} Bs.</b>
+                    </td>
+                </tr>
+                
+                <tr>
+                    <th colspan="4" class="center w-100">
+                        Gastos Realizados
+                    </th>
+                </tr>
+                
+                {% for gasto in lista_gastos %}
+                {% if gasto.status_id.status_id != estado_anulado %}
+                <tr class="{{forloop.counter|back_class}}">
+                    <td colspan="4" class="right w100">
+                        ({{gasto.concepto}}) &nbsp;&nbsp;&nbsp; {{gasto.monto}} Bs.
+                    </td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+                
+                <tr class="back1">
+                    <td colspan="4" class="right w100">
+                        <b><i>Total Gastos : {{total_gastos}} Bs.</i></b>
+                    </td>
+                </tr>
+                
+                <!-- <tr>
+                    <th colspan="4" class="center w-100">
+                        Total Alquiler Productos
+                    </th>
+                </tr>
+                <tr class="back1">
+                    <td colspan="4" class="right w100">
+                        <b>Total Alquiler : {{saldo_mas_gastos}} Bs.</b>
+                    </td>
+                </tr>
+                 -->
+                
+                <tr>
+                    <th colspan="4" class="center w-100">
+                        Cobros Realizados
+                    </th>
+                </tr>
+                {% for ingreso in lista_ingresos %}
+                <tr class="{% if ingreso.status_id.status_id == estado_anulado %}backanulado{% else %}{{forloop.counter|back_class}}{% endif %}">
+                    <td colspan="4" class="right w100">
+                        ({{ingreso.concepto}}) &nbsp;&nbsp;&nbsp; {{ingreso.monto}} Bs. 
+                        {% if ingreso.status_id.status_id != estado_anulado %}
+                        <button class="btn btn-primary btn-sm" id="btn_anular_{{ingreso.caja_ingreso_id}}" onclick="anularCobroVenta('{{ingreso.caja_ingreso_id}}');">
+                            <i class="nav-icon fas fa-ban"></i>&nbsp;&nbsp;Anular Cobro
+                        </button>
+                        <br>
+                        <div id="div_motivo_anula_{{ingreso.caja_ingreso_id}}" style="display: none;">
+                            <br>
+                            Motivo: <input type="text" class="form-control input w-70" onkeyup="txtValid(this);" onblur="txtValid(this);" autocomplete="off" value="" maxlength="250" id="motivo_anula_{{ingreso.caja_ingreso_id}}">
+                            <br><br>
+                            <button class="btn btn-secondary btn-xs" id="btn_cancelar_anular_{{ingreso.caja_ingreso_id}}" onclick="anularCobroVentaCancelar('{{ingreso.caja_ingreso_id}}');">
+                                <i class="nav-icon fas fa-ban"></i>&nbsp;&nbsp;Cancelar
+                            </button> &nbsp;&nbsp;&nbsp;
+                            <button class="btn btn-primary btn-xs" id="btn_confirmar_anular_{{ingreso.caja_ingreso_id}}" onclick="anularCobroVentaConfirmar('{{ingreso.caja_ingreso_id}}');">
+                                <i class="nav-icon fas fa-ban"></i>&nbsp;&nbsp;Anular
+                            </button>
+                        </div>
+                        {% endif %}
+                        <br>
+                    </td>
+                </tr>
+                {% endfor %}
+                <tr class="back1">
+                    <td colspan="4" class="right w100">
+                        <b><i>Total Cobros : {{total_cobros}} Bs.</i></b>
+                    </td>
+                </tr>
+                
+                <tr class="back1">
+                    <td colspan="4" class="center w-100">&nbsp;</td>
+                </tr>
+                
+                <!-- <tr class="back1">
+                    <td colspan="4" class="right w100">
+                        <i><b>Saldo sin Garant&iacute;a : {{saldo_venta}} Bs.</b></i>
+                    </td>
+                </tr> -->
+                <tr class="back1">
+                    <td colspan="4" class="right w100">
+                        <b>Saldo con Garant&iacute;a : {{saldo_sin_garantia}} Bs.</b>
+                    </td>
+                </tr>
+                
+                <tr class="back1">
+                    <td colspan="4" class="center w-100">&nbsp;</td>
+                </tr>
+                <tr>
+                    <th colspan="4" class="center w-100">
+                        Nuevo Cobro
+                    </th>
+                </tr>
+                <tr class="back1">
+                    <td class="right w-20">
+                        Caja&nbsp;:&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <select name="caja" id="caja" class="form-control input w-80 h-35">
+                            <option value="{{caja_usuario.caja_id}}">{{caja_usuario.caja}}</option>
+                        </select>
+                    </td>
+                    <td class="right w-20">
+                        Monto&nbsp;:&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <input type="text" autocomplete="off" class="form-control input right w-80" name="monto" id="monto" value="" maxlength="10" onkeyup="validarNumeroPunto(this);txtValid(this);" onblur="txtValid(this);">
+                    </td>
+                </tr>
+
+                <tr class="back2">
+                    <td class="right w-20">
+                        Fecha&nbsp;:&nbsp;
+                    </td>
+                    <td colspan="3" class="left w-80">
+                        <input name="fecha" id="fecha" value="{{fecha_actual}}" type="text" class="form-control input w-90 left" readonly="readonly">
+                    </td>
+                </tr>
+
+                <tr class="back1">
+                    <td class="right w-20">
+                        Concepto&nbsp;:&nbsp;
+                    </td>
+                    <td colspan="3" class="left w-80">
+                        <input type="text" autocomplete="off" class="form-control input left w-90" name="concepto" id="concepto" value="" maxlength="250" onkeyup="txtValid(this);" onblur="txtValid(this);">
+                    </td>
+                </tr>
+                
+                <tr class="back1">
+                    <td colspan="4" class="center w-100">&nbsp;</td>
+                </tr>
+                <tr class="back2">
+                    <td colspan="4" class="center w-100">
+                        <button class="btn btn-secondary btn-sm" name="button_cancel" onclick="backWindow();">
+                            <i class="nav-icon fas fa-arrow-alt-circle-left"></i>&nbsp;&nbsp;Cancelar
+                        </button>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <button class="btn btn-primary btn-sm" name="add_button" onclick="sendFormVenta('cobros', '');">
+                            <i class="nav-icon fas fa-save"></i>&nbsp;&nbsp;Guardar
+                        </button>
+                        <input type="hidden" name="cobros_x" value="acc">
+                        
+                        <input type="hidden" name="control_form" value="txt|1|S|monto|Monto;txt|2|S|concepto|Concepto">
+                        <input type="hidden" id="url_main" value="{{url_main}}">
+                        <input type="hidden" id="operation_x" name="operation_x" value="{{operation_x}}">
+                        <input type="hidden" name="module_x" value="{{module_x}}">
+                        <input type="hidden" name="id" value="{{id}}">
+                    </td>
+                </tr>
+            </table>
+            
+        </form>
+        <br>
+        <br>
+        <br>
+        <br>
+    </div>
+    <!--fin div contenido-->
+    <div class="col-sm-2">&nbsp;</div>
+</div>
+<!--fin div contenedor-->
+<form name="form_cancel" method="post" action="{{url_main}}">
+    {% csrf_token %}
+</form>
+
+<form name="form_print" method="post" action="{{url_main}}" target="_blank">
+    {% csrf_token %}
+    <input type="hidden" name="module_x" value="{{module_x}}">
+    <input type="hidden" name="operation_x" value="">
+    <input type="hidden" name="id" value="">
+</form>
+<form name="form_operation" method="post" action="{{url_main}}">
+    {% csrf_token %}
+    <input type="hidden" name="module_x" value="{{module_x}}">
+    <input type="hidden" name="module_x2" value="{{module_x2}}">
+    <input type="hidden" name="module_x3" value="{{module_x3}}">
+    
+    <input type="hidden" name="operation_x" value="{{operation_x}}">
+    <input type="hidden" name="operation_x2" value="{{operation_x2}}">
+    <input type="hidden" name="operation_x3" value="{{operation_x3}}">
+    
+    <input type="hidden" name="motivo_anula" value="">
+    <input type="hidden" name="ci_id" value="">
+    
+    <input type="hidden" name="id" value="{{id}}">
+    <input type="hidden" name="id2" value="{{id2}}">
+    <input type="hidden" name="id3" value="{{id3}}">
+</form>

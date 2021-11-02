@@ -1,0 +1,46 @@
+{% load humanize %}
+{% load jinja_tags %}
+{% load static %}
+
+<table class="tablab w-100">
+    <tr>
+        <th class="w-30 left">
+            Linea
+        </th>
+        <th class="w-60 left">
+            Producto
+        </th>
+        <th class="w-10 left">
+            &nbsp;
+        </th>
+    </tr>
+    {% if productos|length > 0 %}
+    {% for producto in productos %}
+    <tr class="back{{forloop.counter|back_class}}">
+        <td class="left w-30">
+            {{producto.linea_id.linea}}
+        </td>
+        <td class="left w-60">
+            {{producto.producto}}
+        </td>
+        <td class="center w-10">
+            <input type="hidden" id="productor_nombre_{{producto.producto_id}}" value="{{producto.linea_id.linea}}-{{producto.producto}}">
+            <i class="nav-icon ico_modify_delete pointer fas fa-check-circle" onclick="nd(); seleccionarProductoRelacionado('{{producto.producto_id}}');"
+                onMouseOver="overlib('seleccionar producto',CAPTION,'Producto',WIDTH,'120',LEFT); return true" onMouseOut=" nd(); return true"></i>
+        </td>
+    </tr>
+    {% endfor %}
+    {% else %}
+    <tr class="back1">
+        <td class="left w-30">
+            &nbsp;
+        </td>
+        <td class="left w-60">
+            <i>&#34;Sin resultados&#34;</i>
+        </td>
+        <td class="center w-10">
+            &nbsp;
+        </td>
+    </tr>
+    {% endif %}
+</table>
