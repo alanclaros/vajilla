@@ -629,6 +629,46 @@ function modalSetParameters(type, position, title, body, btn_cancel, btn_success
 	// }
 }
 
+function modalPrintSetParameters(type, position, title, body, btn_cancel, btn_success) {
+	//header
+	modalBackGround = document.getElementById('modalPrintHeader');
+	modalBackGround.className = 'modal-header modal_bg_' + type;
+	//body
+	modalBackGroundBody = document.getElementById('modalPrintBodyBG');
+	modalBackGroundBody.className = 'modal-body modal_bg_body_' + type;
+	//footer
+	modalBackGroundFooter = document.getElementById('modalPrintFooterBG');
+	modalBackGroundFooter.className = 'modal-footer justify-content-between modal_bg_footer_' + type;
+	//console.log(modalBackGround.className);
+
+	// modalPos = document.getElementById('modalPrintPosition');
+	// defPosition = "modal-dialog";
+	// if (position == 'center') {
+	// 	//defPosition = "modal-dialog modal-dialog-centered";
+	// 	defPosition = "modal-dialog-centered modal-sm";
+	// }
+	// modalPos.className = defPosition;
+
+	mTitle = document.getElementById('modalPrintTitle');
+	mTitle.innerHTML = title;
+	mBody = document.getElementById('modalPrintBody');
+	mBody.innerHTML = body;
+	mBtnCancel = document.getElementById('modalPrintB1');
+	mBtnCancel.innerHTML = btn_cancel;
+	mBtnSuccess = document.getElementById('modalPrintB2');
+	mBtnSuccess.innerHTML = btn_success;
+}
+
+//press success button 
+function modalPrintPressB1() {
+	const functionName = document.getElementById('modalPrintFunctionB1').value;
+	eval(functionName);
+}
+function modalPrintPressB2() {
+	const functionName = document.getElementById('modalPrintFunctionB2').value;
+	eval(functionName);
+}
+
 async function sendFormObject(formName, divLoad) {
 	var fd = new FormData(document.forms[formName]);
 

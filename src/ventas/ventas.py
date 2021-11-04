@@ -22,7 +22,9 @@ from controllers.cajas.CajasController import CajasController
 # reportes
 import io
 from django.http import FileResponse
-#from reportes.inventarios.rptIngresoAlmacen import rptIngresoAlmacen
+
+from reportes.ventas.rptVentasConCostos import rptVentasConCostos
+from reportes.ventas.rptVentasSinCostos import rptVentasSinCostos
 
 venta_controller = VentasController()
 lista_controller = ListasController()
@@ -40,14 +42,15 @@ def ventas_index(request):
     # operaciones
     if 'operation_x' in request.POST.keys():
         operation = request.POST['operation_x']
-        if not operation in ['', 'add', 'modify', 'anular', 'print',
+        if not operation in ['', 'add', 'modify', 'anular',
                              'buscar_cliente', 'stock_productos',
                              'pasar_venta', 'pasar_venta_anular',
                              'aumento_pedido',
                              'pasar_salida', 'pasar_salida_anular',
                              'pasar_vuelta', 'pasar_vuelta_anular',
                              'gastos', 'cobros',
-                             'pasar_finalizado', 'pasar_finalizado_anular']:
+                             'pasar_finalizado', 'pasar_finalizado_anular',
+                             'imprimir_con_costos', 'imprimir_sin_costos']:
             return render(request, 'pages/without_permission.html', {})
 
         # buscar cliente
@@ -154,26 +157,35 @@ def ventas_index(request):
             if not type(respuesta) == bool:
                 return respuesta
 
-        # if operation == 'print':
-            # if permisos.imprimir:
-            #     try:
-            #         # if not get_user_permission_operation(request.user, settings.MOD_VENTAS, 'imprimir', 'registro_id', int(request.POST['id'].strip()), 'inventarios', 'Registros'):
-            #         user_perfil = apps.get_model('permisos', 'UsersPerfiles').objects.get(user_id=request.user)
-            #         registro = apps.get_model('inventarios', 'Registros').objects.get(pk=int(request.POST['id']))
-            #         if not ingreso_almacen_controller.permission_registro(user_perfil, registro):
-            #             return render(request, 'pages/without_permission.html', {})
+        if operation == 'imprimir_con_costos':
+            if permisos.imprimir:
+                try:
+                    buffer = io.BytesIO()
+                    rptVentasConCostos(buffer, request.user, int(request.POST['id']))
 
-            #         buffer = io.BytesIO()
-            #         rptIngresoAlmacen(buffer, request.user, int(request.POST['id']))
+                    buffer.seek(0)
+                    return FileResponse(buffer, filename='venta_'+str(request.POST['id'])+'.pdf')
 
-            #         buffer.seek(0)
-            #         return FileResponse(buffer, filename='ingreso_almacen_'+str(request.POST['id'])+'.pdf')
+                except Exception as ex:
+                    return render(request, 'pages/internal_error.html', {'error': str(ex)})
 
-            #     except Exception as ex:
-            #         return render(request, 'pages/internal_error.html', {'error': str(ex)})
+            else:
+                return render(request, 'pages/without_permission.html', {})
 
-            # else:
-            #     return render(request, 'pages/without_permission.html', {})
+        if operation == 'imprimir_sin_costos':
+            if permisos.imprimir:
+                try:
+                    buffer = io.BytesIO()
+                    rptVentasSinCostos(buffer, request.user, int(request.POST['id']))
+
+                    buffer.seek(0)
+                    return FileResponse(buffer, filename='venta_'+str(request.POST['id'])+'.pdf')
+
+                except Exception as ex:
+                    return render(request, 'pages/internal_error.html', {'error': str(ex)})
+
+            else:
+                return render(request, 'pages/without_permission.html', {})
 
             # verificamos mensajes
     if 'nuevo_mensaje' in request.session.keys():

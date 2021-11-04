@@ -4,6 +4,10 @@ modalFunction = document.getElementById('modalFunctionSuccess');
 modalF = $('#modalForm');
 div_modulo = $("#div_block_content");
 
+modalPrintFunctionB1 = document.getElementById('modalPrintFunctionB1');
+modalPrintFunctionB2 = document.getElementById('modalPrintFunctionB2');
+modalFPrint = $('#modalPrint');
+
 function ventaWarning() {
     modalF = $('#modalForm');
     modalF.modal('toggle');
@@ -710,8 +714,22 @@ function anularCobroVentaSend() {
 
 //impresion de venta
 function imprimirVenta(venta_id) {
-    document.form_print.id.value = venta_id;
-    document.form_print.operation_x.value = 'print';
-    document.form_print.submit();
+    modalPrintFunctionB1.value = "imprimirVentaConCostos('" + venta_id + "');";
+    modalPrintFunctionB2.value = "imprimirVentaSinCostos('" + venta_id + "');";
+    modalPrintSetParameters('success', 'center', 'Ventas!', 'Imprimir Costos?', 'SI', 'NO');
+    modalFPrint.modal();
 }
 
+function imprimirVentaConCostos(venta_id) {
+    modalFPrint.modal('toggle');
+    document.forms['form_print'].elements['id'].value = venta_id;
+    document.forms['form_print'].elements['operation_x'].value = 'imprimir_con_costos';
+    document.forms['form_print'].submit();
+}
+
+function imprimirVentaSinCostos(venta_id) {
+    modalFPrint.modal('toggle');
+    document.forms['form_print'].elements['id'].value = venta_id;
+    document.forms['form_print'].elements['operation_x'].value = 'imprimir_sin_costos';
+    document.forms['form_print'].submit();
+}

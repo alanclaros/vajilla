@@ -186,10 +186,8 @@
                 
                 <td class="center w-5">
                     {% if permisos.imprimir == 1 %}
-                    {% with url_main=url_main url_id=venta.venta_id target='_blank' %}
-                    {% include 'partials/btn_imprimir.html' %}
-                    {% endwith %}
-                    {% else %} &nbsp;
+                    <i class="nav-icon ico_modify_delete pointer fas fa-print" onclick="imprimirVenta('{{venta.venta_id}}');nd();"
+                        onMouseOver=" overlib('Imprimir esta operacion',CAPTION,'Imprimir',WIDTH,'120',LEFT); return true" onMouseOut=" nd(); return true"></i>
                     {% endif %}
                 </td>
                 
