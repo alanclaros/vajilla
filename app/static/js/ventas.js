@@ -733,3 +733,22 @@ function imprimirVentaSinCostos(venta_id) {
     document.forms['form_print'].elements['operation_x'].value = 'imprimir_sin_costos';
     document.forms['form_print'].submit();
 }
+
+//impresion de venta gasto
+function imprimirVentaGasto(gasto_id) {
+    document.forms['form_print'].elements['id'].value = gasto_id;
+    document.forms['form_print'].submit();
+}
+
+//impresion de venta cobro
+function imprimirVentaCobro(cobro_id) {
+    document.forms['form_print'].elements['id'].value = cobro_id;
+    document.forms['form_print'].submit();
+}
+
+//impresion de venta resumen
+function imprimirVentaResumen(venta_id) {
+    document.forms['form_print'].elements['id'].value = venta_id;
+    document.forms['form_print'].elements['operation_x'].value = 'print_resumen';
+    document.forms['form_print'].submit();
+}

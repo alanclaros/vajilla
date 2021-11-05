@@ -46,6 +46,9 @@
                 <tr class="{% if gasto.status_id.status_id == estado_anulado %}backanulado{% else %}{{forloop.counter|back_class}}{% endif %}">
                     <td colspan="4" class="right w100">
                         {{gasto.monto}} Bs. ({{gasto.concepto}}) &nbsp;&nbsp;&nbsp;
+                        <i class="nav-icon ico_modify_delete pointer fas fa-print" onclick="imprimirVentaGasto('{{gasto.caja_egreso_id}}');nd();"
+                        onMouseOver=" overlib('Imprimir esta operacion',CAPTION,'Imprimir',WIDTH,'120',LEFT); return true" onMouseOut=" nd(); return true"></i>
+                        &nbsp;&nbsp;&nbsp;
                         {% if gasto.status_id.status_id != estado_anulado %}
                         <button class="btn btn-primary btn-sm" id="btn_anular_{{gasto.caja_egreso_id}}" onclick="anularGastoVenta('{{gasto.caja_egreso_id}}');">
                             <i class="nav-icon fas fa-ban"></i>&nbsp;&nbsp;Anular Gasto
@@ -152,7 +155,7 @@
 <form name="form_print" method="post" action="{{url_main}}" target="_blank">
     {% csrf_token %}
     <input type="hidden" name="module_x" value="{{module_x}}">
-    <input type="hidden" name="operation_x" value="">
+    <input type="hidden" name="operation_x" value="gastos_print">
     <input type="hidden" name="id" value="">
 </form>
 <form name="form_operation" method="post" action="{{url_main}}">

@@ -114,6 +114,10 @@
                 <tr class="{% if ingreso.status_id.status_id == estado_anulado %}backanulado{% else %}{{forloop.counter|back_class}}{% endif %}">
                     <td colspan="4" class="right w100">
                         ({{ingreso.concepto}}) &nbsp;&nbsp;&nbsp; {{ingreso.monto}} Bs. 
+                        &nbsp;&nbsp;&nbsp;
+                        <i class="nav-icon ico_modify_delete pointer fas fa-print" onclick="imprimirVentaCobro('{{ingreso.caja_ingreso_id}}');nd();"
+                        onMouseOver=" overlib('Imprimir esta operacion',CAPTION,'Imprimir',WIDTH,'120',LEFT); return true" onMouseOut=" nd(); return true"></i>
+                        &nbsp;&nbsp;&nbsp;
                         {% if ingreso.status_id.status_id != estado_anulado %}
                         <button class="btn btn-primary btn-sm" id="btn_anular_{{ingreso.caja_ingreso_id}}" onclick="anularCobroVenta('{{ingreso.caja_ingreso_id}}');">
                             <i class="nav-icon fas fa-ban"></i>&nbsp;&nbsp;Anular Cobro
@@ -153,6 +157,15 @@
                 <tr class="back1">
                     <td colspan="4" class="right w100">
                         <b>Saldo con Garant&iacute;a : {{saldo_sin_garantia}} Bs.</b>
+                    </td>
+                </tr>
+                <tr class="back1">
+                    <td colspan="4" class="right w100">
+                        <b>Imprimir Todo : </b>
+                        &nbsp;&nbsp;&nbsp;
+                        <i class="nav-icon ico_modify_delete pointer fas fa-print" onclick="imprimirVentaResumen('{{venta.venta_id}}');nd();"
+                        onMouseOver=" overlib('Imprimir todo',CAPTION,'Imprimir',WIDTH,'120',LEFT); return true" onMouseOut=" nd(); return true"></i>
+                        &nbsp;&nbsp;&nbsp;
                     </td>
                 </tr>
                 
@@ -239,7 +252,7 @@
 <form name="form_print" method="post" action="{{url_main}}" target="_blank">
     {% csrf_token %}
     <input type="hidden" name="module_x" value="{{module_x}}">
-    <input type="hidden" name="operation_x" value="">
+    <input type="hidden" name="operation_x" value="cobros_print">
     <input type="hidden" name="id" value="">
 </form>
 <form name="form_operation" method="post" action="{{url_main}}">

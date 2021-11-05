@@ -1,4 +1,4 @@
-from django.apps.registry import apps
+from django.apps import apps
 from django.shortcuts import render
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib import messages
@@ -25,6 +25,10 @@ from django.http import FileResponse
 
 from reportes.ventas.rptVentasConCostos import rptVentasConCostos
 from reportes.ventas.rptVentasSinCostos import rptVentasSinCostos
+from reportes.ventas.rptVentasResumen import rptVentasResumen
+
+from reportes.cajas.rptCajaEgresoRecibo import rptCajaEgresoRecibo
+from reportes.cajas.rptCajaIngresoRecibo import rptCajaIngresoRecibo
 
 venta_controller = VentasController()
 lista_controller = ListasController()
@@ -48,9 +52,10 @@ def ventas_index(request):
                              'aumento_pedido',
                              'pasar_salida', 'pasar_salida_anular',
                              'pasar_vuelta', 'pasar_vuelta_anular',
-                             'gastos', 'cobros',
+                             'gastos', 'gastos_print', 'cobros', 'cobros_print',
                              'pasar_finalizado', 'pasar_finalizado_anular',
-                             'imprimir_con_costos', 'imprimir_sin_costos']:
+                             'imprimir_con_costos', 'imprimir_sin_costos',
+                             'print_resumen']:
             return render(request, 'pages/without_permission.html', {})
 
         # buscar cliente
@@ -180,6 +185,51 @@ def ventas_index(request):
 
                     buffer.seek(0)
                     return FileResponse(buffer, filename='venta_'+str(request.POST['id'])+'.pdf')
+
+                except Exception as ex:
+                    return render(request, 'pages/internal_error.html', {'error': str(ex)})
+
+            else:
+                return render(request, 'pages/without_permission.html', {})
+
+        if operation == 'gastos_print':
+            if permisos.imprimir:
+                try:
+                    buffer = io.BytesIO()
+                    rptCajaEgresoRecibo(buffer, int(request.POST['id']))
+
+                    buffer.seek(0)
+                    return FileResponse(buffer, filename='ce_venta_recibo.pdf')
+
+                except Exception as ex:
+                    return render(request, 'pages/internal_error.html', {'error': str(ex)})
+
+            else:
+                return render(request, 'pages/without_permission.html', {})
+
+        if operation == 'cobros_print':
+            if permisos.imprimir:
+                try:
+                    buffer = io.BytesIO()
+                    rptCajaIngresoRecibo(buffer, int(request.POST['id']))
+
+                    buffer.seek(0)
+                    return FileResponse(buffer, filename='ci_venta_recibo.pdf')
+
+                except Exception as ex:
+                    return render(request, 'pages/internal_error.html', {'error': str(ex)})
+
+            else:
+                return render(request, 'pages/without_permission.html', {})
+
+        if operation == 'print_resumen':
+            if permisos.imprimir:
+                try:
+                    buffer = io.BytesIO()
+                    rptVentasResumen(buffer, request.user, int(request.POST['id']))
+
+                    buffer.seek(0)
+                    return FileResponse(buffer, filename='venta_resumen.pdf')
 
                 except Exception as ex:
                     return render(request, 'pages/internal_error.html', {'error': str(ex)})

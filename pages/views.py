@@ -41,6 +41,7 @@ from src.inventarios.movimientos_almacen import movimientos_almacen_index
 
 # ventas
 from src.ventas.ventas import ventas_index
+from src.ventas.pendientes import pendientes_index
 
 # # reportes
 # from src.reportes.reportes import reportes_index
@@ -119,6 +120,10 @@ def index(request):
         # ventas
         if module_id == settings.MOD_VENTAS:
             return ventas_index(request)
+
+        # pendientes
+        if module_id == settings.MOD_PENDIENTES:
+            return pendientes_index(request)
 
         context = {
             'module_id': module_id,

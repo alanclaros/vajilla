@@ -76,8 +76,16 @@ def rptCajaEgresoRecibo(buffer, caja_egreso_id):
     texto.setFillColorRGB(0, 0, 0)
 
     # dibujamos
-    # usuario operacion
     pdf.setFont('Helvetica', 10)
+    # verificamos si es de una venta
+    if ce_data.venta_id != 0:
+        venta = apps.get_model('ventas', 'Ventas').objects.get(pk=ce_data.venta_id)
+        pdf.drawRightString(posX*mm, posY*mm, 'Venta: ')
+        pdf.drawString(posX*mm, posY*mm, '#' + venta.numero_contrato + ' ' + venta.apellidos + ' ' + venta.nombres + ' (' + str(venta.venta_id) + ')')
+        posY = posY - altoTxt
+        texto.setTextOrigin(posX*mm, posY*mm)
+
+    # usuario operacion
     pdf.drawRightString(posX*mm, posY*mm, 'Usuario: ')
     texto.textOut(usuario_operacion)
 
