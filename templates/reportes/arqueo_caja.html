@@ -1,0 +1,96 @@
+{% load jinja_tags %}
+{% load static %}
+
+<!--contenedor-->
+<div class="row align-items-center">
+    <div class="col-sm-2">&nbsp;</div>
+    <div class="col-sm-8">
+        <!--contenido-->
+        <!--alerts-->
+        {% include 'partials/_alerts.html' %}
+        <br>
+
+        <div class="link_blue right">
+            <span class="link_blue pointer" onclick="backWindow();">Volver</span>
+        </div>
+        <br>
+
+        <form name="formulario" method="post" action="" onsubmit="return false;">
+            {% csrf_token %}
+            <table class="table3 w-100">
+                <tr>
+                    <th colspan="4" class="center w-100">
+                        Arqueo de Caja
+                    </th>
+                </tr>
+
+                <tr class="back1">
+                    <td class="right w-20">
+                        Caja :&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <select name="caja" id="caja" class="form-control input w-90 h-35">
+                            {% for caja in lista_cajas %}
+                            {% if permisos.permiso %}
+                            <option value="{{caja.caja_id}}">{{caja.punto_id.sucursal_id.sucursal}}-{{caja.caja}}</option>
+                            {% else %}
+                            <option value="{{caja.caja_id}}">{{caja.caja}}</option>
+                            {% endif %}
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td class="right w-20">
+                        Fecha :&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <input name="fecha" id="fecha" value="{{fecha_actual}}" type="text" class="form-control input w-90 left" readonly="readonly">
+                        <script type="text/javascript">
+                            var foopicker = new FooPicker({
+                                id: 'fecha',
+                                dateFormat: 'dd-MMM-yyyy'
+                            });
+                        </script>
+                    </td>
+                </tr>
+
+                <tr class="back2">
+                    <td colspan="4" class="w-100 center">&nbsp;</td>
+                </tr>
+                <tr class="back1">
+                    <td colspan="4" class="w-100 center">
+                        <button class="btn btn-primary btn-sm" name="add_button" onclick="arqueoCaja();">
+                            <i class="nav-icon far fa-clone"></i>&nbsp;&nbsp;Mostrar
+                        </button>
+                    </td>
+                </tr>
+            </table>
+        </form>
+        <br>
+    </div>
+    <!--fin div contenido-->
+    <div class="col-sm-2">&nbsp;</div>
+</div>
+<!--fin div contenedor-->
+<form name="form_print" method="post" action="" target="_blank">
+    {% csrf_token %}
+    <input type="hidden" name="module_x" value="{{module_x}}">
+    <input type="hidden" name="operation_x" value="{{operation_x}}">
+    <input type="hidden" name="operation_x2" value="">
+    <input type="hidden" name="id" value="">
+    <input type="hidden" name="fecha" value="">
+</form>
+
+<form name="form_operation" method="post" action="{{url_main}}">
+    {% csrf_token %}
+    <input type="hidden" name="module_x" value="{{module_x}}">
+    <input type="hidden" name="module_x2" value="{{module_x2}}">
+    <input type="hidden" name="module_x3" value="{{module_x3}}">
+    
+    <input type="hidden" name="operation_x" value="{{operation_x}}">
+    <input type="hidden" name="operation_x2" value="{{operation_x2}}">
+    <input type="hidden" name="operation_x3" value="{{operation_x3}}">
+    
+    <input type="hidden" name="id" value="{{id}}">
+    <input type="hidden" name="id2" value="{{id2}}">
+    <input type="hidden" name="id3" value="{{id3}}">
+</form>

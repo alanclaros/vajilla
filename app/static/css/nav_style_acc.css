@@ -1231,7 +1231,7 @@ tabla de costo
 }
 
 .back_aviso{
-    background-color: #007BFF;
+    background-color: #EC6A00;
     color: #FFFFFF;
     font-size: 15px;
 }
@@ -1240,6 +1240,20 @@ tabla de costo
     color: #666666;
     font-size: 13px;
     background-color: #F0F0F0;
+    line-height: 18px;
+}
+
+.content_aviso_warning{
+    color: #666666;
+    font-size: 13px;
+    background-color: #FFFFB9;
+    line-height: 18px;
+}
+
+.content_aviso_danger{
+    color: #000000;
+    font-size: 13px;
+    background-color: #FF8888;
     line-height: 18px;
 }
 

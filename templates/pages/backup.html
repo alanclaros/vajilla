@@ -1,0 +1,56 @@
+{% load jinja_tags %}
+{% load static %}
+
+<!--contenedor-->
+<div class="row align-items-center">
+    <div class="col-sm-2">&nbsp;</div>
+    <div class="col-sm-8">
+        <!--contenido-->
+        <!--alerts-->
+        {% include 'partials/_alerts.html' %}
+        <br>
+        <br>
+
+        <form name="formulario" method="post" action="" onsubmit="return false;">
+            {% csrf_token %}
+            <table class="table3 w-100">
+                <tr>
+                    <th colspan="4" class="center w-100">
+                        Backup
+                    </th>
+                </tr>
+
+                <tr class="back2">
+                    <td colspan="4" class="w-100 center">&nbsp;</td>
+                </tr>
+                <tr class="back1">
+                    <td colspan="4" class="w-100 center">
+                        <button class="btn btn-primary btn-sm" name="add_button" onclick="makeBackup();">
+                            <i class="nav-icon far fa-clone"></i>&nbsp;&nbsp;Hacer Copia
+                        </button>
+                        <input type="hidden" name="url_main" id="url_main" value="{{url_main}}">
+                        <input type="hidden" name="url_actual" id="url_actual" value="{{url_actual}}">
+                    </td>
+                </tr>
+            </table>
+        </form>
+        <br>
+    </div>
+    <!--fin div contenido-->
+    <div class="col-sm-2">&nbsp;</div>
+</div>
+<!--fin div contenedor-->
+<form name="form_operation" method="post" action="{{url_main}}" target="_blank">
+    {% csrf_token %}
+    <input type="hidden" name="module_x" value="{{module_x}}">
+    <input type="hidden" name="module_x2" value="{{module_x2}}">
+    <input type="hidden" name="module_x3" value="{{module_x3}}">
+    
+    <input type="hidden" name="operation_x" value="{{operation_x}}">
+    <input type="hidden" name="operation_x2" value="{{operation_x2}}">
+    <input type="hidden" name="operation_x3" value="{{operation_x3}}">
+    
+    <input type="hidden" name="id" value="{{id}}">
+    <input type="hidden" name="id2" value="{{id2}}">
+    <input type="hidden" name="id3" value="{{id3}}">
+</form>

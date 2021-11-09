@@ -1,5 +1,6 @@
 
-from utils.dates_functions import get_date_show
+import os
+from utils.dates_functions import add_minutes_datetime, get_date_show, get_date_to_db, get_fecha_int, get_minutes_date1_sub_date2
 from django.db import connection
 from django.shortcuts import render
 
@@ -43,10 +44,16 @@ from src.inventarios.movimientos_almacen import movimientos_almacen_index
 from src.ventas.ventas import ventas_index
 from src.ventas.pendientes import pendientes_index
 
-# # reportes
-# from src.reportes.reportes import reportes_index
-# # recibos
-# from src.calendario.lista_cobros import lista_cobros_index
+# reportes
+from src.reportes.reportes import reportes_index
+from utils.permissions import current_date, get_permissions_user, get_system_settings, get_user_permission_operation
+from datetime import datetime
+# xls
+import openpyxl
+import zipfile
+from django.http import FileResponse, HttpResponse
+# conexion directa a la base de datos
+from django.db import connection
 
 
 def index(request):
@@ -124,6 +131,14 @@ def index(request):
         # pendientes
         if module_id == settings.MOD_PENDIENTES:
             return pendientes_index(request)
+
+        # reportes
+        if module_id == settings.MOD_REPORTES:
+            return reportes_index(request)
+
+        # backup
+        if module_id == settings.MOD_TABLAS_BACKUP:
+            return backup(request)
 
         context = {
             'module_id': module_id,
@@ -247,6 +262,146 @@ def cambiar_password(request):
     return render(request, 'pages/cambiar_password.html', context)
 
 
+def backup(request):
+    """cambio de password de los usuarios"""
+    usuario = request.user
+    id_usuario = usuario.id
+    if id_usuario:
+        autenticado = 'si'
+    else:
+        autenticado = 'no'
+        return render(request, 'pages/without_permission.html')
+
+    if not get_user_permission_operation(request.user, settings.MOD_TABLAS_BACKUP, 'lista'):
+        return render(request, 'pages/without_permission.html')
+
+    if 'operation_x' in request.POST.keys():
+        operation = request.POST['operation_x']
+        lista_tablas = [['auth', 'User', 'auth_user'], ['status', 'Status', 'status'],
+
+                        ['permisos', 'Perfiles', 'perfiles'], ['permisos', 'Modulos', 'modulos'], ['permisos', 'UsersPerfiles', 'users_perfiles'], ['permisos', 'UsersModulos', 'users_modulos'],
+
+                        ['configuraciones', 'Configuraciones', 'configuraciones'], ['configuraciones', 'Paises', 'paises'], ['configuraciones', 'Ciudades', 'ciudades'], ['configuraciones', 'Sucursales', 'sucursales'],
+                        ['configuraciones', 'Puntos', 'puntos'], ['configuraciones', 'TiposMonedas', 'tipos_monedas'], ['configuraciones', 'Monedas', 'monedas'],
+                        ['configuraciones', 'Cajas', 'cajas'], ['configuraciones', 'Almacenes', 'almacenes'], ['configuraciones', 'Lineas', 'lineas', 'puntos_almacenes'],
+
+                        ['cajas', 'CajasIngresos', 'cajas_ingresos'], ['cajas', 'CajasEgresos', 'cajas_egresos'], ['cajas', 'CajasOperaciones', 'cajas_operaciones'],
+                        ['cajas', 'CajasOperacionesDetalles', 'cajas_operaciones_detalles'], ['cajas', 'CajasMovimientos', 'cajas_movimientos'],
+
+                        ['clientes', 'Clientes', 'clientes'],
+
+                        ['productos', 'Productos', 'productos'], ['productos', 'ProductosImagenes', 'productos_imagenes'], ['productos', 'ProductosRelacionados', 'productos_relacionados'],
+
+                        ['inventarios', 'Registros', 'registros'], ['inventarios', 'RegistrosDetalles', 'registros_detalles'], ['inventarios', 'Stock', 'stock'],
+
+                        ['ventas', 'Ventas', 'ventas'], ['ventas', 'VentasDetalles', 'ventas_detalles'], ['ventas', 'VentasAumentos', 'ventas_aumentos'], ['ventas', 'VentasAumentosDetalles', 'ventas_aumentos_detalles']
+                        ]
+
+        if operation == 'add':
+            # leemos las tablas y realizamos la copia
+            wb = openpyxl.Workbook()
+            # creamos las hojas
+            for tabla in lista_tablas:
+                ws = wb.create_sheet(tabla[2])
+                modelo = apps.get_model(tabla[0], tabla[1])
+
+                # print('modelo...: ', modelo)
+                # for field in modelo._meta.fields:
+                #     columna = field.get_attname_column()
+                #     print('columna: ', columna)
+
+                #columna = modelo._meta.get_field(arg)
+                #ws.append(('111', '22222'))
+
+                # columnas = modelo._meta.fields
+                # print('columnas...: ', len(columnas))
+
+                aux_columnas = modelo._meta.fields
+                len_columnas = len(aux_columnas)
+
+                lista_filas = []
+                lista_select = ''
+                for field in modelo._meta.fields:
+                    #columna = field[1]
+                    #print('columna: ', columna)
+                    columna = field.get_attname_column()
+                    nombre_columna = columna[1]
+                    lista_filas.append(nombre_columna)
+                    lista_select += nombre_columna + ','
+
+                if len(lista_select) > 0:
+                    lista_select = lista_select[0:len(lista_select)-1]
+
+                # titulos columnas
+                ws.append(lista_filas)
+
+                # datos
+                nombre_tabla = tabla[2]
+                sql = f"SELECT {lista_select} FROM {nombre_tabla} "
+                with connection.cursor() as cursor:
+                    cursor.execute(sql)
+                    rows = cursor.fetchall()
+                    for row in rows:
+                        fila = []
+                        for i in range(len_columnas):
+                            #print('i...: ', i)
+                            fila.append(row[i])
+
+                        # aniadimos la fila
+                        ws.append(fila)
+
+            # response = HttpResponse(content_type="application/msexcel")
+            # response["Content-Disposition"] = "attachment; filename=backup.xlsx"
+            # wb.save(response)
+            # return response
+            ruta_settings = settings.STATICFILES_DIRS[0]
+            ruta_guardar = os.path.join(ruta_settings, 'img', 'files_download', 'backup.xlsx')
+            loczip = os.path.join(ruta_settings, 'img', 'files_download', 'backup.zip')
+
+            # eliminamos archivos si es que existen
+            if os.path.isfile(ruta_guardar):
+                os.unlink(ruta_guardar)
+            if os.path.isfile(loczip):
+                os.unlink(loczip)
+
+            wb.save(ruta_guardar)
+            wb.close()
+
+            zip = zipfile.ZipFile(loczip, "w")
+            # con path
+            # zip.write(ruta_guardar)
+            # quitando el path
+            zip.write(ruta_guardar, os.path.basename(ruta_guardar))
+            zip.close()
+
+            zip_file = open(loczip, 'rb')
+            return FileResponse(zip_file)
+
+            # print('zip fileee....: ', zip_file)
+            # response = HttpResponse(zip_file, content_type='application/force-download')
+            # print('response...: ', response)
+            # response['Content-Disposition'] = 'attachment; filename="%s"' % 'backup.zip'
+            # return response
+
+    context = {
+        'autenticado': autenticado,
+        'url_main': '',
+        'module_x': settings.MOD_TABLAS_BACKUP,
+        'module_x2': '',
+        'module_x3': '',
+
+        'operation_x': 'add',
+        'operation_x2': '',
+        'operation_x3': '',
+
+        'id': '',
+        'id2': '',
+        'id3': '',
+    }
+
+    return render(request, 'pages/backup.html', context)
+
+
 def reemplazar_codigo_html(cadena):
     retorno = cadena
     retorno = retorno.replace('&', "&#38;")
@@ -304,19 +459,14 @@ def notificaciones_pagina(request):
 
     # usuarios autenticados
     try:
-        user_perfil = apps.get_model('permisos', 'UsersPerfiles').objects.get(user_id=request.user)
-
-        lista_notificaciones = []
-        cantidad = 0
-        cantidad_rojos = 0
-        cantidad_normal = 0
+        listado = lista_para_notificar(request.user)
 
         # context para el html
         context = {
-            'notificaciones': lista_notificaciones,
-            'cantidad': cantidad,
-            'cantidad_rojos': cantidad_rojos,
-            'cantidad_normal': cantidad_normal,
+            'notificaciones': listado['lista_notificaciones'],
+            'cantidad': listado['cantidad'],
+            'cantidad_danger': listado['cantidad_danger'],
+            'cantidad_warning': listado['cantidad_warning'],
             'autenticado': autenticado,
         }
 
@@ -326,8 +476,160 @@ def notificaciones_pagina(request):
         print('ERROR ' + str(e))
         context = {
             'cantidad': 0,
-            'cantidad_rojos': 0,
+            'cantidad_danger': 0,
+            'cantidad_warning': 0,
             'notificaciones': {},
             'autenticado': autenticado,
         }
         return render(request, 'pages/notificaciones_pagina.html', context)
+
+
+def lista_para_notificar(user):
+    # usuarios autenticados
+    retorno = {}
+    lista_notificaciones = []
+    cantidad = 0
+    cantidad_danger = 0
+    cantidad_warning = 0
+
+    try:
+        # ventas que se tienen que entregar
+        hora = '0' + str(datetime.now().hour) if len(str(datetime.now().hour)) == 1 else str(datetime.now().hour)
+        minuto = '0' + str(datetime.now().minute) if len(str(datetime.now().minute)) == 1 else str(datetime.now().minute)
+        segundo = '0' + str(datetime.now().second) if len(str(datetime.now().second)) == 1 else str(datetime.now().second)
+
+        fecha_actual = current_date() + ' ' + hora + ':' + minuto + ':' + segundo
+        fecha_actual_int = get_fecha_int(fecha_actual)
+        tiempo_aviso_entrega = 6*60  # minutos, 6 horas
+        tiempo_aviso_entrega_tarde = 3*60  # 3 horas
+
+        tiempo_aviso_recoger = 6*60  # minutos, 6 horas
+        tiempo_aviso_recoger_tarde = 3*60  # 3 horas
+
+        tiempo_aviso_finalizar = 3*60  # minutos, 3 horas
+        tiempo_aviso_finalizar_tarde = 6*60  # 6 horas
+
+        # # para entregar
+        # fecha_aviso_entrega = add_minutes_datetime(fecha=fecha_actual, formato_ori='yyyy-mm-dd HH:ii:ss', minutos_add=0-tiempo_aviso_entrega)
+        # fecha_aviso_entrega_tarde = add_minutes_datetime(fecha=fecha_actual, formato_ori='yyyy-mm-dd HH:ii:ss', minutos_add=0-tiempo_aviso_entrega_tarde)
+
+        # # para recoger
+        # fecha_aviso_recoger = add_minutes_datetime(fecha=fecha_actual, formato_ori='yyyy-mm-dd HH:ii:ss', minutos_add=0-tiempo_aviso_recoger)
+        # fecha_aviso_recoger_tarde = add_minutes_datetime(fecha=fecha_actual, formato_ori='yyyy-mm-dd HH:ii:ss', minutos_add=0-tiempo_aviso_recoger_tarde)
+
+        # # para finalizar
+        # fecha_aviso_finalizar = add_minutes_datetime(fecha=fecha_actual, formato_ori='yyyy-mm-dd HH:ii:ss', minutos_add=tiempo_aviso_finalizar)
+        # fecha_aviso_finalizar_tarde = add_minutes_datetime(fecha=fecha_actual, formato_ori='yyyy-mm-dd HH:ii:ss', minutos_add=tiempo_aviso_finalizar_tarde)
+
+        sql = "SELECT v.numero_contrato, v.apellidos, v.nombres, v.fecha_evento, v.fecha_entrega, v.fecha_devolucion, v.status_id "
+        sql += f"FROM ventas v WHERE v.status_id IN ('{settings.STATUS_VENTA}', '{settings.STATUS_SALIDA_ALMACEN}', '{settings.STATUS_VUELTA_ALMACEN}') "
+        sql += "ORDER BY v.fecha_evento, v.fecha_entrega "
+        #print('sql: ', sql)
+
+        with connection.cursor() as cursor:
+            cursor.execute(sql)
+            rows = cursor.fetchall()
+            for row in rows:
+                fecha_evento = row[3]
+                numero_contrato = row[0]
+                fecha_entrega = row[4]
+                fecha_entrega_r1 = add_minutes_datetime(fecha_entrega, minutos_add=0-tiempo_aviso_entrega)
+                fecha_entrega_r1_int = get_fecha_int(fecha_entrega_r1)
+                fecha_entrega_r2 = add_minutes_datetime(fecha_entrega, minutos_add=0-tiempo_aviso_entrega_tarde)
+                fecha_entrega_r2_int = get_fecha_int(fecha_entrega_r2)
+
+                fecha_devolucion = row[5]
+                fecha_devolucion_r1 = add_minutes_datetime(fecha_devolucion, minutos_add=0-tiempo_aviso_recoger)
+                fecha_devolucion_r1_int = get_fecha_int(fecha_devolucion_r1)
+                fecha_devolucion_r2 = add_minutes_datetime(fecha_devolucion, minutos_add=0-tiempo_aviso_recoger_tarde)
+                fecha_devolucion_r2_int = get_fecha_int(fecha_devolucion_r2)
+                status_venta = row[6]
+
+                fecha_finalizar_r1 = add_minutes_datetime(fecha_devolucion, minutos_add=tiempo_aviso_finalizar)
+                fecha_finalizar_r1_int = get_fecha_int(fecha_finalizar_r1)
+                fecha_finalizar_r2 = add_minutes_datetime(fecha_devolucion, minutos_add=tiempo_aviso_finalizar_tarde)
+                fecha_finalizar_r2_int = get_fecha_int(fecha_finalizar_r2)
+
+                if status_venta == settings.STATUS_VENTA:
+                    if fecha_actual_int >= fecha_entrega_r1_int and fecha_actual_int <= fecha_entrega_r2_int:
+                        dato = {}
+                        dato['tipo'] = 'E'
+                        dato['tipo_notificacion'] = 'warning'
+                        fecha = get_date_show(fecha=fecha_entrega, formato='dd-MMM-yyyy HH:ii', formato_ori='yyyy-mm-dd HH:ii:ss')
+                        dato['descripcion'] = 'E - ' + fecha + ', &#35; ' + numero_contrato
+                        dato['url'] = 'ventas'
+                        lista_notificaciones.append(dato)
+                        cantidad_warning += 1
+                        cantidad += 1
+                    elif fecha_actual_int > fecha_entrega_r2_int:
+                        dato = {}
+                        dato['tipo'] = 'E'
+                        dato['tipo_notificacion'] = 'danger'
+                        fecha = get_date_show(fecha=fecha_entrega, formato='dd-MMM-yyyy HH:ii', formato_ori='yyyy-mm-dd HH:ii:ss')
+                        dato['descripcion'] = 'E - ' + fecha + ', &#35; ' + numero_contrato
+                        dato['url'] = 'ventas'
+                        lista_notificaciones.append(dato)
+                        cantidad_danger += 1
+                        cantidad += 1
+
+                if status_venta == settings.STATUS_SALIDA_ALMACEN:
+                    if fecha_actual_int >= fecha_devolucion_r1_int and fecha_actual_int <= fecha_devolucion_r2_int:
+                        dato = {}
+                        dato['tipo'] = 'R'
+                        dato['tipo_notificacion'] = 'warning'
+                        fecha = get_date_show(fecha=fecha_devolucion, formato='dd-MMM-yyyy HH:ii', formato_ori='yyyy-mm-dd HH:ii:ss')
+                        dato['descripcion'] = 'R - ' + fecha + ', &#35; ' + numero_contrato
+                        dato['url'] = 'ventas'
+                        lista_notificaciones.append(dato)
+                        cantidad_warning += 1
+                        cantidad += 1
+
+                    if fecha_actual_int > fecha_devolucion_r2_int:
+                        dato = {}
+                        dato['tipo'] = 'R'
+                        dato['tipo_notificacion'] = 'danger'
+                        fecha = get_date_show(fecha=fecha_devolucion, formato='dd-MMM-yyyy HH:ii', formato_ori='yyyy-mm-dd HH:ii:ss')
+                        dato['descripcion'] = 'R - ' + fecha + ', &#35; ' + numero_contrato
+                        dato['url'] = 'ventas'
+                        lista_notificaciones.append(dato)
+                        cantidad_danger += 1
+                        cantidad += 1
+
+                if status_venta == settings.STATUS_VUELTA_ALMACEN:
+                    if fecha_actual_int >= fecha_finalizar_r1_int and fecha_actual_int <= fecha_finalizar_r2_int:
+                        dato = {}
+                        dato['tipo'] = 'F'
+                        dato['tipo_notificacion'] = 'warning'
+                        fecha = get_date_show(fecha=fecha_devolucion, formato='dd-MMM-yyyy HH:ii', formato_ori='yyyy-mm-dd HH:ii:ss')
+                        dato['descripcion'] = 'F - ' + fecha + ', &#35; ' + numero_contrato
+                        dato['url'] = 'ventas'
+                        lista_notificaciones.append(dato)
+                        cantidad_warning += 1
+                        cantidad += 1
+
+                    if fecha_actual_int > fecha_finalizar_r2_int:
+                        dato = {}
+                        dato['tipo'] = 'F'
+                        dato['tipo_notificacion'] = 'danger'
+                        fecha = get_date_show(fecha=fecha_devolucion, formato='dd-MMM-yyyy HH:ii', formato_ori='yyyy-mm-dd HH:ii:ss')
+                        dato['descripcion'] = 'F - ' + fecha + ', &#35; ' + numero_contrato
+                        dato['url'] = 'ventas'
+                        lista_notificaciones.append(dato)
+                        cantidad_danger += 1
+                        cantidad += 1
+
+        #print('lista notificaciones: ', lista_notificaciones)
+        retorno['cantidad'] = cantidad
+        retorno['cantidad_danger'] = cantidad_danger
+        retorno['cantidad_warning'] = cantidad_warning
+        retorno['lista_notificaciones'] = lista_notificaciones
+
+        return retorno
+
+    except Exception as e:
+        retorno['cantidad'] = cantidad
+        retorno['cantidad_danger'] = cantidad_danger
+        retorno['cantidad_warning'] = cantidad_warning
+        retorno['lista_notificaciones'] = lista_notificaciones
+
+        return retorno

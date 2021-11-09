@@ -521,6 +521,49 @@ def get_seconds_date1_sub_date2(fecha1, fecha2, formato1='yyyy-mm-dd HH:ii:ss', 
     return resta
 
 
+def get_minutes_date1_sub_date2(fecha1, fecha2, formato1='yyyy-mm-dd HH:ii:ss', formato2='yyyy-mm-dd HH:ii:ss'):
+    """
+    get seconds date1 sub date2
+    :param fecha1: (object) date1
+    :param fecha2: (object) date2
+    :param formato1: (str) format date1, string case
+    :param formato2: (str) format date2, string case
+    :return: (int) seconds sub
+    """
+
+    # fecha 1
+    fecha1_formato = get_date_to_db(fecha1, formato_ori=formato1, formato='yyyy-mm-dd HH:ii:ss')
+
+    anio = fecha1_formato[0:4]
+    mes = fecha1_formato[5:7]
+    dia = fecha1_formato[8:10]
+    hora = fecha1_formato[11:13]
+    minutos = fecha1_formato[14:16]
+    segundos = fecha1_formato[17:19]
+
+    nueva_fecha = anio + '-' + mes + '-' + dia
+    fecha1_aux = datetime.strptime(nueva_fecha, "%Y-%m-%d")
+    fecha1_aux = fecha1_aux + timedelta(hours=int(hora)) + timedelta(minutes=int(minutos)) + timedelta(seconds=int(segundos))
+
+    # fecha 2
+    fecha2_formato = get_date_to_db(fecha2, formato_ori=formato2, formato='yyyy-mm-dd HH:ii:ss')
+
+    anio = fecha2_formato[0:4]
+    mes = fecha2_formato[5:7]
+    dia = fecha2_formato[8:10]
+    hora = fecha2_formato[11:13]
+    minutos = fecha2_formato[14:16]
+    segundos = fecha2_formato[17:19]
+
+    nueva_fecha = anio + '-' + mes + '-' + dia
+    fecha2_aux = datetime.strptime(nueva_fecha, "%Y-%m-%d")
+    fecha2_aux = fecha2_aux + timedelta(hours=int(hora)) + timedelta(minutes=int(minutos)) + timedelta(seconds=int(segundos))
+    #print('fecha1_aux: ', fecha1_aux, ' fecha2_aux: ', fecha2_aux)
+    resta = (fecha1_aux - fecha2_aux).seconds
+
+    return int(resta/60)
+
+
 def es_bisiesto(anio_dato):
     anio = int(anio_dato)
     return anio % 4 == 0 and (anio % 100 != 0 or anio % 400 == 0)

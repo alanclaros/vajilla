@@ -1,0 +1,157 @@
+{% load static %}
+{% load jinja_tags %}
+
+<div class="row align-items-center">
+    <div class="col-sm-2">&nbsp;</div>
+    <div class="col-sm-8">
+        <!--div contenedor-->
+        <br>
+        <!--alerts-->
+        {% include 'partials/_alerts.html' %}
+        <br>
+        <table class="table3 w-100">
+            <tr>
+                <th colspan="2" class="w-100 center">
+                    Lista de Reportes
+                </th>
+            </tr>
+            <tr>
+                <th colspan="2" class="w-100">
+                    Cajas
+                </th>
+            </tr>
+
+            <tr class="back1">
+                <td class="w-80 left">
+                    Arqueo de Caja
+                </td>
+                <td class="center">
+                    {% with url_id='arqueo_caja' boton='fas fa-print' operation='arqueo_caja' titulo='Arqueo Caja' descripcion='opciones del reporte' %}
+                    {% include 'partials/btn.html' %}
+                    {% endwith %}
+                </td>
+            </tr>
+
+            <tr class="back2">
+                <td class="w-80 left">
+                    Ingresos a Caja
+                </td>
+                <td class="center">
+                    {% with url_id='ingresos_caja' boton='fas fa-print' operation='ingresos_caja' titulo='Ingresos a Caja' descripcion='opciones del reporte' %}
+                    {% include 'partials/btn.html' %}
+                    {% endwith %}
+                </td>
+            </tr>
+
+            <tr class="back1">
+                <td class="w-80 left">
+                    Egresos de Caja
+                </td>
+                <td class="center">
+                    {% with url_id='egresos_caja' boton='fas fa-print' operation='egresos_caja' titulo='Egresos Caja' descripcion='opciones del reporte' %}
+                    {% include 'partials/btn.html' %}
+                    {% endwith %}
+                </td>
+            </tr>
+
+            <tr class="back2">
+                <td class="w-80 left">
+                    Movimientos de Caja
+                </td>
+                <td class="center">
+                    {% with url_id='movimientos_caja' boton='fas fa-print' operation='movimientos_caja' titulo='Movimientos Caja' descripcion='opciones del reporte' %}
+                    {% include 'partials/btn.html' %}
+                    {% endwith %}
+                </td>
+            </tr>
+
+            <tr>
+                <th colspan="2" class="w-100">
+                    Inventarios
+                </th>
+            </tr>
+            <tr class="back1">
+                <td class="w-80 left">
+                    Ingreso de Productos
+                </td>
+                <td class="center">
+                    {% with url_id='ingreso_productos' boton='fas fa-print' operation='ingreso_productos' titulo='Ingreso Productos' descripcion='opciones del reporte' %}
+                    {% include 'partials/btn.html' %}
+                    {% endwith %}
+                </td>
+            </tr>
+
+            <tr class="back2">
+                <td class="w-80 left">
+                    Salida de Productos
+                </td>
+                <td class="center">
+                    {% with url_id='salida_productos' boton='fas fa-print' operation='salida_productos' titulo='Salida Productos' descripcion='opciones del reporte' %}
+                    {% include 'partials/btn.html' %}
+                    {% endwith %}
+                </td>
+            </tr>
+
+            <tr class="back1">
+                <td class="w-80 left">
+                    Movimiento de Productos
+                </td>
+                <td class="center">
+                    {% with url_id='movimiento_productos' boton='fas fa-print' operation='movimiento_productos' titulo='Mov. Productos' descripcion='opciones del reporte' %}
+                    {% include 'partials/btn.html' %}
+                    {% endwith %}
+                </td>
+            </tr>
+
+            <tr class="back2">
+                <td class="w-80 left">
+                    Ventas
+                </td>
+                <td class="center">
+                    {% with url_id='ventas' boton='fas fa-print' operation='ventas' titulo='Ventas' descripcion='opciones del reporte' %}
+                    {% include 'partials/btn.html' %}
+                    {% endwith %}
+                </td>
+            </tr>
+            
+            <tr class="back2">
+                <td class="w-80 left">
+                    Stock de Productos
+                </td>
+                <td class="center">
+                    {% with url_id='stock_productos' boton='fas fa-print' operation='stock_productos' titulo='Stock Productos' descripcion='opciones del reporte' %}
+                    {% include 'partials/btn.html' %}
+                    {% endwith %}
+                </td>
+            </tr>
+
+        </table>
+        <br>
+    </div>
+    <!--fin div contenedor-->
+    <div class="col-sm-2">&nbsp;</div>
+</div>
+
+<BR><BR>
+
+<form name="form_operation" method="post" action="{{url_main}}">
+    {% csrf_token %}
+    <input type="hidden" name="module_x" value="{{module_x}}">
+    <input type="hidden" name="module_x2" value="{{module_x2}}">
+    <input type="hidden" name="module_x3" value="{{module_x3}}">
+    
+    <input type="hidden" name="operation_x" value="{{operation_x}}">
+    <input type="hidden" name="operation_x2" value="{{operation_x2}}">
+    <input type="hidden" name="operation_x3" value="{{operation_x3}}">
+    
+    <input type="hidden" name="id" value="{{id}}">
+    <input type="hidden" name="id2" value="{{id2}}">
+    <input type="hidden" name="id3" value="{{id3}}">
+</form>
+
+<form name="form_print" method="post" action="{{url_main}}" target="_blank">
+    {% csrf_token %}
+    <input type="hidden" name="operation_x" value="">
+    <input type="hidden" name="id" value="">
+</form>
+</div>

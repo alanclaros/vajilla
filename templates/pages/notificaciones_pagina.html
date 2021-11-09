@@ -3,22 +3,22 @@
 {% if cantidad > 0 %}
 <a class="nav-link" data-toggle="dropdown" href="#">
     <i class="far fa-bell notification_icon"></i>
-    <span class="badge badge-{% if cantidad_rojos > 0 %}danger{% else %}success{% endif %} navbar-badge notification_normal">{{cantidad}}</span>
+    <span class="badge badge-{% if cantidad_danger > 0 %}danger{% else %}warning{% endif %} navbar-badge notification_normal">{{cantidad}}</span>
 </a>
 <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right back_aviso">
     <div class="w100 center">{{cantidad}} Avisos</div>
     {% for notif in notificaciones %}
     <div class="dropdown-divider"></div>
-    <div class="w-100 left content_aviso h-30 v-middle pointer" onclick="notificacionAbrir('{{notif.tipo}}');">
+    <div class="w-100 left content_aviso_{{notif.tipo_notificacion}} h-30 v-middle pointer" onclick="notificacionAbrir('{{notif.tipo}}');">
         &nbsp;
-        {% if notif.tipo == 'cobros' %}
-        <i class="fas fa-money-check mr-2 red"></i> 
+        {% if notif.tipo == 'E' or notif.tipo == 'R' or notif.tipo == 'F' %}
+        <i class="fas fa-calendar-day"></i>
         {% endif %}
         {% if notif.tipo == 'calendario' %}
-        <i class="fas fa-calendar-day"></i> 
+        <i class="fas fa-money-check mr-2 red"></i>
         {% endif %}
         &nbsp;
-        <span>{{notif.descripcion}}</span>
+        <span>{% autoescape off %}{{notif.descripcion}}{% endautoescape %}</span>
     </div>
     {% endfor %}
 </div>

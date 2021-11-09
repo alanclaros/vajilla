@@ -80,7 +80,29 @@ function hideNotifications() {
 setInterval('hideNotifications()', 3000);
 
 //notificaciones
-//setInterval('checkNotifications()', 45000); //45 segundos
+setInterval('checkNotifications()', 25000); //45 segundos
+
+//de las notificaciones para abrir los menus
+function notificacionAbrir(tipo) {
+	if (document.getElementById('li_header_ventas')) {
+		const li_header = document.getElementById('li_header_ventas');
+		const href_header = $('#href_header_ventas');
+
+		const clase_header = li_header.className;
+		//console.log(clase_header);
+
+		if (clase_header.toLowerCase() == 'nav-item has-treeview') {
+			href_header.click();
+		}
+
+		if (tipo === 'E' || tipo === 'R' || tipo === 'F') {
+			openModule('1');
+		}
+		// if (tipo == 'calendario') {
+		// 	openModule('23');
+		// }
+	}
+}
 
 function checkNotifications() {
 	try {
@@ -712,28 +734,6 @@ function sleep(milliseconds) {
 	for (var i = 0; i < 1e7; i++) {
 		if ((new Date().getTime() - start) > milliseconds) {
 			break;
-		}
-	}
-}
-
-//de las notificaciones para abrir los menus
-function notificacionAbrir(tipo) {
-	if (document.getElementById('li_header_calendario')) {
-		const li_header = document.getElementById('li_header_calendario');
-		const href_header = $('#href_header_calendario');
-
-		const clase_header = li_header.className;
-		console.log(clase_header);
-
-		if (clase_header.toLowerCase() == 'nav-item has-treeview') {
-			href_header.click();
-		}
-
-		if (tipo == 'cobros') {
-			openModule('25');
-		}
-		if (tipo == 'calendario') {
-			openModule('23');
 		}
 	}
 }

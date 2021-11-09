@@ -1,9 +1,3 @@
-/************************************************************************************/
-/************************************************************************************/
-/****************Desarrollador, Programador: Alan Claros Camacho ********************/
-/****************E-mail: alan_Claros13@hotmail.com **********************************/
-/************************************************************************************/
-/************************************************************************************/
 
 //acc, control especifico del modulo
 function arqueoCaja() {
@@ -192,11 +186,11 @@ function movimientosCajaExcel() {
 	document.forms['form_print'].submit();
 }
 
-//reportes cobros
-function reportesCobros(tipo) {
-	bloque = document.getElementById('bloque').value;
-	piso = document.getElementById('piso').value;
-	caja = document.getElementById('caja').value;
+//ingresos de productos
+function ingresoProductos(operation) {
+	ciudad = document.getElementById('ciudad').value;
+	sucursal = document.getElementById('sucursal').value;
+	almacen = document.getElementById('almacen').value;
 	fecha_ini = document.getElementById('fecha_ini').value;
 	fecha_fin = document.getElementById('fecha_fin').value;
 
@@ -208,10 +202,10 @@ function reportesCobros(tipo) {
 		anulados = 'no';
 	}
 
-	document.forms['form_print'].elements['operation_x2'].value = tipo;
-	document.forms['form_print'].elements['caja'].value = caja;
-	document.forms['form_print'].elements['bloque'].value = bloque;
-	document.forms['form_print'].elements['piso'].value = piso;
+	document.forms['form_print'].elements['operation_x2'].value = operation;
+	document.forms['form_print'].elements['ciudad'].value = ciudad;
+	document.forms['form_print'].elements['sucursal'].value = sucursal;
+	document.forms['form_print'].elements['almacen'].value = almacen;
 	document.forms['form_print'].elements['fecha_ini'].value = fecha_ini;
 	document.forms['form_print'].elements['fecha_fin'].value = fecha_fin;
 	document.forms['form_print'].elements['anulados'].value = anulados;
@@ -219,12 +213,11 @@ function reportesCobros(tipo) {
 	document.forms['form_print'].submit();
 }
 
-//reportes cobros mensuales
-function reportesCobrosMensuales(tipo) {
-	bloque = document.getElementById('bloque').value;
-	piso = document.getElementById('piso').value;
-	cobro_mensual = document.getElementById('cobro_mensual').value;
-	caja = document.getElementById('caja').value;
+//salida de productos
+function salidaProductos(operation) {
+	ciudad = document.getElementById('ciudad').value;
+	sucursal = document.getElementById('sucursal').value;
+	almacen = document.getElementById('almacen').value;
 	fecha_ini = document.getElementById('fecha_ini').value;
 	fecha_fin = document.getElementById('fecha_fin').value;
 
@@ -236,11 +229,10 @@ function reportesCobrosMensuales(tipo) {
 		anulados = 'no';
 	}
 
-	document.forms['form_print'].elements['operation_x2'].value = tipo;
-	document.forms['form_print'].elements['caja'].value = caja;
-	document.forms['form_print'].elements['bloque'].value = bloque;
-	document.forms['form_print'].elements['piso'].value = piso;
-	document.forms['form_print'].elements['cobro_mensual'].value = cobro_mensual;
+	document.forms['form_print'].elements['operation_x2'].value = operation;
+	document.forms['form_print'].elements['ciudad'].value = ciudad;
+	document.forms['form_print'].elements['sucursal'].value = sucursal;
+	document.forms['form_print'].elements['almacen'].value = almacen;
 	document.forms['form_print'].elements['fecha_ini'].value = fecha_ini;
 	document.forms['form_print'].elements['fecha_fin'].value = fecha_fin;
 	document.forms['form_print'].elements['anulados'].value = anulados;
@@ -248,12 +240,11 @@ function reportesCobrosMensuales(tipo) {
 	document.forms['form_print'].submit();
 }
 
-//reportes cobros manuales
-function reportesCobrosManuales(tipo) {
-	bloque = document.getElementById('bloque').value;
-	piso = document.getElementById('piso').value;
-	cobro_manual = document.getElementById('cobro_manual').value;
-	caja = document.getElementById('caja').value;
+//movimiento de productos
+function movimientoProductos(operation) {
+	ciudad = document.getElementById('ciudad').value;
+	sucursal = document.getElementById('sucursal').value;
+	almacen = document.getElementById('almacen').value;
 	fecha_ini = document.getElementById('fecha_ini').value;
 	fecha_fin = document.getElementById('fecha_fin').value;
 
@@ -265,11 +256,10 @@ function reportesCobrosManuales(tipo) {
 		anulados = 'no';
 	}
 
-	document.forms['form_print'].elements['operation_x2'].value = tipo;
-	document.forms['form_print'].elements['caja'].value = caja;
-	document.forms['form_print'].elements['bloque'].value = bloque;
-	document.forms['form_print'].elements['piso'].value = piso;
-	document.forms['form_print'].elements['cobro_manual'].value = cobro_manual;
+	document.forms['form_print'].elements['operation_x2'].value = operation;
+	document.forms['form_print'].elements['ciudad'].value = ciudad;
+	document.forms['form_print'].elements['sucursal'].value = sucursal;
+	document.forms['form_print'].elements['almacen'].value = almacen;
 	document.forms['form_print'].elements['fecha_ini'].value = fecha_ini;
 	document.forms['form_print'].elements['fecha_fin'].value = fecha_fin;
 	document.forms['form_print'].elements['anulados'].value = anulados;
@@ -277,72 +267,216 @@ function reportesCobrosManuales(tipo) {
 	document.forms['form_print'].submit();
 }
 
-//reportes lecturas
-function reportesLecturas(tipo) {
-	bloque = document.getElementById('bloque').value;
-	piso = document.getElementById('piso').value;
-	caja = document.getElementById('caja').value;
-	periodo_ini = document.getElementById('periodo_ini').value;
-	periodo_fin = document.getElementById('periodo_fin').value;
+//ventas
+function ventasReporte(operation) {
+	ciudad = document.getElementById('ciudad').value;
+	sucursal = document.getElementById('sucursal').value;
+	punto = document.getElementById('punto').value;
+	fecha_ini = document.getElementById('fecha_ini').value;
+	fecha_fin = document.getElementById('fecha_fin').value;
 
-	aux_n = document.getElementById('anulados');
-	if (aux_n.checked) {
-		anulados = 'si';
-	}
-	else {
-		anulados = 'no';
-	}
+	anulados = document.getElementById('anulados').checked ? 'si' : 'no';
+	preventa = document.getElementById('preventa').checked ? 'si' : 'no';
+	venta = document.getElementById('venta').checked ? 'si' : 'no';
+	salida = document.getElementById('salida').checked ? 'si' : 'no';
+	vuelta = document.getElementById('vuelta').checked ? 'si' : 'no';
+	finalizado = document.getElementById('finalizado').checked ? 'si' : 'no';
 
-	document.forms['form_print'].elements['operation_x2'].value = tipo;
-	document.forms['form_print'].elements['caja'].value = caja;
-	document.forms['form_print'].elements['bloque'].value = bloque;
-	document.forms['form_print'].elements['piso'].value = piso;
-	document.forms['form_print'].elements['periodo_ini'].value = periodo_ini;
-	document.forms['form_print'].elements['periodo_fin'].value = periodo_fin;
+	document.forms['form_print'].elements['operation_x2'].value = operation;
+	document.forms['form_print'].elements['ciudad'].value = ciudad;
+	document.forms['form_print'].elements['sucursal'].value = sucursal;
+	document.forms['form_print'].elements['punto'].value = punto;
+	document.forms['form_print'].elements['fecha_ini'].value = fecha_ini;
+	document.forms['form_print'].elements['fecha_fin'].value = fecha_fin;
 	document.forms['form_print'].elements['anulados'].value = anulados;
+	document.forms['form_print'].elements['preventa'].value = preventa;
+	document.forms['form_print'].elements['venta'].value = venta;
+	document.forms['form_print'].elements['salida'].value = salida;
+	document.forms['form_print'].elements['vuelta'].value = vuelta;
+	document.forms['form_print'].elements['finalizado'].value = finalizado;
 
 	document.forms['form_print'].submit();
 }
 
-//reportes expensas
-function reportesExpensas(tipo) {
-	bloque = document.getElementById('bloque').value;
-	piso = document.getElementById('piso').value;
-	caja = document.getElementById('caja').value;
-	periodo_ini = document.getElementById('periodo_ini').value;
-	periodo_fin = document.getElementById('periodo_fin').value;
+//stock productos
+function stockProductosReporte(operation) {
+	linea = document.getElementById('linea').value;
+	fecha_ini = document.getElementById('fecha_ini').value;
+	fecha_fin = document.getElementById('fecha_fin').value;
 
-	aux_n = document.getElementById('anulados');
-	if (aux_n.checked) {
-		anulados = 'si';
-	}
-	else {
-		anulados = 'no';
-	}
-
-	document.forms['form_print'].elements['operation_x2'].value = tipo;
-	document.forms['form_print'].elements['caja'].value = caja;
-	document.forms['form_print'].elements['bloque'].value = bloque;
-	document.forms['form_print'].elements['piso'].value = piso;
-	document.forms['form_print'].elements['periodo_ini'].value = periodo_ini;
-	document.forms['form_print'].elements['periodo_fin'].value = periodo_fin;
-	document.forms['form_print'].elements['anulados'].value = anulados;
+	document.forms['form_print'].elements['operation_x2'].value = operation;
+	document.forms['form_print'].elements['linea'].value = linea;
+	document.forms['form_print'].elements['fecha_ini'].value = fecha_ini;
+	document.forms['form_print'].elements['fecha_fin'].value = fecha_fin;
 
 	document.forms['form_print'].submit();
 }
 
-//reportes cobros pendientes
-function reportesCobrosPendientes(tipo) {
-	bloque = document.getElementById('bloque').value;
-	piso = document.getElementById('piso').value;
-	periodo_ini = document.getElementById('periodo_ini').value;
-	periodo_fin = document.getElementById('periodo_fin').value;
 
-	document.forms['form_print'].elements['operation_x2'].value = tipo;
-	document.forms['form_print'].elements['bloque'].value = bloque;
-	document.forms['form_print'].elements['piso'].value = piso;
-	document.forms['form_print'].elements['periodo_ini'].value = periodo_ini;
-	document.forms['form_print'].elements['periodo_fin'].value = periodo_fin;
+//sucursales por ciudad, y despues caja
+function cargarSucursalesCiudad() {
+	ciudad = document.getElementById('ciudad').value;
+	url_main = document.getElementById('url_main').value;
 
-	document.forms['form_print'].submit();
+	if (ciudad == '0') {
+		$("#" + 'div_sucursal').html('<select name="sucursal" id="sucursal" class="form-control input w-90 h-35"><option value="0">(TODOS)</option></select>');
+		$("#" + 'div_caja').html('<select name="caja" id="caja" class="form-control input w-90 h-35"><option value="0">(TODOS)</option></select>');
+	}
+	else {
+		$("#" + 'div_caja').html('<select name="caja" id="caja" class="form-control input w-90 h-35"><option value="0">(TODOS)</option></select>');
+		//cargamos sucursales
+		imagen = '<img src="/static/img/pass/loading2.gif">';
+		//url_main = '/enviardinero/';
+		token = document.forms['formulario'].elements['csrfmiddlewaretoken'].value;
+		datos = {
+			'module_x': document.forms['form_operation'].elements['module_x'].value,
+			'ciudad': ciudad,
+			'operation_x': 'buscar_sucursal',
+			'csrfmiddlewaretoken': token,
+		}
+		$("#" + 'div_sucursal').html(imagen);
+		$("#" + 'div_sucursal').load(url_main, datos, function () {
+			//termina de cargar la ventana
+			//resultadoBusqedaCI();
+		});
+	}
+}
+
+//cajas por sucursal
+function cargarCajasSucursal() {
+	sucursal = document.getElementById('sucursal').value;
+	url_main = document.getElementById('url_main').value;
+
+	if (sucursal == '0') {
+		$("#" + 'div_caja').html('<select name="caja" id="caja" class="form-control input w-90 h-35"><option value="0">(TODOS)</option></select>');
+	}
+	else {
+		//cargamos sucursales
+		imagen = '<img src="/static/img/pass/loading2.gif">';
+		//url_main = '/enviardinero/';
+		token = document.forms['formulario'].elements['csrfmiddlewaretoken'].value;
+		datos = {
+			'module_x': document.forms['form_operation'].elements['module_x'].value,
+			'sucursal': sucursal,
+			'operation_x': 'buscar_caja',
+			'csrfmiddlewaretoken': token,
+		}
+		$("#" + 'div_caja').html(imagen);
+		$("#" + 'div_caja').load(url_main, datos, function () {
+			//termina de cargar la ventana
+			//resultadoBusqedaCI();
+		});
+	}
+}
+
+//sucursales por ciudad, y despues almacen
+function cargarSucursalesAlmacen() {
+	ciudad = document.getElementById('ciudad').value;
+	url_main = document.getElementById('url_main').value;
+
+	if (ciudad == '0') {
+		$("#" + 'div_sucursal').html('<select name="sucursal" id="sucursal" class="form-control input w-90 h-35"><option value="0">(TODOS)</option></select>');
+		$("#" + 'div_almacen').html('<select name="almacen" id="almacen" class="form-control input w-90 h-35"><option value="0">(TODOS)</option></select>');
+	}
+	else {
+		$("#" + 'div_almacen').html('<select name="almacen" id="almacen" class="form-control input w-90 h-35"><option value="0">(TODOS)</option></select>');
+		//cargamos sucursales
+		imagen = '<img src="/static/img/pass/loading2.gif">';
+		//url_main = '/enviardinero/';
+		token = document.forms['formulario'].elements['csrfmiddlewaretoken'].value;
+		datos = {
+			'module_x': document.forms['form_operation'].elements['module_x'].value,
+			'ciudad': ciudad,
+			'operation_x': 'buscar_sucursal_almacen',
+			'csrfmiddlewaretoken': token,
+		}
+		$("#" + 'div_sucursal').html(imagen);
+		$("#" + 'div_sucursal').load(url_main, datos, function () {
+			//termina de cargar la ventana
+			//resultadoBusqedaCI();
+		});
+	}
+}
+
+//almacenes por sucursal
+function cargarAlmacenesSucursal() {
+	sucursal = document.getElementById('sucursal').value;
+	url_main = document.getElementById('url_main').value;
+
+	if (sucursal == '0') {
+		$("#" + 'div_almacen').html('<select name="almacen" id="almacen" class="form-control input w-90 h-35"><option value="0">(TODOS)</option></select>');
+	}
+	else {
+		//cargamos sucursales
+		imagen = '<img src="/static/img/pass/loading2.gif">';
+		//url_main = '/enviardinero/';
+		token = document.forms['formulario'].elements['csrfmiddlewaretoken'].value;
+		datos = {
+			'module_x': document.forms['form_operation'].elements['module_x'].value,
+			'sucursal': sucursal,
+			'operation_x': 'buscar_almacen',
+			'csrfmiddlewaretoken': token,
+		}
+		$("#" + 'div_almacen').html(imagen);
+		$("#" + 'div_almacen').load(url_main, datos, function () {
+			//termina de cargar la ventana
+			//resultadoBusqedaCI();
+		});
+	}
+}
+
+//sucursales por ciudad, y despues punto
+function cargarSucursalesCiudadPunto() {
+	ciudad = document.getElementById('ciudad').value;
+	url_main = document.getElementById('url_main').value;
+
+	if (ciudad == '0') {
+		$("#" + 'div_sucursal').html('<select name="sucursal" id="sucursal" class="form-control input w-90 h-35"><option value="0">(TODOS)</option></select>');
+		$("#" + 'div_punto').html('<select name="punto" id="punto" class="form-control input w-90 h-35"><option value="0">(TODOS)</option></select>');
+	}
+	else {
+		$("#" + 'div_punto').html('<select name="punto" id="punto" class="form-control input w-90 h-35"><option value="0">(TODOS)</option></select>');
+		//cargamos sucursales
+		imagen = '<img src="/static/img/pass/loading2.gif">';
+		//url_main = '/enviardinero/';
+		token = document.forms['formulario'].elements['csrfmiddlewaretoken'].value;
+		datos = {
+			'module_x': document.forms['form_operation'].elements['module_x'].value,
+			'ciudad': ciudad,
+			'operation_x': 'buscar_sucursal_punto',
+			'csrfmiddlewaretoken': token,
+		}
+		$("#" + 'div_sucursal').html(imagen);
+		$("#" + 'div_sucursal').load(url_main, datos, function () {
+			//termina de cargar la ventana
+			//resultadoBusqedaCI();
+		});
+	}
+}
+
+//puntos por sucursal
+function cargarPuntosSucursal() {
+	sucursal = document.getElementById('sucursal').value;
+	url_main = document.getElementById('url_main').value;
+
+	if (sucursal == '0') {
+		$("#" + 'div_punto').html('<select name="punto" id="punto" class="form-control input w-90 h-35"><option value="0">(TODOS)</option></select>');
+	}
+	else {
+		//cargamos sucursales
+		imagen = '<img src="/static/img/pass/loading2.gif">';
+		//url_main = '/enviardinero/';
+		token = document.forms['formulario'].elements['csrfmiddlewaretoken'].value;
+		datos = {
+			'module_x': document.forms['form_operation'].elements['module_x'].value,
+			'sucursal': sucursal,
+			'operation_x': 'buscar_punto',
+			'csrfmiddlewaretoken': token,
+		}
+		$("#" + 'div_punto').html(imagen);
+		$("#" + 'div_punto').load(url_main, datos, function () {
+			//termina de cargar la ventana
+			//resultadoBusqedaCI();
+		});
+	}
 }

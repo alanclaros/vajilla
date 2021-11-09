@@ -1,0 +1,6 @@
+<select name="punto" id="punto" class="form-control input w-90 h-35">
+    <option value="0">(TODOS)</option>
+    {% for punto in lista_puntos %}
+    <option value="{{punto.punto_id}}">{{punto.punto}}</option>
+    {% endfor %}
+</select>

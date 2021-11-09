@@ -1,0 +1,6 @@
+<select name="almacen" id="almacen" class="form-control input w-90 h-35">
+    <option value="0">(TODOS)</option>
+    {% for almacen in lista_almacenes %}
+    <option value="{{almacen.almacen_id}}">{{almacen.almacen}}</option>
+    {% endfor %}
+</select>

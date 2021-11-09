@@ -1,0 +1,6 @@
+<select name="caja" id="caja" class="form-control input w-90 h-35">
+    <option value="0">(TODOS)</option>
+    {% for caja in lista_cajas %}
+    <option value="{{caja.caja_id}}">{{caja.punto_id.punto}}-{{caja.caja}}</option>
+    {% endfor %}
+</select>

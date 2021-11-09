@@ -1,0 +1,6 @@
+<select name="sucursal" id="sucursal" class="form-control input w-90 h-35" onchange="cargarAlmacenesSucursal();">
+    <option value="0">(TODOS)</option>
+    {% for sucursal in lista_sucursales %}
+    <option value="{{sucursal.sucursal_id}}">{{sucursal.sucursal}}</option>
+    {% endfor %}
+</select>
