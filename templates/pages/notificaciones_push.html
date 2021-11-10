@@ -103,6 +103,9 @@
             lista_usuarios += up_supervisor.length > 0 ? up_supervisor + '|' : '';
             lista_usuarios += up_almacen.length > 0 ? up_almacen + '|' : '';
             //lista_usuarios += up_cajero.length > 0 ? up_admin + '|' : '';
+            if(lista_usuarios.length > 0){
+                lista_usuarios= lista_usuarios.substr(0, lista_usuarios.length-1);
+            }
             
             div_recoger= lista_recoger.split('||');
             for(let i=0; i<div_recoger.length; i++){
@@ -117,7 +120,7 @@
                         'id': lista_usuarios,
                         'csrfmiddlewaretoken': token,
                     }
-            
+                    console.log(datos_push);
                     //$("#div_push_result_recoger").html(imagen);
                     $("#div_push_result_recoger").load(url_push, datos_push, function () {
                         console.log('recoger');
@@ -132,6 +135,9 @@
             lista_usuarios += up_supervisor.length > 0 ? up_supervisor + '|' : '';
             //lista_usuarios += up_almacen.length > 0 ? up_almacen + '|' : '';
             lista_usuarios += up_cajero.length > 0 ? up_admin + '|' : '';
+            if(lista_usuarios.length > 0){
+                lista_usuarios= lista_usuarios.substr(0, lista_usuarios.length-1);
+            }
             
             div_finalizar= lista_finalizar.split('||');
             for(let i=0; i<div_finalizar.length; i++){
@@ -147,7 +153,7 @@
                         'id': lista_usuarios,
                         'csrfmiddlewaretoken': token,
                     }
-            
+                    console.log(datos_push);
                     //$("#div_push_result_recoger").html(imagen);
                     $("#div_push_result_finalizar").load(url_push, datos_push, function () {
                         console.log('finalizar');
