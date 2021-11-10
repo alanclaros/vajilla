@@ -10,7 +10,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('productos', '0001_initial'),
+        ('productos', '0002_productos_init_data'),
     ]
 
     operations = [

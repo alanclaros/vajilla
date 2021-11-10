@@ -24,12 +24,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure--*ba9!@=3(u=!$cufu*(!&uli!ka64!tqwy4z95$45=bo0v$7d'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1', '192.168.0.27']
 CURRENT_HOST = '127.0.0.1'
 HOST_FULL_PATH = '127.0.0.1:8000'
 SUB_URL_EMPRESA = 'vajilla'
+KEY_PUSH = 'AZXiQVKyX58y7uWjp5PhFfL2aiQExeRpHLZI6WfgdhwKk0PwezCpbuXKEI9vSevvYNxfrB4GX9j3Xu5WC3YHySpe99Q9pa8fU1ajPiG'
 
 # base de datos
 DATABASE_HOST = 'localhost'
@@ -61,6 +62,7 @@ INSTALLED_APPS = [
     'productos.apps.ProductosConfig',
     'inventarios.apps.InventariosConfig',
     'ventas.apps.VentasConfig',
+    'webpush',
 ]
 
 MIDDLEWARE = [
@@ -133,8 +135,8 @@ AUTH_PASSWORD_VALIDATORS = [
 # webpush
 # https://web-push-codelab.glitch.me/
 WEBPUSH_SETTINGS = {
-    "VAPID_PUBLIC_KEY": "BMq5GxqmkGoefx9NJh36-iS2NAsIjaBi7t7KRI8uYbL30XqJ0aIw3QWtAdcyiQiS5QXkLE9ovB8Sf9Tcd54CwiY",
-    "VAPID_PRIVATE_KEY": "M9IRhpFcAf5LAfICkHtNlXFWdv215H8ucYOFB8PiGgw",
+    "VAPID_PUBLIC_KEY": "BJJc0SG74CAC7A9oL7FKhiQx0Dd25d-xqNt8K-3v6EgINmJW_FiHpiFe-NkQ6kqeIGYecpnkT5Hwova_3wIcF-8",
+    "VAPID_PRIVATE_KEY": "N4cftrcqoCDLszPUD5UPYFgNRCo4ygTo94lYqZABvr0",
     "VAPID_ADMIN_EMAIL": "acc.claros@gmail.com"
 }
 

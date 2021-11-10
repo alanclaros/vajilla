@@ -1,4 +1,4 @@
-const host_open = "https://ntsoft-bolivia.com/teamwork";
+const host_open = "https://ntsoft-bolivia.com/vajilla";
 const webpush_icon = "https://ntsoft-bolivia.com/webpush_image.png";
 const webpush_badge = 'https://ntsoft-bolivia.com/cel_notificacion002_128.png';
 const action_ver_icon = "https://ntsoft-bolivia.com/webpush_image.png";

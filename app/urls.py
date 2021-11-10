@@ -18,9 +18,17 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
+from .views import send_push
+from django.views.generic import TemplateView
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('pages.urls')),
+
+    # webpush
+    path('send_push', send_push),
+    path('webpush/', include('webpush.urls')),  # del framework
+    path('sw.js', TemplateView.as_view(template_name='sw.js', content_type='application/x-javascript'))
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

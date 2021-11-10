@@ -50,6 +50,7 @@ from utils.permissions import current_date, get_permissions_user, get_system_set
 from datetime import datetime
 # xls
 import openpyxl
+from decimal import Decimal
 import zipfile
 from django.http import FileResponse, HttpResponse
 # conexion directa a la base de datos
@@ -154,41 +155,41 @@ def index(request):
         autenticado = 'no'
         usuario = {}
 
-    # # webpush
-    # webpush_settings = getattr(settings, 'WEBPUSH_SETTINGS', {})
-    # vapid_key = webpush_settings.get('VAPID_PUBLIC_KEY')
+    # webpush
+    webpush_settings = getattr(settings, 'WEBPUSH_SETTINGS', {})
+    vapid_key = webpush_settings.get('VAPID_PUBLIC_KEY')
 
-    # url_empresa = settings.SUB_URL_EMPRESA
+    url_empresa = settings.SUB_URL_EMPRESA
 
-    # # usuarios del sistema para la notificacion
-    # status_activo = apps.get_model('status', 'Status').objects.get(pk=1)
-    # filtro_usuarios = {}
-    # filtro_usuarios['status_id'] = status_activo
-    # filtro_usuarios['perfil_id__perfil_id__in'] = [settings.PERFIL_ADMIN, settings.PERFIL_SUPERVISOR, settings.PERFIL_CAJERO]
-    # filtro_usuarios['notificacion'] = 1
+    # usuarios del sistema para la notificacion
+    status_activo = apps.get_model('status', 'Status').objects.get(pk=1)
+    filtro_usuarios = {}
+    filtro_usuarios['status_id'] = status_activo
+    filtro_usuarios['perfil_id__perfil_id__in'] = [settings.PERFIL_ADMIN, settings.PERFIL_SUPERVISOR, settings.PERFIL_ALMACEN, settings.PERFIL_CAJERO]
+    filtro_usuarios['notificacion'] = 1
 
-    # usuarios_notificacion = apps.get_model('permisos', 'UsersPerfiles').objects.filter(**filtro_usuarios).order_by('user_perfil_id')
-    # lista_notificacion = ''
-    # for usuario_notif in usuarios_notificacion:
-    #     lista_notificacion += str(usuario_notif.user_id.id) + '|'
+    usuarios_notificacion = apps.get_model('permisos', 'UsersPerfiles').objects.filter(**filtro_usuarios).order_by('user_perfil_id')
+    lista_notificacion = ''
+    for usuario_notif in usuarios_notificacion:
+        lista_notificacion += str(usuario_notif.user_id.id) + '|'
 
-    # if len(lista_notificacion) > 0:
-    #     lista_notificacion = lista_notificacion[0:len(lista_notificacion)-1]
+    if len(lista_notificacion) > 0:
+        lista_notificacion = lista_notificacion[0:len(lista_notificacion)-1]
 
-    # if settings.SUB_URL_EMPRESA != '':
-    #     url_push = '/' + settings.SUB_URL_EMPRESA + '/send_push'
-    # else:
-    #     url_push = '/send_push'
+    if settings.SUB_URL_EMPRESA != '':
+        url_push = '/' + settings.SUB_URL_EMPRESA + '/send_push'
+    else:
+        url_push = '/send_push'
 
     context = {
         'autenticado': autenticado,
         'url_notificacion': 'url_notificacion',
         'pagina_inicio': 'si',
         'user': usuario,
-        'vapid_key': 'vapid_key',
-        'url_empresa': 'url_empresa',
-        'lista_notificacion': 'lista_notificacion',
-        'url_webpush': 'url_push',
+        'vapid_key': vapid_key,
+        'url_empresa': url_empresa,
+        'lista_notificacion': lista_notificacion,
+        'url_webpush': url_push,
     }
 
     return render(request, 'pages/index.html', context)
@@ -263,7 +264,7 @@ def cambiar_password(request):
 
 
 def backup(request):
-    """cambio de password de los usuarios"""
+    """backup"""
     usuario = request.user
     id_usuario = usuario.id
     if id_usuario:
@@ -482,6 +483,113 @@ def notificaciones_pagina(request):
             'autenticado': autenticado,
         }
         return render(request, 'pages/notificaciones_pagina.html', context)
+
+
+# notificaciones push para el usuario
+def notificaciones_push(request):
+    autenticado = 'no'
+    if 'keypush' in request.GET.keys():
+        key_push = request.GET['keypush']
+        if key_push == settings.KEY_PUSH:
+            autenticado = 'si'
+
+    if autenticado == 'no':
+        return render(request, 'pages/without_permission.html', {})
+
+    # usuarios autenticados
+    try:
+        user_adm = User.objects.get(pk=1)
+        listado = lista_para_notificar(user_adm)
+
+        lista_entregar = ''
+        lista_recoger = ''
+        lista_finalizar = ''
+        for notificacion in listado['lista_notificaciones']:
+            if notificacion['tipo'] == 'E':
+                lista_entregar += notificacion['tipo_notificacion'] + '|' + notificacion['descripcion'] + '||'
+
+            if notificacion['tipo'] == 'R':
+                lista_recoger += notificacion['tipo_notificacion'] + '|' + notificacion['descripcion'] + '||'
+
+            if notificacion['tipo'] == 'F':
+                lista_finalizar += notificacion['tipo_notificacion'] + '|' + notificacion['descripcion'] + '||'
+
+        if len(lista_entregar) > 0:
+            lista_entregar = lista_entregar[0:len(lista_entregar)-2]
+
+        if len(lista_recoger) > 0:
+            lista_recoger = lista_recoger[0:len(lista_recoger)-2]
+
+        if len(lista_finalizar) > 0:
+            lista_finalizar = lista_finalizar[0:len(lista_finalizar)-2]
+
+        # lista de usuarios para mandar notificaciones
+        status_activo = apps.get_model('status', 'Status').objects.get(pk=1)
+        lista_user_perfil = apps.get_model('permisos', 'UsersPerfiles').objects.filter(status_id=status_activo, notificacion=1)
+        lista_up_admin = ''
+        lista_up_supervisor = ''
+        lista_up_almacen = ''
+        lista_up_cajero = ''
+
+        for user_perfil in lista_user_perfil:
+            if user_perfil.perfil_id.perfil_id == settings.PERFIL_ADMIN:
+                lista_up_admin += str(user_perfil.user_id.id) + '|'
+
+            if user_perfil.perfil_id.perfil_id == settings.PERFIL_SUPERVISOR:
+                lista_up_supervisor += str(user_perfil.user_id.id) + '|'
+
+            if user_perfil.perfil_id.perfil_id == settings.PERFIL_ALMACEN:
+                lista_up_almacen += str(user_perfil.user_id.id) + '|'
+
+            if user_perfil.perfil_id.perfil_id == settings.PERFIL_CAJERO:
+                lista_up_cajero += str(user_perfil.user_id.id) + '|'
+
+        #print('lista up admin: ', lista_up_admin)
+        if len(lista_up_admin) > 0:
+            lista_up_admin = lista_up_admin[0:len(lista_up_admin)-1]
+
+        if len(lista_up_supervisor) > 0:
+            lista_up_supervisor = lista_up_supervisor[0:len(lista_up_supervisor)-1]
+
+        if len(lista_up_almacen) > 0:
+            lista_up_almacen = lista_up_almacen[0:len(lista_up_almacen)-1]
+
+        if len(lista_up_cajero) > 0:
+            lista_up_cajero = lista_up_cajero[0:len(lista_up_cajero)-1]
+
+        # webpush
+        webpush_settings = getattr(settings, 'WEBPUSH_SETTINGS', {})
+        vapid_key = webpush_settings.get('VAPID_PUBLIC_KEY')
+        if settings.CURRENT_HOST == '127.0.0.1':
+            url_push = '/send_push'
+        else:
+            url_push = '/' + settings.SUB_URL_EMPRESA + '/send_push'
+
+        # context para el html
+        context = {
+            'url_push': url_push,
+            'lista_up_admin': lista_up_admin,
+            'lista_up_supervisor': lista_up_supervisor,
+            'lista_up_cajero': lista_up_cajero,
+            'lista_up_almacen': lista_up_almacen,
+            'vapid_key': vapid_key,
+            'lista_entregar': lista_entregar,
+            'lista_recoger': lista_recoger,
+            'lista_finalizar': lista_finalizar,
+        }
+
+        return render(request, 'pages/notificaciones_push.html', context)
+
+    except Exception as e:
+        print('ERROR ' + str(e))
+        context = {
+            'lista_up_admin': '',
+            'lista_up_supervisor': '',
+            'lista_up_cajero': '',
+            'lista_up_almacen': '',
+            'vapid_key': '',
+        }
+        return render(request, 'pages/notificaciones_push.html', context)
 
 
 def lista_para_notificar(user):

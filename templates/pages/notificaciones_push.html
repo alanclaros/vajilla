@@ -1,0 +1,162 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>EvControl - Sistema de Control de Eventos</title>
+    
+    <meta name="user_id" content="1">
+    <meta name="vapid-key" content="{{ vapid_key }}">
+</head>
+
+<body onload="sendPush();">
+<form name="formulario" method="post" action="">
+    {% csrf_token %}
+<input type="hidden" id="lista_up_admin" value="{{lista_up_admin}}">
+<input type="hidden" id="lista_up_supervisor" value="{{lista_up_supervisor}}">
+<input type="hidden" id="lista_up_almacen" value="{{lista_up_almacen}}">
+<input type="hidden" id="lista_up_cajero" value="{{lista_up_cajero}}">
+
+<input type="hidden" id="lista_entregar" value="{{lista_entregar}}">
+<input type="hidden" id="lista_recoger" value="{{lista_recoger}}">
+<input type="hidden" id="lista_finalizar" value="{{lista_finalizar}}">
+
+<input type="hidden" id="url_push" value="{{url_push}}">
+</form>
+<div id="div_push_result_entregar">
+    result push entregar
+</div>
+<div id="div_push_result_recoger">
+    result push recoger
+</div>
+<div id="div_push_result_finalizar">
+    result push finalizar
+</div>
+
+<!-- jQuery -->
+<script src="{% static 'plugins/jquery/jquery.min.js' %}"></script>
+
+<script>
+    function sendPush(){
+        const url_push = document.getElementById('url_push').value;
+        const token = document.forms['formulario'].elements['csrfmiddlewaretoken'].value;
+        
+        const up_admin= document.getElementById('lista_up_admin').value;
+        const up_supervisor= document.getElementById('lista_up_supervisor').value;
+        const up_cajero= document.getElementById('lista_up_cajero').value;
+        const up_almacen= document.getElementById('lista_up_almacen').value;
+        
+        const lista_entregar= document.getElementById('lista_entregar').value;
+        const lista_recoger= document.getElementById('lista_recoger').value;
+        const lista_finalizar= document.getElementById('lista_finalizar').value;
+        
+        const cant_entregar= lista_entregar.length;
+        const cant_recoger= lista_recoger.length;
+        const cant_finalizar= lista_finalizar.length;
+        
+        let div_entregar=[];
+        let div_recoger= [];
+        let div_finalizar= [];
+        
+        //entregar
+        if(cant_entregar>0){
+            let lista_usuarios= '';
+            lista_usuarios += up_admin.length > 0 ? up_admin + '|' : '';
+            lista_usuarios += up_supervisor.length > 0 ? up_supervisor + '|' : '';
+            lista_usuarios += up_almacen.length > 0 ? up_almacen + '|' : '';
+            //lista_usuarios += up_cajero.length > 0 ? up_admin + '|' : '';
+            if(lista_usuarios.length > 0){
+                lista_usuarios= lista_usuarios.substr(0, lista_usuarios.length-1);
+            }
+            
+            div_entregar= lista_entregar.split('||');
+            for(let i=0; i<div_entregar.length; i++){
+                const aux_d= div_entregar[i].split('|');
+            
+                const head = aux_d[0]==='warning' ? 'Aviso':'**Alerta**';
+                const body = aux_d[1];
+                if(lista_usuarios.length>0){
+                    const datos_push = {
+                        'head': head,
+                        'body': body,
+                        'id': lista_usuarios,
+                        'csrfmiddlewaretoken': token,
+                    }
+                    console.log(datos_push);
+            
+                    //$("#div_push_result").html(imagen);
+                    $("#div_push_result_entregar").load(url_push, datos_push, function () {
+                        console.log('engregar');
+                    });
+                }
+            }
+        }
+        
+        //recoger
+        if(cant_recoger>0){
+            let lista_usuarios= '';
+            lista_usuarios += up_admin.length > 0 ? up_admin + '|' : '';
+            lista_usuarios += up_supervisor.length > 0 ? up_supervisor + '|' : '';
+            lista_usuarios += up_almacen.length > 0 ? up_almacen + '|' : '';
+            //lista_usuarios += up_cajero.length > 0 ? up_admin + '|' : '';
+            
+            div_recoger= lista_recoger.split('||');
+            for(let i=0; i<div_recoger.length; i++){
+                const aux_d= div_recoger[i].split('|');
+            
+                const head = aux_d[0]==='warning' ? 'Aviso':'**Alerta**';
+                const body = aux_d[1];
+                if(lista_usuarios.length>0){
+                    const datos_push = {
+                        'head': head,
+                        'body': body,
+                        'id': lista_usuarios,
+                        'csrfmiddlewaretoken': token,
+                    }
+            
+                    //$("#div_push_result_recoger").html(imagen);
+                    $("#div_push_result_recoger").load(url_push, datos_push, function () {
+                        console.log('recoger');
+                    });
+                }
+            }
+        }
+        
+        if(cant_finalizar>0){
+            let lista_usuarios= '';
+            lista_usuarios += up_admin.length > 0 ? up_admin + '|' : '';
+            lista_usuarios += up_supervisor.length > 0 ? up_supervisor + '|' : '';
+            //lista_usuarios += up_almacen.length > 0 ? up_almacen + '|' : '';
+            lista_usuarios += up_cajero.length > 0 ? up_admin + '|' : '';
+            
+            div_finalizar= lista_finalizar.split('||');
+            for(let i=0; i<div_finalizar.length; i++){
+                const aux_d= div_finalizar[i].split('|');
+            
+                const head = aux_d[0]==='warning' ? 'Aviso':'**Alerta**';
+                const body = aux_d[1];
+                if(lista_usuarios.length>0){
+                    
+                    const datos_push = {
+                        'head': head,
+                        'body': body,
+                        'id': lista_usuarios,
+                        'csrfmiddlewaretoken': token,
+                    }
+            
+                    //$("#div_push_result_recoger").html(imagen);
+                    $("#div_push_result_finalizar").load(url_push, datos_push, function () {
+                        console.log('finalizar');
+                    });
+                }
+            }
+        }
+    }
+</script>
+    
+</body>
+</html>
