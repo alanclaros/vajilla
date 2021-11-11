@@ -52,51 +52,51 @@ def load_data(apps, schema_editor):
     puntos_almacenes_add.save()
 
     # lineas
-    linea = Lineas.objects.create(linea='Vajilla', codigo='vajilla', linea_principal=1, linea_superior_id=0, descripcion='', imagen='vajilla.jpg',
-                                  imagen_thumb='vajilla_thumb.jpg', status_id=status_activo, created_at='now', updated_at='now')
-    linea.save()
-    linea = Lineas.objects.create(linea='Manteleria', codigo='manteleria', linea_principal=1, linea_superior_id=0, descripcion='', imagen='manteleria.jpg',
-                                  imagen_thumb='manteleria_thumb.jpg', status_id=status_activo, created_at='now', updated_at='now')
-    linea.save()
-    linea = Lineas.objects.create(linea='SobreManteles', codigo='sobremanteles', linea_principal=1, linea_superior_id=0, descripcion='', imagen='sobremanteles.jpg',
-                                  imagen_thumb='sobremanteles_thumb.jpg', status_id=status_activo, created_at='now', updated_at='now')
-    linea.save()
-    linea = Lineas.objects.create(linea='Caminitos', codigo='caminitos', linea_principal=1, linea_superior_id=0, descripcion='', imagen='caminitos.jpg',
-                                  imagen_thumb='caminitos_thumb.jpg', status_id=status_activo, created_at='now', updated_at='now')
-    linea.save()
-    linea = Lineas.objects.create(linea='Servilletas', codigo='servilletas', linea_principal=1, linea_superior_id=0, descripcion='', imagen='servilletas.jpg',
-                                  imagen_thumb='servilletas_thumb.jpg', status_id=status_activo, created_at='now', updated_at='now')
-    linea.save()
-    linea = Lineas.objects.create(linea='Moñas', codigo='monias', linea_principal=1, linea_superior_id=0, descripcion='', imagen='monias.jpg',
-                                  imagen_thumb='monias_thumb.jpg', status_id=status_activo, created_at='now', updated_at='now')
-    linea.save()
-    linea = Lineas.objects.create(linea='Cabezal', codigo='cabecal', linea_principal=1, linea_superior_id=0, descripcion='', imagen='cabecal.jpg',
-                                  imagen_thumb='cabecal_thumb.jpg', status_id=status_activo, created_at='now', updated_at='now')
-    linea.save()
-    linea = Lineas.objects.create(linea='Cobertores', codigo='cobertores', linea_principal=1, linea_superior_id=0, descripcion='', imagen='cobertores.jpg',
-                                  imagen_thumb='cobertores_thumb.jpg', status_id=status_activo, created_at='now', updated_at='now')
-    linea.save()
-    linea = Lineas.objects.create(linea='Faldones', codigo='faldones', linea_principal=1, linea_superior_id=0, descripcion='', imagen='faldones.jpg',
-                                  imagen_thumb='faldones_thumb.jpg', status_id=status_activo, created_at='now', updated_at='now')
-    linea.save()
-    linea = Lineas.objects.create(linea='CanCan', codigo='cancan', linea_principal=1, linea_superior_id=0, descripcion='', imagen='cancan.jpg',
-                                  imagen_thumb='cancan_thumb.jpg', status_id=status_activo, created_at='now', updated_at='now')
-    linea.save()
-    linea = Lineas.objects.create(linea='Muletones', codigo='muletones', linea_principal=1, linea_superior_id=0, descripcion='', imagen='muletones.jpg',
-                                  imagen_thumb='muletones_thumb.jpg', status_id=status_activo, created_at='now', updated_at='now')
-    linea.save()
-    linea = Lineas.objects.create(linea='Mesas', codigo='mesas', linea_principal=1, linea_superior_id=0, descripcion='', imagen='mesas.jpg',
-                                  imagen_thumb='mesas_thumb.jpg', status_id=status_activo, created_at='now', updated_at='now')
-    linea.save()
-    linea = Lineas.objects.create(linea='Toldos', codigo='toldos', linea_principal=1, linea_superior_id=0, descripcion='', imagen='toldos.jpg',
-                                  imagen_thumb='toldos_thumb.jpg', status_id=status_activo, created_at='now', updated_at='now')
-    linea.save()
-    linea = Lineas.objects.create(linea='Laterales', codigo='laterales', linea_principal=1, linea_superior_id=0, descripcion='', imagen='laterales.jpg',
-                                  imagen_thumb='laterales_thumb.jpg', status_id=status_activo, created_at='now', updated_at='now')
-    linea.save()
-    linea = Lineas.objects.create(linea='Alfombras', codigo='alfombras', linea_principal=1, linea_superior_id=0, descripcion='', imagen='alfombras.jpg',
-                                  imagen_thumb='alfombras_thumb.jpg', status_id=status_activo, created_at='now', updated_at='now')
-    linea.save()
+    # linea = Lineas.objects.create(linea='Vajilla', codigo='vajilla', linea_principal=1, linea_superior_id=0, descripcion='', imagen='vajilla.jpg',
+    #                               imagen_thumb='vajilla_thumb.jpg', status_id=status_activo, created_at='now', updated_at='now')
+    # linea.save()
+    # linea = Lineas.objects.create(linea='Manteleria', codigo='manteleria', linea_principal=1, linea_superior_id=0, descripcion='', imagen='manteleria.jpg',
+    #                               imagen_thumb='manteleria_thumb.jpg', status_id=status_activo, created_at='now', updated_at='now')
+    # linea.save()
+    # linea = Lineas.objects.create(linea='SobreManteles', codigo='sobremanteles', linea_principal=1, linea_superior_id=0, descripcion='', imagen='sobremanteles.jpg',
+    #                               imagen_thumb='sobremanteles_thumb.jpg', status_id=status_activo, created_at='now', updated_at='now')
+    # linea.save()
+    # linea = Lineas.objects.create(linea='Caminitos', codigo='caminitos', linea_principal=1, linea_superior_id=0, descripcion='', imagen='caminitos.jpg',
+    #                               imagen_thumb='caminitos_thumb.jpg', status_id=status_activo, created_at='now', updated_at='now')
+    # linea.save()
+    # linea = Lineas.objects.create(linea='Servilletas', codigo='servilletas', linea_principal=1, linea_superior_id=0, descripcion='', imagen='servilletas.jpg',
+    #                               imagen_thumb='servilletas_thumb.jpg', status_id=status_activo, created_at='now', updated_at='now')
+    # linea.save()
+    # linea = Lineas.objects.create(linea='Moñas', codigo='monias', linea_principal=1, linea_superior_id=0, descripcion='', imagen='monias.jpg',
+    #                               imagen_thumb='monias_thumb.jpg', status_id=status_activo, created_at='now', updated_at='now')
+    # linea.save()
+    # linea = Lineas.objects.create(linea='Cabezal', codigo='cabecal', linea_principal=1, linea_superior_id=0, descripcion='', imagen='cabecal.jpg',
+    #                               imagen_thumb='cabecal_thumb.jpg', status_id=status_activo, created_at='now', updated_at='now')
+    # linea.save()
+    # linea = Lineas.objects.create(linea='Cobertores', codigo='cobertores', linea_principal=1, linea_superior_id=0, descripcion='', imagen='cobertores.jpg',
+    #                               imagen_thumb='cobertores_thumb.jpg', status_id=status_activo, created_at='now', updated_at='now')
+    # linea.save()
+    # linea = Lineas.objects.create(linea='Faldones', codigo='faldones', linea_principal=1, linea_superior_id=0, descripcion='', imagen='faldones.jpg',
+    #                               imagen_thumb='faldones_thumb.jpg', status_id=status_activo, created_at='now', updated_at='now')
+    # linea.save()
+    # linea = Lineas.objects.create(linea='CanCan', codigo='cancan', linea_principal=1, linea_superior_id=0, descripcion='', imagen='cancan.jpg',
+    #                               imagen_thumb='cancan_thumb.jpg', status_id=status_activo, created_at='now', updated_at='now')
+    # linea.save()
+    # linea = Lineas.objects.create(linea='Muletones', codigo='muletones', linea_principal=1, linea_superior_id=0, descripcion='', imagen='muletones.jpg',
+    #                               imagen_thumb='muletones_thumb.jpg', status_id=status_activo, created_at='now', updated_at='now')
+    # linea.save()
+    # linea = Lineas.objects.create(linea='Mesas', codigo='mesas', linea_principal=1, linea_superior_id=0, descripcion='', imagen='mesas.jpg',
+    #                               imagen_thumb='mesas_thumb.jpg', status_id=status_activo, created_at='now', updated_at='now')
+    # linea.save()
+    # linea = Lineas.objects.create(linea='Toldos', codigo='toldos', linea_principal=1, linea_superior_id=0, descripcion='', imagen='toldos.jpg',
+    #                               imagen_thumb='toldos_thumb.jpg', status_id=status_activo, created_at='now', updated_at='now')
+    # linea.save()
+    # linea = Lineas.objects.create(linea='Laterales', codigo='laterales', linea_principal=1, linea_superior_id=0, descripcion='', imagen='laterales.jpg',
+    #                               imagen_thumb='laterales_thumb.jpg', status_id=status_activo, created_at='now', updated_at='now')
+    # linea.save()
+    # linea = Lineas.objects.create(linea='Alfombras', codigo='alfombras', linea_principal=1, linea_superior_id=0, descripcion='', imagen='alfombras.jpg',
+    #                               imagen_thumb='alfombras_thumb.jpg', status_id=status_activo, created_at='now', updated_at='now')
+    # linea.save()
 
     # tipos monedas
     tipo_moneda_add = TiposMonedas.objects.create(tipo_moneda_id=1, status_id=status_activo, tipo_moneda='Bolivianos', codigo='Bs.')

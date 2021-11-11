@@ -21,9 +21,9 @@
 <input type="hidden" id="lista_up_almacen" value="{{lista_up_almacen}}">
 <input type="hidden" id="lista_up_cajero" value="{{lista_up_cajero}}">
 
-<input type="hidden" id="lista_entregar" value="{{lista_entregar}}">
-<input type="hidden" id="lista_recoger" value="{{lista_recoger}}">
-<input type="hidden" id="lista_finalizar" value="{{lista_finalizar}}">
+<input type="hidden" id="lista_entregar" value="{% autoescape off %}{{lista_entregar}}{% endautoescape %}">
+<input type="hidden" id="lista_recoger" value="{% autoescape off %}{{lista_recoger}}{% endautoescape %}">
+<input type="hidden" id="lista_finalizar" value="{% autoescape off %}{{lista_finalizar}}{% endautoescape %}">
 
 <input type="hidden" id="url_push" value="{{url_push}}">
 </form>
