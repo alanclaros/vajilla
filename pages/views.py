@@ -608,15 +608,19 @@ def lista_para_notificar(user):
 
         fecha_actual = current_date() + ' ' + hora + ':' + minuto + ':' + segundo
         fecha_actual_int = get_fecha_int(fecha_actual)
-        tiempo_aviso_entrega = 6*60  # minutos, 6 horas
-        tiempo_aviso_entrega_tarde = 3*60  # 3 horas
 
-        tiempo_aviso_recoger = 6*60  # minutos, 6 horas
-        tiempo_aviso_recoger_tarde = 3*60  # 3 horas
+        configuraciones_db = get_system_settings()
+        #print('configuraciones db: ', configuraciones_db)
+        tiempo_aviso_entrega = configuraciones_db['minutos_aviso_entregar']  # 6*60  # minutos, 6 horas
+        tiempo_aviso_entrega_tarde = configuraciones_db['minutos_aviso_entregar_tarde']  # 3*60  # 3 horas
 
-        tiempo_aviso_finalizar = 3*60  # minutos, 3 horas
-        tiempo_aviso_finalizar_tarde = 6*60  # 6 horas
+        tiempo_aviso_recoger = configuraciones_db['minutos_aviso_recoger']  # 6*60  # minutos, 6 horas
+        tiempo_aviso_recoger_tarde = configuraciones_db['minutos_aviso_recoger_tarde']  # 3*60  # 3 horas
 
+        tiempo_aviso_finalizar = configuraciones_db['minutos_aviso_finalizar']  # 3*60  # minutos, 3 horas
+        tiempo_aviso_finalizar_tarde = configuraciones_db['minutos_aviso_finalizar_tarde']  # 6*60  # 6 horas
+
+        # print('cargado....')
         # # para entregar
         # fecha_aviso_entrega = add_minutes_datetime(fecha=fecha_actual, formato_ori='yyyy-mm-dd HH:ii:ss', minutos_add=0-tiempo_aviso_entrega)
         # fecha_aviso_entrega_tarde = add_minutes_datetime(fecha=fecha_actual, formato_ori='yyyy-mm-dd HH:ii:ss', minutos_add=0-tiempo_aviso_entrega_tarde)

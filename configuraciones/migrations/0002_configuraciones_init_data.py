@@ -8,8 +8,12 @@ from status.models import Status
 
 def load_data(apps, schema_editor):
     # configuraciones
-    configuraciones_add = Configuraciones.objects.create(configuracion_id=1, cant_per_page=30,
-                                                         usar_fecha_servidor='si', fecha_sistema='now', minutos_antes_devolucion=180, minutos_despues_entrega=180)
+    configuraciones_add = Configuraciones.objects.create(
+        configuracion_id=1, cant_per_page=30,
+        usar_fecha_servidor='si', fecha_sistema='now', minutos_antes_devolucion=180, minutos_despues_entrega=180,
+        minutos_aviso_entregar=360, minutos_aviso_entregar_tarde=180,
+        minutos_aviso_recoger=360, minutos_aviso_recoger_tarde=180,
+        minutos_aviso_finalizar=180, minutos_aviso_finalizar_tarde=360)
     configuraciones_add.save()
 
     # paises

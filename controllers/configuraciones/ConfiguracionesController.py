@@ -51,6 +51,13 @@ class ConfiguracionesController(DefaultValues):
             usar_fecha_servidor = validate_string('usar_fecha_servidor', request.POST['usar_fecha_servidor'], remove_specials='yes')
             fecha_sistema = get_date_to_db(fecha=request.POST['fecha_sistema'].strip(), formato_ori='dd-MMM-yyyy', formato='yyyy-mm-dd')
 
+            minutos_aviso_entregar = validate_number_int('minutos aviso entregar', request.POST['minutos_aviso_entregar'])
+            minutos_aviso_entregar_tarde = validate_number_int('minutos aviso entregar tarde', request.POST['minutos_aviso_entregar_tarde'])
+            minutos_aviso_recoger = validate_number_int('minutos aviso recoger', request.POST['minutos_aviso_recoger'])
+            minutos_aviso_recoger_tarde = validate_number_int('minutos aviso recoger tarde', request.POST['minutos_aviso_recoger_tarde'])
+            minutos_aviso_finalizar = validate_number_int('minutos aviso finalizar', request.POST['minutos_aviso_finalizar'])
+            minutos_aviso_finalizar_tarde = validate_number_int('minutos aviso finalizar tarde', request.POST['minutos_aviso_finalizar_tarde'])
+
             configuracion = apps.get_model('configuraciones', 'Configuraciones').objects.get(pk=1)
             configuracion.cant_per_page = cant_per_page
             configuracion.usar_fecha_servidor = usar_fecha_servidor
@@ -58,6 +65,13 @@ class ConfiguracionesController(DefaultValues):
             configuracion.usar_fecha_servidor = usar_fecha_servidor
             configuracion.minutos_antes_devolucion = minutos_antes_devolucion
             configuracion.minutos_despues_entrega = minutos_despues_entrega
+
+            configuracion.minutos_aviso_entregar = minutos_aviso_entregar
+            configuracion.minutos_aviso_entregar_tarde = minutos_aviso_entregar_tarde
+            configuracion.minutos_aviso_recoger = minutos_aviso_recoger
+            configuracion.minutos_aviso_recoger_tarde = minutos_aviso_recoger_tarde
+            configuracion.minutos_aviso_finalizar = minutos_aviso_finalizar
+            configuracion.minutos_aviso_finalizar_tarde = minutos_aviso_finalizar_tarde
             configuracion.save()
             return True
 

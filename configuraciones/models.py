@@ -13,6 +13,16 @@ class Configuraciones(models.Model):
     minutos_antes_devolucion = models.IntegerField(blank=False, null=False)
     minutos_despues_entrega = models.IntegerField(blank=False, null=False)
 
+    # notificaciones push
+    minutos_aviso_entregar = models.IntegerField(blank=False, null=False)
+    minutos_aviso_entregar_tarde = models.IntegerField(blank=False, null=False)
+
+    minutos_aviso_recoger = models.IntegerField(blank=False, null=False)
+    minutos_aviso_recoger_tarde = models.IntegerField(blank=False, null=False)
+
+    minutos_aviso_finalizar = models.IntegerField(blank=False, null=False)
+    minutos_aviso_finalizar_tarde = models.IntegerField(blank=False, null=False)
+
     class Meta:
         db_table = 'configuraciones'
 

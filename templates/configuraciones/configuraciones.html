@@ -34,13 +34,13 @@
                 
                 <tr class="back2">
                     <td class="right w-20">
-                        Min. Devolucion&nbsp;
+                        Min. antes Entregar&nbsp;
                     </td>
                     <td class="left w-30">
                         <input type="text" autocomplete="off" class="form-control input right w-70" name="minutos_antes_devolucion" id="minutos_antes_devolucion" value="{{configuraciones.minutos_antes_devolucion}}" onkeyup="validarNumero(this);txtValid(this);" onblur="txtValid(this);">
                     </td>
                     <td class="right w-20">
-                        Min. Entrega&nbsp;
+                        Min. despues Recoger&nbsp;
                     </td>
                     <td class="left w-30">
                         <input type="text" autocomplete="off" class="form-control input right w-70" name="minutos_despues_entrega" id="minutos_despues_entrega" value="{{configuraciones.minutos_despues_entrega}}" onkeyup="validarNumero(this);txtValid(this);" onblur="txtValid(this);">
@@ -48,6 +48,51 @@
                 </tr>
                 
                 <tr class="back1">
+                    <td class="right w-20">
+                        Aviso Entregar&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <input type="text" autocomplete="off" class="form-control input right w-70" name="minutos_aviso_entregar" id="minutos_aviso_entregar" value="{{configuraciones.minutos_aviso_entregar}}" onkeyup="validarNumero(this);txtValid(this);" onblur="txtValid(this);">
+                    </td>
+                    <td class="right w-20">
+                        Entregar Tarde&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <input type="text" autocomplete="off" class="form-control input right w-70" name="minutos_aviso_entregar_tarde" id="minutos_aviso_entregar_tarde" value="{{configuraciones.minutos_aviso_entregar_tarde}}" onkeyup="validarNumero(this);txtValid(this);" onblur="txtValid(this);">
+                    </td>
+                </tr>
+                
+                <tr class="back2">
+                    <td class="right w-20">
+                        Aviso Recoger&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <input type="text" autocomplete="off" class="form-control input right w-70" name="minutos_aviso_recoger" id="minutos_aviso_recoger" value="{{configuraciones.minutos_aviso_recoger}}" onkeyup="validarNumero(this);txtValid(this);" onblur="txtValid(this);">
+                    </td>
+                    <td class="right w-20">
+                        Recoger Tarde&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <input type="text" autocomplete="off" class="form-control input right w-70" name="minutos_aviso_recoger_tarde" id="minutos_aviso_recoger_tarde" value="{{configuraciones.minutos_aviso_recoger_tarde}}" onkeyup="validarNumero(this);txtValid(this);" onblur="txtValid(this);">
+                    </td>
+                </tr>
+                
+                <tr class="back1">
+                    <td class="right w-20">
+                        Aviso Finalizar&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <input type="text" autocomplete="off" class="form-control input right w-70" name="minutos_aviso_finalizar" id="minutos_aviso_finalizar" value="{{configuraciones.minutos_aviso_finalizar}}" onkeyup="validarNumero(this);txtValid(this);" onblur="txtValid(this);">
+                    </td>
+                    <td class="right w-20">
+                        Finalizar Tarde&nbsp;
+                    </td>
+                    <td class="left w-30">
+                        <input type="text" autocomplete="off" class="form-control input right w-70" name="minutos_aviso_finalizar_tarde" id="minutos_aviso_finalizar_tarde" value="{{configuraciones.minutos_aviso_finalizar_tarde}}" onkeyup="validarNumero(this);txtValid(this);" onblur="txtValid(this);">
+                    </td>
+                </tr>
+                
+                <tr class="back2">
                     <td class="right w-20">
                         F. Serv.&nbsp;
                     </td>
@@ -71,7 +116,7 @@
                     </td>
                 </tr>
 
-                <tr class="back2">
+                <tr class="back1">
                     <td colspan="4" class="center w-100">
                         &nbsp;
                     </td>

@@ -77,10 +77,10 @@ function hideNotifications() {
 	}
 }
 
-setInterval('hideNotifications()', 3000);
+setInterval('hideNotifications()', 5000);
 
 //notificaciones
-setInterval('checkNotifications()', 25000); //45 segundos
+setInterval('checkNotifications()', 45000); //45 segundos
 
 //de las notificaciones para abrir los menus
 function notificacionAbrir(tipo) {

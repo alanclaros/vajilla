@@ -52,6 +52,15 @@ class Migration(migrations.Migration):
                 ('fecha_sistema', utils.custome_db_types.DateFieldCustome(blank=True, null=True)),
                 ('minutos_antes_devolucion', models.IntegerField()),
                 ('minutos_despues_entrega', models.IntegerField()),
+
+                ('minutos_aviso_entregar', models.IntegerField()),
+                ('minutos_aviso_entregar_tarde', models.IntegerField()),
+
+                ('minutos_aviso_recoger', models.IntegerField()),
+                ('minutos_aviso_recoger_tarde', models.IntegerField()),
+
+                ('minutos_aviso_finalizar', models.IntegerField()),
+                ('minutos_aviso_finalizar_tarde', models.IntegerField()),
             ],
             options={
                 'db_table': 'configuraciones',
