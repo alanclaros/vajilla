@@ -406,7 +406,7 @@ def backup(request):
 def reemplazar_codigo_html(cadena):
     retorno = cadena
     retorno = retorno.replace('&', "&#38;")
-    retorno = retorno.replace('#', "&#35;")
+    retorno = retorno.replace('#', "#")
 
     retorno = retorno.replace("'", "&#39;")
     retorno = retorno.replace('"', "&#34;")
@@ -668,7 +668,7 @@ def lista_para_notificar(user):
                         dato['tipo'] = 'E'
                         dato['tipo_notificacion'] = 'warning'
                         fecha = get_date_show(fecha=fecha_entrega, formato='dd-MMM-yyyy HH:ii', formato_ori='yyyy-mm-dd HH:ii:ss')
-                        dato['descripcion'] = 'E - ' + fecha + ', &#35; ' + numero_contrato
+                        dato['descripcion'] = 'E - ' + fecha + ', # ' + numero_contrato
                         dato['url'] = 'ventas'
                         lista_notificaciones.append(dato)
                         cantidad_warning += 1
@@ -678,7 +678,7 @@ def lista_para_notificar(user):
                         dato['tipo'] = 'E'
                         dato['tipo_notificacion'] = 'danger'
                         fecha = get_date_show(fecha=fecha_entrega, formato='dd-MMM-yyyy HH:ii', formato_ori='yyyy-mm-dd HH:ii:ss')
-                        dato['descripcion'] = 'E - ' + fecha + ', &#35; ' + numero_contrato
+                        dato['descripcion'] = 'E - ' + fecha + ', # ' + numero_contrato
                         dato['url'] = 'ventas'
                         lista_notificaciones.append(dato)
                         cantidad_danger += 1
@@ -690,7 +690,7 @@ def lista_para_notificar(user):
                         dato['tipo'] = 'R'
                         dato['tipo_notificacion'] = 'warning'
                         fecha = get_date_show(fecha=fecha_devolucion, formato='dd-MMM-yyyy HH:ii', formato_ori='yyyy-mm-dd HH:ii:ss')
-                        dato['descripcion'] = 'R - ' + fecha + ', &#35; ' + numero_contrato
+                        dato['descripcion'] = 'R - ' + fecha + ', # ' + numero_contrato
                         dato['url'] = 'ventas'
                         lista_notificaciones.append(dato)
                         cantidad_warning += 1
@@ -701,7 +701,7 @@ def lista_para_notificar(user):
                         dato['tipo'] = 'R'
                         dato['tipo_notificacion'] = 'danger'
                         fecha = get_date_show(fecha=fecha_devolucion, formato='dd-MMM-yyyy HH:ii', formato_ori='yyyy-mm-dd HH:ii:ss')
-                        dato['descripcion'] = 'R - ' + fecha + ', &#35; ' + numero_contrato
+                        dato['descripcion'] = 'R - ' + fecha + ', # ' + numero_contrato
                         dato['url'] = 'ventas'
                         lista_notificaciones.append(dato)
                         cantidad_danger += 1
@@ -713,7 +713,7 @@ def lista_para_notificar(user):
                         dato['tipo'] = 'F'
                         dato['tipo_notificacion'] = 'warning'
                         fecha = get_date_show(fecha=fecha_devolucion, formato='dd-MMM-yyyy HH:ii', formato_ori='yyyy-mm-dd HH:ii:ss')
-                        dato['descripcion'] = 'F - ' + fecha + ', &#35; ' + numero_contrato
+                        dato['descripcion'] = 'F - ' + fecha + ', # ' + numero_contrato
                         dato['url'] = 'ventas'
                         lista_notificaciones.append(dato)
                         cantidad_warning += 1
@@ -724,7 +724,7 @@ def lista_para_notificar(user):
                         dato['tipo'] = 'F'
                         dato['tipo_notificacion'] = 'danger'
                         fecha = get_date_show(fecha=fecha_devolucion, formato='dd-MMM-yyyy HH:ii', formato_ori='yyyy-mm-dd HH:ii:ss')
-                        dato['descripcion'] = 'F - ' + fecha + ', &#35; ' + numero_contrato
+                        dato['descripcion'] = 'F - ' + fecha + ', # ' + numero_contrato
                         dato['url'] = 'ventas'
                         lista_notificaciones.append(dato)
                         cantidad_danger += 1
