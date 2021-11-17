@@ -487,7 +487,7 @@ function validarFilaPreVenta(fila) {
 }
 
 //acc, total por producto
-function totalPedidoPreVenta() {
+function totalPedidoPreVenta(origen) {
     total_pedido = 0;
     for (i = 1; i <= 50; i++) {
         try {
@@ -514,7 +514,9 @@ function totalPedidoPreVenta() {
     //console.log('error');
     obj_total_pedido.value = redondeo(total_pedido, 2);
 
-    calcularPorcentajeDescuentoVenta();
+    if (origen !== 'descuento') {
+        calcularPorcentajeDescuentoVenta();
+    }
 
     //descuento
     t_final = total_pedido;

@@ -117,14 +117,18 @@
                                 dateFormat: 'dd-MMM-yyyy'
                             });
                         </script> 
-                        <select name="hora_entrega" id="hora_entrega"  onchange="ocultarProductosVenta();" class="form-control w-20 input h-35">
+                        <select name="hora_entrega" id="hora_entrega"  onchange="ocultarProductosVenta();" class="form-control w-20 input h-35" readonly="readonly">
                             {% for hora in horas %}
+                            {% if hora == hora_entrega %}
                             <option value="{{hora}}" {% if hora == hora_entrega %}selected{% endif %}>{{hora}}</option>
+                            {% endif %}
                             {% endfor %}
                         </select> 
-                        <select name="minuto_entrega" id="minuto_entrega"  onchange="ocultarProductosVenta();" class="form-control w-20 input h-35">
+                        <select name="minuto_entrega" id="minuto_entrega"  onchange="ocultarProductosVenta();" class="form-control w-20 input h-35" readonly="readonly">
                             {% for minuto in minutos %}
+                            {% if minuto == minuto_entrega %}
                             <option value="{{minuto}}" {% if minuto == minuto_entrega %}selected{% endif %}>{{minuto}}</option>
+                            {% endif %}
                             {% endfor %}
                         </select>
                     </td>
@@ -142,14 +146,18 @@
                                 dateFormat: 'dd-MMM-yyyy'
                             });
                         </script>
-                        <select name="hora_devolucion" id="hora_devolucion"  onchange="ocultarProductosVenta();" class="form-control w-20 input h-35">
+                        <select name="hora_devolucion" id="hora_devolucion"  onchange="ocultarProductosVenta();" class="form-control w-20 input h-35" readonly="readonly">
                             {% for hora in horas %}
+                            {% if hora == hora_devolucion %}
                             <option value="{{hora}}" {% if hora == hora_devolucion %}selected{% endif %}>{{hora}}</option>
+                            {% endif %}
                             {% endfor %}
                         </select> 
-                        <select name="minuto_devolucion" id="minuto_devolucion"  onchange="ocultarProductosVenta();" class="form-control w-20 input h-35">
+                        <select name="minuto_devolucion" id="minuto_devolucion"  onchange="ocultarProductosVenta();" class="form-control w-20 input h-35" readonly="readonly">
                             {% for minuto in minutos %}
+                            {% if minuto == minuto_devolucion %}
                             <option value="{{minuto}}" {% if minuto == minuto_devolucion %}selected{% endif %}>{{minuto}}</option>
+                            {% endif %}
                             {% endfor %}
                         </select>
                     </td>
@@ -237,13 +245,13 @@
                             
                             SubTotal : <input type="text" class="form-control input right w-20" name="total_pedido" id="total_pedido" value="{{venta.subtotal}}" readonly="readonly"> Bs.<br>
                             
-                            &#37; Desc. <input type="text" autocomplete="off" class="form-control input right w-20" name="porcentaje_descuento" id="porcentaje_descuento" value="{{venta.porcentaje_descuento}}" onkeyup="validarNumeroPunto(this); calcularPorcentajeDescuentoVenta(); totalPedidoPreVenta();">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
-                            Desc. <input type="text" autocomplete="off" class="form-control input right w-20" name="descuento" id="descuento" value="{{venta.descuento}}" onkeyup="validarNumeroPunto(this); totalPedidoPreVenta();"> Bs.<br>
+                            &#37; Desc. <input type="text" autocomplete="off" class="form-control input right w-20" name="porcentaje_descuento" id="porcentaje_descuento" value="{{venta.porcentaje_descuento}}" readonly="readonly">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+                            Desc. <input type="text" autocomplete="off" class="form-control input right w-20" name="descuento" id="descuento" value="{{venta.descuento}}" readonly="readonly"> Bs.<br>
                             
                             Total Productos : <input type="text" class="form-control input right w-20" name="total_venta" id="total_venta" value="{% if venta %}{{venta.total|subtract:venta.costo_transporte}}{% endif %}" readonly="readonly"> Bs.
                             
                             <br>
-                            Transporte : <input type="text" autocomplete="off" class="form-control input right w-20" name="costo_transporte" id="costo_transporte" value="{{venta.costo_transporte}}" onkeyup="validarNumeroPunto(this); totalPedidoPreVenta();"> Bs.<br>
+                            Transporte : <input type="text" autocomplete="off" class="form-control input right w-20" name="costo_transporte" id="costo_transporte" value="{{venta.costo_transporte}}" readonly="readonly"> Bs.<br>
                             Total : <input type="text" class="form-control input right w-20" name="total_final" id="total_final" value="{{venta.total}}" readonly="readonly"> Bs.
                         </td>
                     </tr>
@@ -255,14 +263,14 @@
                     
                     <tr class="back1">
                         <td colspan="2" class="right w-100">
-                            Garantia : <input type="text" autocomplete="off" readonly="readonly" class="form-control input right w-20" name="garantia_bs" id="garantia_bs" value="{{venta.garantia_bs}}" onkeyup="validarNumeroPunto(this);"> Bs.
+                            Garantia : <input type="text" autocomplete="off" readonly="readonly" class="form-control input right w-20" name="garantia_bs" id="garantia_bs" value="{{venta.garantia_bs}}" readonly="readonly"> Bs.
                         </td>
                     </tr>
-                    <tr class="back1">
+                    <!-- <tr class="back1">
                         <td colspan="2" class="center w-100">
                             Observacion :<br><input type="text" autocomplete="off" readonly="readonly" class="form-control input left w-90" name="observacion" id="observacion" value="{{venta.observacion}}">
                         </td>
-                    </tr>
+                    </tr> -->
                     
                     {% if operation_x == 'pasar_venta_anular' %}
                     <tr class="back1">

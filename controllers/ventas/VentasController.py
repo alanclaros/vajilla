@@ -1137,12 +1137,12 @@ class VentasController(DefaultValues):
                     return False
 
                 # verificamos cobros y gastos
-                cant_gastos = apps.get_model('cajas', 'CajasEgresos').objects.filter(venta_id=venta, status_id=self.status_activo).count()
+                cant_gastos = apps.get_model('cajas', 'CajasEgresos').objects.filter(venta_id=venta.venta_id, status_id=self.status_activo).count()
                 if cant_gastos > 0:
                     self.error_operation = 'primero debe anular los gastos de esta venta'
                     return False
 
-                cant_ingresos = apps.get_model('cajas', 'CajasIngresos').objects.filter(venta_id=venta, status_id=self.status_activo).count()
+                cant_ingresos = apps.get_model('cajas', 'CajasIngresos').objects.filter(venta_id=venta.venta_id, status_id=self.status_activo).count()
                 if cant_ingresos > 0:
                     self.error_operation = 'primero debe anular los ingresos de esta venta'
                     return False

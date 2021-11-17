@@ -136,10 +136,10 @@
                             <table class="tablac w-100">
                                 <tr class="back1">
                                     <td class="w-20 right minw-20">
-                                        <input type="text" autocomplete="off" class="form-control input right w-98" name="cantidad_{{fila}}" id="cantidad_{{fila}}" value="" onkeyup="{% if vender_fracciones == 'si' %}validarNumeroPunto(this);{% else %}validarNumero(this);{% endif %}totalPedidoPreVenta();">
+                                        <input type="text" autocomplete="off" class="form-control input right w-98" name="cantidad_{{fila}}" id="cantidad_{{fila}}" value="" onkeyup="{% if vender_fracciones == 'si' %}validarNumeroPunto(this);{% else %}validarNumero(this);{% endif %}totalPedidoPreVenta('');">
                                     </td>
                                     <td class="w-25 right minw-30">
-                                        <input type="text" autocomplete="off" class="form-control input right w-98" name="costo_{{fila}}" id="costo_{{fila}}" value="" onkeyup="validarNumeroPunto(this);totalPedidoPreVenta();">
+                                        <input type="text" autocomplete="off" class="form-control input right w-98" name="costo_{{fila}}" id="costo_{{fila}}" value="" onkeyup="validarNumeroPunto(this);totalPedidoPreVenta('');">
                                     </td>
                                     <td class="w-25 right minw-40">
                                         <input type="text" tabindex="-1" class="form-control input right w-98" name="total_{{fila}}" id="total_{{fila}}" value="" readonly="readonly">
@@ -163,13 +163,13 @@
                             
                             SubTotal : <input type="text" class="form-control input right w-20" name="total_pedido" id="total_pedido" value="" readonly="readonly"> Bs.<br>
                             
-                            &#37; Desc. <input type="text" autocomplete="off" class="form-control input right w-20" name="porcentaje_descuento" id="porcentaje_descuento" value="" onkeyup="validarNumeroPunto(this); calcularPorcentajeDescuentoVenta(); totalPedidoPreVenta();">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
-                            Desc. <input type="text" autocomplete="off" class="form-control input right w-20" name="descuento" id="descuento" value="" onkeyup="validarNumeroPunto(this); totalPedidoPreVenta();"> Bs.<br>
+                            &#37; Desc. <input type="text" autocomplete="off" class="form-control input right w-20" name="porcentaje_descuento" id="porcentaje_descuento" value="" onkeyup="validarNumeroPunto(this); calcularPorcentajeDescuentoVenta(); totalPedidoPreVenta('');">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+                            Desc. <input type="text" autocomplete="off" class="form-control input right w-20" name="descuento" id="descuento" value="" onkeyup="validarNumeroPunto(this); totalPedidoPreVenta('descuento');"> Bs.<br>
                             
                             Total Productos : <input type="text" class="form-control input right w-20" name="total_venta" id="total_venta" value="" readonly="readonly"> Bs.
                             
                             <br>
-                            Transporte : <input type="text" autocomplete="off" class="form-control input right w-20" name="costo_transporte" id="costo_transporte" value="" onkeyup="validarNumeroPunto(this); totalPedidoPreVenta();"> Bs.<br>
+                            Transporte : <input type="text" autocomplete="off" class="form-control input right w-20" name="costo_transporte" id="costo_transporte" value="" onkeyup="validarNumeroPunto(this); totalPedidoPreVenta('');"> Bs.<br>
                             Total : <input type="text" class="form-control input right w-20" name="total_final" id="total_final" value="" readonly="readonly"> Bs.
                         </td>
                     </tr>

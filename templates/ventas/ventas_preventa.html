@@ -270,10 +270,10 @@
                             <table class="tablac w-100">
                                 <tr class="back1">
                                     <td class="w-20 right minw-20">
-                                        <input type="text" autocomplete="off" class="form-control input right w-98" name="cantidad_{{fila}}" id="cantidad_{{fila}}" value="{{fila_venta.cantidad_salida|toint}}" onkeyup="{% if vender_fracciones == 'si' %}validarNumeroPunto(this);{% else %}validarNumero(this);{% endif %}totalPedidoPreVenta();">
+                                        <input type="text" autocomplete="off" class="form-control input right w-98" name="cantidad_{{fila}}" id="cantidad_{{fila}}" value="{{fila_venta.cantidad_salida|toint}}" onkeyup="{% if vender_fracciones == 'si' %}validarNumeroPunto(this);{% else %}validarNumero(this);{% endif %}totalPedidoPreVenta('');">
                                     </td>
                                     <td class="w-25 right minw-30">
-                                        <input type="text" autocomplete="off" class="form-control input right w-98" name="costo_{{fila}}" id="costo_{{fila}}" value="{{fila_venta.costo_salida}}" onkeyup="validarNumeroPunto(this);totalPedidoPreVenta();">
+                                        <input type="text" autocomplete="off" class="form-control input right w-98" name="costo_{{fila}}" id="costo_{{fila}}" value="{{fila_venta.costo_salida}}" onkeyup="validarNumeroPunto(this);totalPedidoPreVenta('');">
                                     </td>
                                     <td class="w-25 right minw-40">
                                         <input type="text" tabindex="-1" class="form-control input right w-98" name="total_{{fila}}" id="total_{{fila}}" value="{{fila_venta.total_salida}}" readonly="readonly">
@@ -336,13 +336,13 @@
                             
                             SubTotal : <input type="text" class="form-control input right w-20" name="total_pedido" id="total_pedido" value="{{venta.subtotal}}" readonly="readonly"> Bs.<br>
                             
-                            &#37; Desc. <input type="text" autocomplete="off" class="form-control input right w-20" name="porcentaje_descuento" id="porcentaje_descuento" value="{{venta.porcentaje_descuento}}" onkeyup="validarNumeroPunto(this); calcularPorcentajeDescuentoVenta(); totalPedidoPreVenta();">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
-                            Desc. <input type="text" autocomplete="off" class="form-control input right w-20" name="descuento" id="descuento" value="{{venta.descuento}}" onkeyup="validarNumeroPunto(this); totalPedidoPreVenta();"> Bs.<br>
+                            &#37; Desc. <input type="text" autocomplete="off" class="form-control input right w-20" name="porcentaje_descuento" id="porcentaje_descuento" value="{{venta.porcentaje_descuento}}" onkeyup="validarNumeroPunto(this); calcularPorcentajeDescuentoVenta(); totalPedidoPreVenta('');">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+                            Desc. <input type="text" autocomplete="off" class="form-control input right w-20" name="descuento" id="descuento" value="{{venta.descuento}}" onkeyup="validarNumeroPunto(this); totalPedidoPreVenta('descuento');"> Bs.<br>
                             
                             Total Productos : <input type="text" class="form-control input right w-20" name="total_venta" id="total_venta" value="{% if venta %}{{venta.total|subtract:venta.costo_transporte}}{% endif %}" readonly="readonly"> Bs.
                             
                             <br>
-                            Transporte : <input type="text" autocomplete="off" class="form-control input right w-20" name="costo_transporte" id="costo_transporte" value="{{venta.costo_transporte}}" onkeyup="validarNumeroPunto(this); totalPedidoPreVenta();"> Bs.<br>
+                            Transporte : <input type="text" autocomplete="off" class="form-control input right w-20" name="costo_transporte" id="costo_transporte" value="{{venta.costo_transporte}}" onkeyup="validarNumeroPunto(this); totalPedidoPreVenta('');"> Bs.<br>
                             Total : <input type="text" class="form-control input right w-20" name="total_final" id="total_final" value="{{venta.total}}" readonly="readonly"> Bs.
                         </td>
                     </tr>
