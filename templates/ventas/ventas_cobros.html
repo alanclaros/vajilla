@@ -67,7 +67,25 @@
                 
                 <tr class="back1">
                     <td colspan="4" class="right w100">
-                        <b>Total Ref. y Rep. : {{venta_garantia_detalles}} Bs.</b>
+                        <b>Total M&aacute;s Ref. y Rep. : {{venta_garantia_detalles}} Bs.</b>
+                    </td>
+                </tr>
+                
+                <tr>
+                    <th colspan="4" class="center w-100">
+                        Aumentos Realizados
+                    </th>
+                </tr>
+                {% for venta_aum in lista_aumentos %}
+                <tr class="{{forloop.counter|back_class}}">
+                    <td colspan="4" class="right w100">
+                        ({{venta_aum.created_at|fecha_mostrar:"dd-MMM-yyyy HH:ii"}}) &nbsp;&nbsp;&nbsp; {{venta_aum.total}} Bs.
+                    </td>
+                </tr>
+                {% endfor %}
+                <tr class="back1">
+                    <td colspan="4" class="right w100">
+                        <b><i>Total Aumentos : {{total_aumentos}} Bs.</i></b>
                     </td>
                 </tr>
                 
@@ -76,7 +94,6 @@
                         Gastos Realizados
                     </th>
                 </tr>
-                
                 {% for gasto in lista_gastos %}
                 {% if gasto.status_id.status_id != estado_anulado %}
                 <tr class="{{forloop.counter|back_class}}">
@@ -86,7 +103,6 @@
                 </tr>
                 {% endif %}
                 {% endfor %}
-                
                 <tr class="back1">
                     <td colspan="4" class="right w100">
                         <b><i>Total Gastos : {{total_gastos}} Bs.</i></b>
@@ -149,14 +165,14 @@
                     <td colspan="4" class="center w-100">&nbsp;</td>
                 </tr>
                 
-                <!-- <tr class="back1">
-                    <td colspan="4" class="right w100">
-                        <i><b>Saldo sin Garant&iacute;a : {{saldo_venta}} Bs.</b></i>
-                    </td>
-                </tr> -->
                 <tr class="back1">
                     <td colspan="4" class="right w100">
-                        <b>Saldo con Garant&iacute;a : {{saldo_sin_garantia}} Bs.</b>
+                        <i><b class="backbuscar_fila1">Saldo con Garant&iacute;a : {{saldo_venta}} Bs.</b></i>
+                    </td>
+                </tr>
+                <tr class="back1">
+                    <td colspan="4" class="right w100">
+                        <b>Saldo sin Garant&iacute;a : {{saldo_sin_garantia}} Bs.</b>
                     </td>
                 </tr>
                 <tr class="back1">

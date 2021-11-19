@@ -1289,6 +1289,9 @@ def ventas_cobros(request, venta_id):
     # lista de ingresos
     lista_ingresos = apps.get_model('cajas', 'CajasIngresos').objects.filter(venta_id=venta.venta_id).order_by('caja_ingreso_id')
 
+    # lista de aumentos
+    #lista_aumentos = apps.get_model('ventas', 'VentasAumentos').objects.filter(venta_id=venta, status_id=venta_controller.status_activo).order_by('venta_aumento_id')
+
     total_gastos = 0
     for gasto in lista_gastos:
         if gasto.status_id == venta_controller.status_activo:
@@ -1302,21 +1305,33 @@ def ventas_cobros(request, venta_id):
             saldo_venta = saldo_venta - ingreso.monto
             total_cobros += ingreso.monto
 
+    # total_aumentos = 0
+    # for venta_aumento in lista_aumentos:
+    #     saldo_venta += venta_aumento.total
+    #     total_aumentos += venta_aumento.total
+
     # devolucion de productos y aumentos
     ventas_detalles = VentasDetalles.objects.filter(venta_id=venta)
     deuda_detalles = 0
     for detalle in ventas_detalles:
         deuda_detalles += detalle.total_vuelta_rotura
 
+    #print('deuda detalles 1..: ', deuda_detalles)
+
     # aumentos
     filtro_aumento = {}
     filtro_aumento['venta_id'] = venta
     filtro_aumento['status_id__in'] = [venta_controller.status_venta, venta_controller.status_salida_almacen, venta_controller.status_vuelta_almacen]
     ventas_aumentos = VentasAumentos.objects.filter(**filtro_aumento)
+    total_aumentos = 0
     for ve_aumento in ventas_aumentos:
+        saldo_venta += ve_aumento.total
+        total_aumentos += ve_aumento.total
+
         ventas_aumentos_detalles = VentasAumentosDetalles.objects.filter(venta_aumento_id=ve_aumento)
         for detalle in ventas_aumentos_detalles:
             deuda_detalles += detalle.total_vuelta_rotura
+            #print('deuda detalles 2:...: ', deuda_detalles)
 
     # venta mas garantia mas detalles
     venta_garantia_detalles = venta_y_garantia + deuda_detalles
@@ -1334,6 +1349,8 @@ def ventas_cobros(request, venta_id):
         'js_file': venta_controller.modulo_session,
         'error_anular': venta_controller.error_operation,
         'autenticado': 'si',
+        'lista_aumentos': ventas_aumentos,
+        'total_aumentos': total_aumentos,
         'lista_gastos': lista_gastos,
         'lista_ingresos': lista_ingresos,
         'saldo_venta': saldo_venta,

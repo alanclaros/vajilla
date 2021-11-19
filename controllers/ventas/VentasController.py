@@ -424,29 +424,30 @@ class VentasController(DefaultValues):
 
                 # detalles del registro
                 detalles = []
-                i = 1
-                for detalle in venta_detalles:
-                    aux = request.POST['vuelta_' + str(i)].strip()
-                    aux2 = request.POST['salida_' + str(i)].strip()
-                    aux_5 = request.POST['rotura_' + str(i)].strip()
-                    aux_6 = request.POST['refaccion_' + str(i)].strip()
-                    if aux_6 == '':
-                        refaccion = 0
-                    else:
-                        refaccion = Decimal(aux_6)
+                #i = 1
+                # for detalle in venta_detalles:
+                for i in range(100):
+                    if 'producto_id_' + str(i) in request.POST.keys():
+                        aux = request.POST['vuelta_' + str(i)].strip()
+                        aux2 = request.POST['salida_' + str(i)].strip()
+                        aux_5 = request.POST['rotura_' + str(i)].strip()
+                        aux_6 = request.POST['refaccion_' + str(i)].strip()
+                        aux_7 = request.POST['producto_id_' + str(i)].strip()
+                        if aux_6 == '':
+                            refaccion = 0
+                        else:
+                            refaccion = Decimal(aux_6)
 
-                    if aux != '' and aux2 != '' and aux_5 != '':
-                        dato_detalle = {}
-                        dato_detalle['producto_id'] = detalle.producto_id
-                        dato_detalle['cantidad_salida'] = Decimal(aux2)
-                        dato_detalle['cantidad_vuelta'] = Decimal(aux)
-                        dato_detalle['rotura'] = Decimal(aux_5)
-                        dato_detalle['refaccion'] = refaccion
-                        dato_detalle['total_vuelta'] = 0
+                        if aux != '' and aux2 != '' and aux_5 != '' and aux_7 != '':
+                            dato_detalle = {}
+                            dato_detalle['producto_id'] = apps.get_model('productos', 'Productos').objects.get(pk=int(aux_7))
+                            dato_detalle['cantidad_salida'] = Decimal(aux2)
+                            dato_detalle['cantidad_vuelta'] = Decimal(aux)
+                            dato_detalle['rotura'] = Decimal(aux_5)
+                            dato_detalle['refaccion'] = refaccion
+                            dato_detalle['total_vuelta'] = 0
 
-                        detalles.append(dato_detalle)
-
-                    i += 1
+                            detalles.append(dato_detalle)
 
                 #print('detalles: ', detalles)
                 datos['detalles'] = detalles
@@ -847,6 +848,7 @@ class VentasController(DefaultValues):
                 # todos los aumentos si es el caso
                 venta = Ventas.objects.get(pk=datos['id'])
                 # detalles
+                #print('detalles...: ', datos['detalles'])
                 for detalle in datos['detalles']:
                     # primero verificamos en las ventas detalles
                     up_ok = 0
@@ -863,15 +865,17 @@ class VentasController(DefaultValues):
                         # verificamos en los aumentos
                         ventas_aumentos = VentasAumentos.objects.filter(venta_id=venta, status_id=self.status_salida_almacen)
                         for venta_aumento in ventas_aumentos:
-                            venta_aumentos_detalles = VentasAumentosDetalles.objects.filter(venta_aumento_id=venta_aumento, producto_id=detalle['producto_id'])
-                            if venta_aumentos_detalles:
-                                va_detalle = venta_aumentos_detalles.first()
-                                va_detalle.cantidad_vuelta = detalle['cantidad_vuelta']
-                                va_detalle.costo_total_rotura = detalle['rotura']
-                                va_detalle.costo_refaccion = detalle['refaccion']
-                                va_detalle.total_vuelta_rotura = ((detalle['cantidad_salida'] - va_detalle.cantidad_vuelta) * va_detalle.costo_total_rotura) + va_detalle.costo_refaccion
-                                va_detalle.save()
-                                up_ok = 1
+                            # mientras no se encuentre el producto
+                            if up_ok == 0:
+                                venta_aumentos_detalles = VentasAumentosDetalles.objects.filter(venta_aumento_id=venta_aumento, producto_id=detalle['producto_id'])
+                                if venta_aumentos_detalles:
+                                    va_detalle = venta_aumentos_detalles.first()
+                                    va_detalle.cantidad_vuelta = detalle['cantidad_vuelta']
+                                    va_detalle.costo_total_rotura = detalle['rotura']
+                                    va_detalle.costo_refaccion = detalle['refaccion']
+                                    va_detalle.total_vuelta_rotura = ((detalle['cantidad_salida'] - va_detalle.cantidad_vuelta) * va_detalle.costo_total_rotura) + va_detalle.costo_refaccion
+                                    va_detalle.save()
+                                    up_ok = 1
 
                     if up_ok == 0:
                         self.error_operation = 'No existe el registro de detalle para este producto'
@@ -1059,7 +1063,9 @@ class VentasController(DefaultValues):
             for gasto in lista_gastos:
                 saldo_venta = saldo_venta + gasto.monto
 
+            cant_ingresos = 0
             for ingreso in lista_ingresos:
+                cant_ingresos += 1
                 saldo_venta = saldo_venta - ingreso.monto
 
             # devolucion de productos y aumentos
@@ -1071,14 +1077,19 @@ class VentasController(DefaultValues):
             # aumentos
             filtro_aumento = {}
             filtro_aumento['venta_id'] = venta
-            filtro_aumento['status_id__in'] = [self.status_venta, self.status_salida_almacen, self.status_vuelta_almacen]
+            filtro_aumento['status_id__in'] = [self.status_venta, self.status_salida_almacen, self.status_vuelta_almacen, self.status_finalizado]
             ventas_aumentos = VentasAumentos.objects.filter(**filtro_aumento)
             for ve_aumento in ventas_aumentos:
+                saldo_venta = saldo_venta + ve_aumento.total
                 ventas_aumentos_detalles = VentasAumentosDetalles.objects.filter(venta_aumento_id=ve_aumento)
                 for detalle in ventas_aumentos_detalles:
                     deuda_detalles += detalle.total_vuelta_rotura
 
-            saldo_venta = saldo_venta + deuda_detalles - venta.garantia_bs
+            #saldo_venta = saldo_venta + deuda_detalles - venta.garantia_bs
+            saldo_venta = saldo_venta + deuda_detalles
+
+            if cant_ingresos > 0:
+                saldo_venta = saldo_venta - venta.garantia_bs
 
             return saldo_venta
             #self.error_operation = 'saldo venta: ' + str(saldo_venta)
@@ -1486,7 +1497,7 @@ class VentasController(DefaultValues):
         sql += "vad.producto_id, vad.cantidad_salida "
         sql += "FROM ventas v, ventas_aumentos va, ventas_aumentos_detalles vad "
         sql += "WHERE v.venta_id=va.venta_id AND va.venta_aumento_id=vad.venta_aumento_id "
-        sql += f"AND v.status_id IN ('{self.venta}', '{self.salida_almacen}') AND va.status_id != '{self.anulado}' "
+        sql += f"AND v.status_id IN ('{self.venta}', '{self.salida_almacen}') AND va.status_id != '{self.anulado}' " + sql_add
 
         # print(sql)
         with connection.cursor() as cursor:

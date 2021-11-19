@@ -68,6 +68,17 @@ def myFirstPage(canvas, doc):
 
     venta = Ventas.objects.get(pk=int(DATO_REGISTRO))
 
+    # aumentos
+    estado_anulado = apps.get_model('status', 'Status').objects.get(pk=settings.STATUS_ANULADO)
+    venta_aumentos = VentasAumentos.objects.filter(venta_id=venta).exclude(status_id=estado_anulado)
+    total_aumentos = 0
+    descuento_aumentos = 0
+    transporte_aumentos = 0
+    for venta_aum in venta_aumentos:
+        total_aumentos += venta_aum.total
+        descuento_aumentos += venta_aum.descuento
+        transporte_aumentos += venta_aum.costo_transporte
+
     # estado de la venta
     estado_venta = 'PREVENTA'
     if venta.status_id.status_id == settings.STATUS_VENTA:
@@ -106,6 +117,7 @@ def myFirstPage(canvas, doc):
     canvas.drawString(posX*mm, posY*mm, venta.apellidos + ' ' + venta.nombres)
     canvas.drawRightString(posX*mm, posY*mm, "Cliente : ")
     # subtotal
+    subtotal_venta = venta.subtotal + total_aumentos
     canvas.drawString(posX2*mm, posY*mm, ' ')
     canvas.drawRightString(posX2*mm, posY*mm, "Subtotal : ")
     canvas.drawString(posX3*mm, posY*mm, ' ')
@@ -150,6 +162,7 @@ def myFirstPage(canvas, doc):
     canvas.drawString(posX2*mm, posY*mm, ' ')
     canvas.drawRightString(posX2*mm, posY*mm, "Total : ")
     canvas.drawString(posX3*mm, posY*mm, ' ')
+    total_venta = subtotal_venta + venta.costo_transporte - venta.descuento
     canvas.drawRightString(posX3*mm, posY*mm, str(venta.garantia_bs + venta.total) + ' Bs.')
 
     # fecha evento
@@ -335,6 +348,7 @@ def rptVentasConCostos(buffer_pdf, usuario, venta_id):
             if existe > -1:
                 # print('pos cero...: ', productos_detalles[])
                 productos_detalles[existe]['cantidad_salida'] = productos_detalles[existe]['cantidad_salida'] + va_detalle.cantidad_salida
+                productos_detalles[existe]['total_salida'] = productos_detalles[existe]['total_salida'] + va_detalle.total_salida
             else:
                 dato = {}
                 dato['producto_id'] = va_detalle.producto_id.producto_id

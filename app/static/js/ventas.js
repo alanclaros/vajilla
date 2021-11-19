@@ -754,3 +754,10 @@ function imprimirVentaResumen(venta_id) {
     document.forms['form_print'].elements['operation_x'].value = 'print_resumen';
     document.forms['form_print'].submit();
 }
+
+//impresion de venta resumen desde ventana principal de ventas
+function imprimirResumenFinalizar(venta_id) {
+    document.forms['form_print'].elements['id'].value = venta_id;
+    document.forms['form_print'].elements['operation_x'].value = 'print_resumen';
+    document.forms['form_print'].submit();
+}

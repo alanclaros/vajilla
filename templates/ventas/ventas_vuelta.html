@@ -167,6 +167,7 @@
                                     <td class="w-15 right minw-20">
                                         {{producto.cantidad_salida|toint}}&nbsp;
                                         <input type="hidden" id="salida_{{forloop.counter}}" name="salida_{{forloop.counter}}" value="{{producto.cantidad_salida|toint}}">
+                                        <input type="hidden" name="producto_id_{{forloop.counter}}" id="producto_id_{{forloop.counter}}" value="{{producto.producto_id}}">
                                     </td>
                                     <td class="w-15 right minw-20">
                                         <input type="text" autocomplete="off" class="form-control input right w-98" name="vuelta_{{forloop.counter}}" id="vuelta_{{forloop.counter}}" value="{{producto.cantidad_vuelta|toint}}" onkeyup="{% if vender_fracciones == 'si' %}validarNumeroPunto(this);{% else %}validarNumero(this);{% endif %}totalPedidoVueltaVenta();">

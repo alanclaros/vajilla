@@ -9,7 +9,7 @@
         <!--alerts-->
         {% include 'partials/_alerts.html' %}
         <br>
-        {% if saldo_venta != 0 %}
+        {% if saldo_venta != 0 and operation_x == 'pasar_finalizado' %}
         {% with title='Ventas' body='No puede finalizar esta venta, el saldo de la venta debe ser "cero"' %}
         {% include 'partials/_alert_info_cant_delete.html' %}
         {% endwith %}

@@ -197,6 +197,11 @@
                     {% include 'partials/btn_modificar.html' %}
                     {% endwith %}
                     {% endif %}
+                    
+                    {% if venta.status_id.status_id == estado_finalizado %}
+                    <i class="nav-icon ico_modify_delete pointer fas fa-file-invoice-dollar" onclick="imprimirResumenFinalizar('{{venta.venta_id}}');nd();"
+                        onMouseOver=" overlib('Imprimir resumen',CAPTION,'Imprimir',WIDTH,'120',LEFT); return true" onMouseOut=" nd(); return true"></i>
+                    {% endif %}
                 </td>
 
                 <td class="center w-5">

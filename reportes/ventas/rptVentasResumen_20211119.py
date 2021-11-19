@@ -21,12 +21,10 @@ from django.conf import settings
 
 # utils
 from utils.permissions import get_sucursal_settings, report_date
-from utils.dates_functions import get_date_show, get_fecha_int
+from utils.dates_functions import get_date_show
 
 import os
 import copy
-from operator import itemgetter
-from decimal import Decimal
 
 # tamanio de pagina
 pagesize = pagesizes.portrait(pagesizes.letter)
@@ -92,8 +90,8 @@ def myFirstPage(canvas, doc):
     # estado venta
     canvas.drawString(posX2*mm, posY*mm, ' ')
     canvas.drawRightString(posX2*mm, posY*mm, estado_venta)
-    # canvas.drawString(posX3*mm, posY*mm, ' ')
-    # canvas.drawRightString(posX3*mm, posY*mm, str(venta.subtotal) + ' Bs.')
+    #canvas.drawString(posX3*mm, posY*mm, ' ')
+    #canvas.drawRightString(posX3*mm, posY*mm, str(venta.subtotal) + ' Bs.')
 
     # cliente
     posY = posY - altoTxt
@@ -110,7 +108,7 @@ def myFirstPage(canvas, doc):
     canvas.drawString(posX*mm, posY*mm, venta.ci_nit)
     canvas.drawRightString(posX*mm, posY*mm, "CI/NIT : ")
     # descuento
-    # canvas.drawString(posX2*mm, posY*mm, '-' + str(venta.descuento) + ' Bs.')
+    #canvas.drawString(posX2*mm, posY*mm, '-' + str(venta.descuento) + ' Bs.')
     canvas.drawString(posX2*mm, posY*mm, ' ')
     canvas.drawRightString(posX2*mm, posY*mm, "Desc. : ")
     canvas.drawString(posX3*mm, posY*mm, ' ')
@@ -220,7 +218,7 @@ def rptVentasResumen(buffer_pdf, usuario, venta_id):
     # tabla
     datos_tabla = []
     data = []
-    #data.append(['Fecha', 'Operacion', 'Monto', 'Saldo'])
+    data.append(['Fecha', 'Operacion', 'Monto', 'Saldo'])
     filas = 0
     saldo_venta = venta.total
 
@@ -232,7 +230,7 @@ def rptVentasResumen(buffer_pdf, usuario, venta_id):
     for egreso in cajas_egresos:
         concepto = Paragraph('Gasto, ' + egreso.concepto, style_tabla_datos)
         saldo_venta = saldo_venta + egreso.monto
-        dato_add = [get_fecha_int(egreso.fecha), 'mas', get_date_show(fecha=egreso.fecha, formato='dd-MMM-yyyy HH:ii'), concepto, str(round(egreso.monto, 2)), str(round(saldo_venta, 2))]
+        dato_add = [get_date_show(fecha=egreso.fecha, formato='dd-MMM-yyyy HH:ii'), concepto, str(round(egreso.monto, 2)), str(round(saldo_venta, 2))]
         data.append(dato_add)
         filas += 1
 
@@ -248,7 +246,7 @@ def rptVentasResumen(buffer_pdf, usuario, venta_id):
     for ve_aumento in ventas_aumentos:
         saldo_venta = saldo_venta + ve_aumento.total
         concepto = 'Aumento al Pedido'
-        dato_add = [get_fecha_int(ve_aumento.created_at), 'mas', get_date_show(fecha=ve_aumento.created_at, formato='dd-MMM-yyyy HH:ii'), concepto, str(round(ve_aumento.total, 2)), str(round(saldo_venta, 2))]
+        dato_add = [get_date_show(fecha=ve_aumento.created_at, formato='dd-MMM-yyyy HH:ii'), concepto, str(round(ve_aumento.total, 2)), str(round(saldo_venta, 2))]
         data.append(dato_add)
         filas += 1
 
@@ -256,47 +254,22 @@ def rptVentasResumen(buffer_pdf, usuario, venta_id):
         for detalle in ventas_aumentos_detalles:
             deuda_detalles += detalle.total_vuelta_rotura
 
-    fecha_rotura = get_date_show(fecha=venta.fecha_entrega, formato='dd-MMM-yyyy HH:ii')
-    dato_fecha = get_fecha_int(venta.fecha_entrega)
-    if not venta.fecha_vuelta is None:
-        fecha_rotura = get_date_show(fecha=venta.fecha_vuelta, formato='dd-MMM-yyyy HH:ii')
-        dato_fecha = get_fecha_int(venta.fecha_vuelta)
-
     # rotura y refaccion
-    if deuda_detalles > 0:
-        saldo_venta = saldo_venta + deuda_detalles
-        dato_add = [dato_fecha, 'mas', fecha_rotura, 'Refaccion y Reposicion de Productos', str(round(deuda_detalles, 2)), str(round(saldo_venta, 2))]
-        data.append(dato_add)
-        filas += 1
+    saldo_venta = saldo_venta + deuda_detalles
+    dato_add = ['', 'Refaccion y Reposicion de Productos', str(round(deuda_detalles, 2)), str(round(saldo_venta, 2))]
+    data.append(dato_add)
+    filas += 1
 
     # ingresos efectivo
     lista_ingresos = apps.get_model('cajas', 'CajasIngresos').objects.filter(venta_id=venta.venta_id, status_id=status_activo).order_by('fecha')
     for ingreso in lista_ingresos:
         concepto = Paragraph('Cobro, ' + ingreso.concepto, style_tabla_datos)
         saldo_venta = saldo_venta - ingreso.monto
-        dato_add = [get_fecha_int(ingreso.fecha), 'menos', get_date_show(fecha=ingreso.fecha, formato='dd-MMM-yyyy HH:ii'), concepto, str(round(ingreso.monto, 2)), str(round(saldo_venta, 2))]
+        dato_add = [get_date_show(fecha=ingreso.fecha, formato='dd-MMM-yyyy HH:ii'), concepto, str(round(ingreso.monto, 2)), str(round(saldo_venta, 2))]
         data.append(dato_add)
         filas += 1
 
-    # ordenamos por fechas los registros
-    #print('antes ordenar...: ', data)
-    lista_ordenada = sorted(data, key=itemgetter(0))
-    #print('despues ordenar: ', lista_ordenada)
-    data_tabla = []
-    saldo_venta = venta.total
-    for dato_lista in lista_ordenada:
-        if dato_lista[1] == 'mas':
-            saldo_venta += Decimal(dato_lista[4])
-            monto_venta = '+' + dato_lista[4]
-        else:
-            saldo_venta -= Decimal(dato_lista[4])
-            monto_venta = '-' + dato_lista[4]
-
-        data_tabla.append([dato_lista[2], dato_lista[3], monto_venta, str(round(saldo_venta, 2))])
-
-    data_tabla.insert(0, ['Fecha', 'Operacion', 'Monto', 'Saldo'])
-
-    tabla_datos = Table(data_tabla, colWidths=[28*mm, 130*mm, 14*mm, 16*mm], repeatRows=1)
+    tabla_datos = Table(data, colWidths=[28*mm, 130*mm, 14*mm, 16*mm], repeatRows=1)
     num_cols = 4-1
     align_right_from = 2
 

@@ -60,6 +60,8 @@
                                 {% for detalle in lista_detalle %}
                                     {{detalle.producto}}, {{detalle.cantidad_salida}} &#42; {{detalle.costo_salida}} = {{detalle.total_salida}}<br>
                                 {% endfor %}
+                                <b><i>SubT. {{aumento.subtotal}}, T. {{aumento.costo_transporte}}, Desc. {{aumento.descuento}} Total: {{aumento.total}}</i></b>
+                                <br>
                             {% endwith %}
                             {% if aumento.status_id.status_id != estado_anulado %}
                             <button class="btn btn-primary btn-sm" name="btn_anular_{{aumento.venta_aumento_id}}" onclick="anularAumentoVenta('{{aumento.venta_aumento_id}}');">
@@ -160,6 +162,7 @@
                     
                     <tr class="back1">
                         <td colspan="2" class="w-100 right">
+                            Transporte : <input type="text" autocomplete="off" class="form-control input right w-20" name="costo_transporte" id="costo_transporte" value="" onkeyup="validarNumeroPunto(this); totalPedidoPreVenta('');"> Bs.<br>
                             
                             SubTotal : <input type="text" class="form-control input right w-20" name="total_pedido" id="total_pedido" value="" readonly="readonly"> Bs.<br>
                             
@@ -169,7 +172,6 @@
                             Total Productos : <input type="text" class="form-control input right w-20" name="total_venta" id="total_venta" value="" readonly="readonly"> Bs.
                             
                             <br>
-                            Transporte : <input type="text" autocomplete="off" class="form-control input right w-20" name="costo_transporte" id="costo_transporte" value="" onkeyup="validarNumeroPunto(this); totalPedidoPreVenta('');"> Bs.<br>
                             Total : <input type="text" class="form-control input right w-20" name="total_final" id="total_final" value="" readonly="readonly"> Bs.
                         </td>
                     </tr>
