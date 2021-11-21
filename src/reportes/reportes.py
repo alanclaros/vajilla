@@ -869,10 +869,11 @@ def ventas(request):
             wb = openpyxl.Workbook()
             hoja = wb.active
             hoja.title = "Ventas"
-            hoja.append(('Ciudad', 'Sucursal', 'Punto', 'Cliente', 'Tipo', 'Subtotal', 'Descuento', 'Total', 'Numero', 'Fecha'))
+            hoja.append(('Ciudad', 'Sucursal', 'Punto', 'Cliente', 'Tipo', 'Subtotal', 'Descuento', 'Adicional', 'Total', 'Ingresos', 'Numero', 'Fecha'))
             datos_reporte = reportes_controller.datos_ventas(request.user, ciudad, sucursal, punto, fecha_ini, fecha_fin, anulados, preventa, venta, salida, vuelta, finalizado)
             for dato in datos_reporte:
-                hoja.append((dato['ciudad'], dato['sucursal'], dato['punto'], dato['cliente'], dato['tipo'], dato['subtotal'], dato['descuento'], dato['total'], dato['numero_contrato'], dato['fecha']))
+                hoja.append((dato['ciudad'], dato['sucursal'], dato['punto'], dato['cliente'], dato['tipo'], dato['subtotal'], dato['descuento'],
+                            dato['adicional'], dato['total'] + dato['adicional'], dato['ingresos_caja'], dato['numero_contrato'], dato['fecha']))
 
             response = HttpResponse(content_type="application/msexcel")
             response["Content-Disposition"] = "attachment; filename=ventas.xlsx"

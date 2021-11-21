@@ -119,6 +119,8 @@ def rptVentas(buffer_pdf, usuario, ciudad_id, sucursal_id, punto_id, fecha_ini, 
     total = 0
     descuento = 0
     subtotal = 0
+    adicional = 0
+    en_ingresos = 0
     bande = 0
     titulo_punto = ''
 
@@ -131,22 +133,21 @@ def rptVentas(buffer_pdf, usuario, ciudad_id, sucursal_id, punto_id, fecha_ini, 
             if bande > 1:
                 # cerramos tabla anterior y aniadimos
                 if len(data) > 0:
-                    datos_tabla = ['', '', '', 'Totales: ', str(subtotal), str(descuento), str(total) + ' ' + codigo_moneda]
+                    datos_tabla = ['', '', '', 'Totales: ', str(subtotal), str(descuento), str(adicional), str(total), str(en_ingresos)]
                     data.append(datos_tabla)
 
                     # ancho columnas
-                    tabla_datos = Table(data, colWidths=[22*mm, 12*mm, 65*mm, 25*mm, 20*mm, 20*mm, 22*mm], repeatRows=1)
-
-                    tabla_datos.setStyle(TableStyle([('BACKGROUND', (0, 0), (6, 0), colors.Color(red=(204/255), green=(204/255), blue=(204/255))),
-                                                     ('ALIGN', (4, 0), (6, filas+1), 'RIGHT'),
+                    tabla_datos = Table(data, colWidths=[22*mm, 12*mm, 58*mm, 25*mm, 17*mm, 15*mm, 17*mm, 17*mm, 17*mm], repeatRows=1)
+                    tabla_datos.setStyle(TableStyle([('BACKGROUND', (0, 0), (8, 0), colors.Color(red=(204/255), green=(204/255), blue=(204/255))),
+                                                     ('ALIGN', (4, 0), (8, filas+1), 'RIGHT'),
                                                      #('ALIGN', (1, 0), (1, filas+1), 'RIGHT'),
                                                      #('ALIGN', (5, filas+1), (5, filas+1), 'RIGHT'),
                                                      ('GRID', (0, 0), (-1, -1), 0.5, colors.black),
-                                                     ('FONTSIZE', (0, 0), (6, 0), 10),
+                                                     ('FONTSIZE', (0, 0), (8, 0), 10),
                                                      ('FONTSIZE', (0, 1), (-1, -1), 9),
-                                                     ('FONTNAME', (0, 0), (6, 0), 'Helvetica'),
-                                                     ('FONTNAME', (0, 1), (6, filas), 'Helvetica'),
-                                                     ('FONTNAME', (0, filas+1), (6, filas+1), 'Helvetica-Bold'),
+                                                     ('FONTNAME', (0, 0), (8, 0), 'Helvetica'),
+                                                     ('FONTNAME', (0, 1), (8, filas), 'Helvetica'),
+                                                     ('FONTNAME', (0, filas+1), (8, filas+1), 'Helvetica-Bold'),
                                                      ('LEFTPADDING', (0, 0), (-1, -1), 2),
                                                      ('RIGHTPADDING', (0, 1), (-1, -1), 1),
                                                      ('VALIGN', (0, 1), (-1, -1), 'TOP'),
@@ -164,22 +165,28 @@ def rptVentas(buffer_pdf, usuario, ciudad_id, sucursal_id, punto_id, fecha_ini, 
             # creamos tabla para esta caja
             data = []
 
-            data.append(['Fecha', 'N.', 'Cliente', 'Tipo', 'SubT', 'Desc', 'Total'])
+            data.append(['Fecha', 'N.', 'Cliente', 'Tipo', 'SubT', 'Desc', 'Ad.', 'Total', 'Ingr.'])
             filas = 0
             total = 0
             subtotal = 0
             descuento = 0
+            adicional = 0
+            en_ingresos = 0
 
         # seguimos llenando de datos la tabla hasta cambiar de caja, sucursal o ciudad
         cliente = Paragraph(dato['cliente'])
         tipo = Paragraph(dato['tipo'])
 
-        datos_tabla = [dato['fecha'], str(dato['numero_contrato'])+' ', cliente, tipo, str(dato['subtotal']), str(dato['descuento']), str(dato['total']) + ' ' + codigo_moneda]
+        datos_tabla = [dato['fecha'], str(dato['numero_contrato'])+' ', cliente, tipo, str(dato['subtotal']), str(dato['descuento']),
+                       str(dato['adicional']), str(dato['total']+dato['adicional']), str(dato['ingresos_caja'])]
         data.append(datos_tabla)
         filas += 1
-        total += dato['total']
+
         descuento += dato['descuento']
         subtotal += dato['subtotal']
+        adicional += dato['adicional']
+        total += dato['total'] + dato['adicional']
+        en_ingresos += dato['ingresos_caja']
 
         # codigo moneda para los totales
         # if codigo_moneda != dato['tipo_moneda']:
@@ -197,20 +204,20 @@ def rptVentas(buffer_pdf, usuario, ciudad_id, sucursal_id, punto_id, fecha_ini, 
 
     # datos de la ultima tabla
     if len(data) > 0:
-        datos_tabla = ['', '', '', 'Totales: ', str(subtotal), str(descuento), str(total) + ' ' + codigo_moneda]
+        datos_tabla = ['', '', '', 'Totales: ', str(subtotal), str(descuento), str(adicional), str(total), str(en_ingresos)]
         data.append(datos_tabla)
 
-        tabla_datos = Table(data, colWidths=[22*mm, 12*mm, 65*mm, 25*mm, 20*mm, 20*mm, 22*mm], repeatRows=1)
-        tabla_datos.setStyle(TableStyle([('BACKGROUND', (0, 0), (6, 0), colors.Color(red=(204/255), green=(204/255), blue=(204/255))),
-                                         ('ALIGN', (4, 0), (6, filas+1), 'RIGHT'),
+        tabla_datos = Table(data, colWidths=[22*mm, 12*mm, 58*mm, 25*mm, 17*mm, 15*mm, 17*mm, 17*mm, 17*mm], repeatRows=1)
+        tabla_datos.setStyle(TableStyle([('BACKGROUND', (0, 0), (8, 0), colors.Color(red=(204/255), green=(204/255), blue=(204/255))),
+                                         ('ALIGN', (4, 0), (8, filas+1), 'RIGHT'),
                                          #('ALIGN', (1, 0), (1, filas+1), 'RIGHT'),
                                          #('ALIGN', (5, filas+1), (5, filas+1), 'RIGHT'),
                                          ('GRID', (0, 0), (-1, -1), 0.5, colors.black),
-                                         ('FONTSIZE', (0, 0), (6, 0), 10),
+                                         ('FONTSIZE', (0, 0), (8, 0), 10),
                                          ('FONTSIZE', (0, 1), (-1, -1), 9),
-                                         ('FONTNAME', (0, 0), (6, 0), 'Helvetica'),
-                                         ('FONTNAME', (0, 1), (6, filas), 'Helvetica'),
-                                         ('FONTNAME', (0, filas+1), (6, filas+1), 'Helvetica-Bold'),
+                                         ('FONTNAME', (0, 0), (8, 0), 'Helvetica'),
+                                         ('FONTNAME', (0, 1), (8, filas), 'Helvetica'),
+                                         ('FONTNAME', (0, filas+1), (8, filas+1), 'Helvetica-Bold'),
                                          ('LEFTPADDING', (0, 0), (-1, -1), 2),
                                          ('RIGHTPADDING', (0, 1), (-1, -1), 1),
                                          ('VALIGN', (0, 1), (-1, -1), 'TOP'),

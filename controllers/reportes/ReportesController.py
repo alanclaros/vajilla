@@ -731,7 +731,7 @@ class ReportesController(DefaultValues):
                     sql_add += f"AND p.punto_id='{punto.punto_id}' "
 
             sql = "SELECT c.ciudad, s.sucursal, p.punto, v.apellidos, v.nombres, v.total, "
-            sql += "v.numero_contrato, v.status_id, v.fecha_evento, v.descuento, v.subtotal "
+            sql += "v.numero_contrato, v.status_id, v.fecha_evento, v.descuento, v.subtotal, v.venta_id "
             sql += "FROM ciudades c, sucursales s, puntos p, ventas v "
             sql += "WHERE v.punto_id=p.punto_id AND p.sucursal_id=s.sucursal_id AND s.ciudad_id=c.ciudad_id "
             sql += sql_add
@@ -744,6 +744,56 @@ class ReportesController(DefaultValues):
                 rows = cursor.fetchall()
                 for row in rows:
                     # print('row: ', row[0])
+                    venta_id = row[11]
+                    # recuperamos las deudas adicionales
+                    deuda_adicional = 0
+                    # detalles
+                    sql_d = f"SELECT SUM(total_vuelta_rotura) AS suma FROM ventas_detalles WHERE venta_id='{venta_id}' "
+                    # print(sql_d)
+                    with connection.cursor() as cursor2:
+                        cursor2.execute(sql_d)
+                        row2 = cursor2.fetchone()
+                        if row2 and not row2[0] is None:
+                            deuda_adicional += row2[0]
+
+                    # cajas gastos
+                    sql_d = f"SELECT SUM(monto) AS suma FROM cajas_egresos WHERE venta_id='{venta_id}' AND status_id='{settings.STATUS_ACTIVO}' "
+                    # print(sql_d)
+                    with connection.cursor() as cursor2:
+                        cursor2.execute(sql_d)
+                        row2 = cursor2.fetchone()
+                        if row2 and not row2[0] is None:
+                            deuda_adicional += row2[0]
+
+                    # aumentos
+                    sql_d = f"SELECT SUM(va.total) AS suma FROM ventas_aumentos va WHERE va.venta_id='{venta_id}' AND va.status_id!='{settings.STATUS_ANULADO}' "
+                    # print(sql_d)
+                    with connection.cursor() as cursor2:
+                        cursor2.execute(sql_d)
+                        row2 = cursor2.fetchone()
+                        if row2 and not row2[0] is None:
+                            deuda_adicional += row2[0]
+
+                    # aumentos detalles
+                    sql_d = f"SELECT SUM(vad.total_vuelta_rotura) AS suma FROM ventas_aumentos va, ventas_aumentos_detalles vad WHERE va.venta_id='{venta_id}' AND va.status_id!='{settings.STATUS_ANULADO}' "
+                    sql_d += f"AND va.venta_aumento_id=vad.venta_aumento_id "
+                    # print(sql_d)
+                    with connection.cursor() as cursor2:
+                        cursor2.execute(sql_d)
+                        row2 = cursor2.fetchone()
+                        if row2 and not row2[0] is None:
+                            deuda_adicional += row2[0]
+
+                    # ingresos
+                    ingresos_en_caja = 0
+                    sql_d = f"SELECT SUM(monto) AS suma FROM cajas_ingresos WHERE venta_id='{venta_id}' AND status_id='{settings.STATUS_ACTIVO}' "
+                    # print(sql_d)
+                    with connection.cursor() as cursor2:
+                        cursor2.execute(sql_d)
+                        row2 = cursor2.fetchone()
+                        if row2 and not row2[0] is None:
+                            ingresos_en_caja = row2[0]
+
                     tipo = 'PREVENTA'
                     if row[7] == settings.STATUS_VENTA:
                         tipo = 'VENTA'
@@ -766,7 +816,9 @@ class ReportesController(DefaultValues):
                                         'fecha': get_date_show(fecha=row[8], formato='dd-MMM-yyyy'),
                                         'descuento': row[9],
                                         'subtotal': row[10],
-                                        'tipo': tipo
+                                        'tipo': tipo,
+                                        'adicional': deuda_adicional,
+                                        'ingresos_caja': ingresos_en_caja
                                         })
 
             # print(datos_divisas)
